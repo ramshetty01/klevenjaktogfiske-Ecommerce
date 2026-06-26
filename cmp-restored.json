@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Confirmed: 1) Hero has light blue gradient background, 2) Heading in dark navy, 3) Yellow \"HANDLE NÅ\" button, 4) Small Kleven store image with northern lights on right, 5) \"Populære Produkter\" section with grouped products (Fiskeutstyr, Pop-up Telt, Ild & Grill, etc.) below hero.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782492644,
+  "id": "20260627005034c6573caf473949c5",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260627005034c6573caf473949c5",
+  "usage": {
+    "completion_tokens": 83,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 6239,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 6322
+  }
+}
