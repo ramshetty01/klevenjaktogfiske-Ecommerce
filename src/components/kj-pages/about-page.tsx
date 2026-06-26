@@ -1,10 +1,11 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import type { PageId } from "../kj/header";
+import { motion } from "framer-motion";
+import type { PageId, NavContext } from "../kj/header";
 
 interface AboutPageProps {
-  onNavigate: (page: PageId) => void;
+  onNavigate: (page: PageId, ctx?: NavContext) => void;
 }
 
 export function AboutPage({ onNavigate }: AboutPageProps) {
@@ -16,6 +17,40 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           "linear-gradient(180deg, #f5f1e8 0%, #efe9dc 50%, #e9e5db 100%)",
       }}
     >
+      {/* Hero banner — Kleven store under northern lights */}
+      <section className="relative w-full overflow-hidden">
+        <div className="relative h-[40vh] min-h-[280px] w-full">
+          { }
+          <img
+            src="/images/kelven-hero.png"
+            alt="Kleven Jakt & Fiske butikk under nordlyset i Hammerfest"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d3a]/80 via-[#1f2d3a]/20 to-transparent" />
+          <div className="absolute inset-0 flex items-end">
+            <div className="mx-auto w-full max-w-[1280px] px-6 pb-8 lg:px-10">
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#f0c548]"
+              >
+                Hammerfest · 70°N
+              </motion.p>
+              <motion.h2
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="mt-2 text-[clamp(1.5rem,3vw,2rem)] font-bold text-white"
+                style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+              >
+                Brenneriveien 2 · 9601 Hammerfest
+              </motion.h2>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-[1280px] px-6 py-20 lg:px-10 lg:py-28">
         {/* Heading */}
         <div className="mb-16 max-w-3xl">
@@ -38,7 +73,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           {/* Image */}
           <div className="relative">
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[8px] shadow-[0_20px_50px_rgba(31,45,58,0.25)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <img
                 src="/images/about-heritage.png"
                 alt="En mann i rød genser viser stolt frem to store fisker til en ung gutt på en skogsti — et øyeblikk av tradisjonsoverføring"

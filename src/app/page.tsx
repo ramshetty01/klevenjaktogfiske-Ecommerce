@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Header, type PageId } from "@/components/kj/header";
+import { Header, type PageId, type NavContext } from "@/components/kj/header";
 import { Footer } from "@/components/kj/footer";
 import { HomePage } from "@/components/kj-pages/home-page";
 import { ShopPage } from "@/components/kj-pages/shop-page";
 import { AboutPage } from "@/components/kj-pages/about-page";
 import { CategoriesPage } from "@/components/kj-pages/categories-page";
+import { ProductDetailPage } from "@/components/kj-pages/product-detail-page";
+import { CartPage } from "@/components/kj-pages/cart-page";
+import type { CategoryNode } from "@/lib/kj/types";
 
 /**
  * Global guard against React "removeChild" errors caused by browser
@@ -27,10 +30,8 @@ function useTranslationErrorGuard() {
         msg.includes("The node to be removed is not a child of this node");
 
       if (isRemoveChild) {
-        // Prevent the error from surfacing as a white-screen crash
         e.preventDefault();
         e.stopPropagation();
-        // Force React to re-render by bumping the key
         setRecoverKey((k) => k + 1);
       }
     };
@@ -44,9 +45,34 @@ function useTranslationErrorGuard() {
 
 export default function Home() {
   const [page, setPage] = useState<PageId>("home");
+  const [navCtx, setNavCtx] = useState<NavContext>({});
+  const [categories, setCategories] = useState<CategoryNode[]>([]);
   const recoverKey = useTranslationErrorGuard();
 
-  const navigate = useCallback((p: PageId) => setPage(p), []);
+  // Fetch categories once for the mega menu
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/categories", { cache: "no-store" });
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          setCategories(data.categories ?? []);
+        }
+      } catch {
+        /* ignore — mega menu just won't populate */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const navigate = useCallback((p: PageId, ctx?: NavContext) => {
+    setNavCtx(ctx ?? {});
+    setPage(p);
+  }, []);
 
   return (
     <div
@@ -54,13 +80,22 @@ export default function Home() {
       className="flex min-h-screen flex-col bg-white"
       translate="no"
     >
-      <Header current={page} onNavigate={navigate} />
+      <Header current={page} onNavigate={navigate} categories={categories} />
 
       <main className="flex-1">
         {page === "home" && <HomePage onNavigate={navigate} />}
-        {page === "shop" && <ShopPage />}
+        {page === "shop" && (
+          <ShopPage
+            initialFilters={navCtx.shopFilters}
+            onNavigate={navigate}
+          />
+        )}
         {page === "about" && <AboutPage onNavigate={navigate} />}
         {page === "categories" && <CategoriesPage onNavigate={navigate} />}
+        {page === "product" && navCtx.productSlug && (
+          <ProductDetailPage slug={navCtx.productSlug} onNavigate={navigate} />
+        )}
+        {page === "cart" && <CartPage onNavigate={navigate} />}
       </main>
 
       <Footer onNavigate={navigate} />

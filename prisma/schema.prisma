@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma schema for Kleven Jakt & Fiske AS
+// Norwegian hunting & fishing e-commerce retailer
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +10,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+/// Product brand (e.g. Sauer, Zeiss, Fjellreven, Helle)
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  logoUrl     String?
+  description String?
+  country     String?
+  createdAt   DateTime  @default(now())
+  products    Product[]
 }
 
-model Post {
+/// Top-level category (e.g. Jakt, Fiske, Camping) or subcategory
+/// Subcategories reference their parent via parentId
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  icon      String?
+  parentId  String?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Category[] @relation("CategoryTree")
+  products  Product[]  @relation("ProductCategory")
+  subProducts Product[] @relation("ProductSubcategory")
+  createdAt DateTime   @default(now())
+}
+
+/// Product in the catalog.
+/// All merchandising metadata (sales90, conversionRate, etc.) is stored
+/// so the API can replicate the original klevenjaktogfiske.no sort algorithm
+/// ("recommended" = weighted score) server-side.
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  subtitle       String?
+  description    String?
+  /// Current price in NOK (kr)
+  price          Float
+  /// Original (pre-discount) price in NOK. Null when not on sale.
+  originalPrice  Float?
+  /// Primary image URL
+  imageUrl       String
+  /// Additional image URLs (JSON-encoded array)
+  images         String
+  /// Stock keeping unit / item number
+  sku            String   @unique
+  /// Numeric stock count (0 = out of stock / pre-order)
+  stockCount     Int
+  /// Human-readable stock status (e.g. "20+ på lager", "På vei 07/07")
+  stockLabel     String?
+  /// Tag for badges: "Bestselger", "Nyhet", "Tilbud", "Begrenset", "-30%", etc.
+  tag            String?
+  /// Average rating 0–5
+  rating         Float    @default(0)
+  reviewCount    Int      @default(0)
+  /// Merchandising metadata for sort algorithms
+  sales90        Int      @default(0)
+  conversionRate Float    @default(0)
+  popularity     Float    @default(0)
+  seasonBoost    Float    @default(0)
+  margin         Float    @default(0)
+  /// True when product is flagged as new
+  isNew          Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  /// Relations
+  brandId        String?
+  brand          Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  categoryId     String?
+  category       Category? @relation("ProductCategory", fields: [categoryId], references: [id], onDelete: SetNull)
+  subcategoryId  String?
+  subcategory    Category? @relation("ProductSubcategory", fields: [subcategoryId], references: [id], onDelete: SetNull)
+  /// Child relations
+  reviews        Review[]
+  cartItems      CartItem[]
+}
+
+/// Verified / unverified product review
+model Review {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorName  String
+  rating      Int
+  title       String
+  body        String
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+/// Cart line item — bound to a session ID (cookie-based, anonymous cart)
+model CartItem {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  sessionId String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@index([sessionId])
 }

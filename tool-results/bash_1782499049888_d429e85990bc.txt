@@ -1,0 +1,1723 @@
+     1→"use client";
+     2→
+     3→import { useState, useMemo } from "react";
+     4→import { ChevronLeft, ChevronRight, ArrowRight, SlidersHorizontal } from "lucide-react";
+     5→import { ShippingBanner } from "../kj/shipping-banner";
+     6→import {
+     7→  Select,
+     8→  SelectContent,
+     9→  SelectItem,
+    10→  SelectTrigger,
+    11→  SelectValue,
+    12→} from "@/components/ui/select";
+    13→
+    14→type Category =
+    15→  | "Camping"
+    16→  | "Fiske"
+    17→  | "Footwear"
+    18→  | "Gavekort"
+    19→  | "Jakt"
+    20→  | "Husdyr"
+    21→  | "Kleven Fluer"
+    22→  | "Bekledning"
+    23→  | "Outlet"
+    24→  | "Vintersport";
+    25→
+    26→/**
+    27→ * Merchandising-first sort options.
+    28→ * Default = "Anbefalt" (Recommended) using a weighted score.
+    29→ * "Størst rabatt" only shows when Outlet category is active.
+    30→ */
+    31→type SortKey =
+    32→  | "recommended"
+    33→  | "bestsellers"
+    34→  | "newest"
+    35→  | "price_asc"
+    36→  | "price_desc"
+    37→  | "rating"
+    38→  | "reviews"
+    39→  | "stock_first"
+    40→  | "discount"
+    41→  // Sort options matching the original klevenjaktogfiske.no site
+    42→  | "name_asc"
+    43→  | "name_desc"
+    44→  | "itemno_asc"
+    45→  | "itemno_desc"
+    46→  | "stock_asc";
+    47→
+    48→interface Product {
+    49→  name: string;
+    50→  subtitle?: string;
+    51→  price: string;
+    52→  priceNok: number; // numeric value for sorting
+    53→  original?: string;
+    54→  originalNok?: number;
+    55→  img: string;
+    56→  tag?: string;
+    57→  stock?: string;
+    58→  stockCount: number; // numeric stock for sorting (0 if unknown)
+    59→  category: Category;
+    60→  subcategory?: string; // for Camping: Binoculars, Pop-up tent, Light, etc.
+    61→  // Merchandising metadata
+    62→  sales90: number; // units sold last 90 days
+    63→  conversionRate: number; // 0-1
+    64→  inventoryHealth: number; // 0-1
+    65→  popularity: number; // 0-100
+    66→  seasonBoost: number; // 0-1 (1 = currently in season)
+    67→  margin: number; // 0-1
+    68→  rating: number; // 0-5
+    69→  reviewCount: number;
+    70→  createdAt: number; // timestamp ms (higher = newer)
+    71→  isNew?: boolean;
+    72→}
+    73→
+    74→// Fixed reference date (not Date.now()) so server and client produce
+    75→// identical sort orders — prevents React hydration "removeChild" errors.
+    76→const NOW = new Date("2026-06-26T12:00:00Z").getTime();
+    77→const DAY = 24 * 60 * 60 * 1000;
+    78→
+    79→const PRODUCTS: Product[] = [
+    80→  // ============ CAMPING (25 products from klevenjaktogfiske.no/camping) ============
+    81→  {
+    82→    name: "#Nord 6 Model 2025",
+    83→    subtitle: "Pop-up telt for hele året",
+    84→    price: "kr 14 999",
+    85→    priceNok: 14999,
+    86→    img: "https://sfile.chatglm.cn/images-ppt/e8afc2db251f.jpg",
+    87→    tag: "Bestselger",
+    88→    stock: "20+ på lager",
+    89→    stockCount: 25,
+    90→    category: "Camping",
+    91→    subcategory: "Pop-up tent",
+    92→    sales90: 142,
+    93→    conversionRate: 0.082,
+    94→    inventoryHealth: 0.9,
+    95→    popularity: 92,
+    96→    seasonBoost: 1,
+    97→    margin: 0.22,
+    98→    rating: 4.8,
+    99→    reviewCount: 87,
+   100→    createdAt: NOW - 45 * DAY,
+   101→  },
+   102→  {
+   103→    name: "#Nord 8 Model 2025",
+   104→    subtitle: "Pop-up telt for hele året",
+   105→    price: "kr 16 999",
+   106→    priceNok: 16999,
+   107→    img: "https://sfile.chatglm.cn/images-ppt/68aba7a27084.jpg",
+   108→    stock: "20+ på lager",
+   109→    stockCount: 22,
+   110→    category: "Camping",
+   111→    subcategory: "Pop-up tent",
+   112→    sales90: 98,
+   113→    conversionRate: 0.068,
+   114→    inventoryHealth: 0.85,
+   115→    popularity: 85,
+   116→    seasonBoost: 1,
+   117→    margin: 0.23,
+   118→    rating: 4.7,
+   119→    reviewCount: 64,
+   120→    createdAt: NOW - 45 * DAY,
+   121→  },
+   122→  {
+   123→    name: "#Nord 9 Model 2025",
+   124→    subtitle: "Pop-up telt for hele året",
+   125→    price: "kr 16 999",
+   126→    priceNok: 16999,
+   127→    img: "https://sfile.chatglm.cn/images-ppt/f1163f0b7bce.jpg",
+   128→    stock: "20+ på lager",
+   129→    stockCount: 20,
+   130→    category: "Camping",
+   131→    subcategory: "Pop-up tent",
+   132→    sales90: 76,
+   133→    conversionRate: 0.062,
+   134→    inventoryHealth: 0.82,
+   135→    popularity: 80,
+   136→    seasonBoost: 1,
+   137→    margin: 0.23,
+   138→    rating: 4.6,
+   139→    reviewCount: 52,
+   140→    createdAt: NOW - 45 * DAY,
+   141→  },
+   142→  {
+   143→    name: "Abu Røken Small",
+   144→    subtitle: "Røykeovn med spritbrenner",
+   145→    price: "kr 799",
+   146→    priceNok: 799,
+   147→    img: "https://sfile.chatglm.cn/images-ppt/aefa144deda5.jpg",
+   148→    stock: "3 på lager",
+   149→    stockCount: 3,
+   150→    category: "Camping",
+   151→    subcategory: "Smoking room",
+   152→    sales90: 18,
+   153→    conversionRate: 0.044,
+   154→    inventoryHealth: 0.4,
+   155→    popularity: 54,
+   156→    seasonBoost: 0.7,
+   157→    margin: 0.32,
+   158→    rating: 4.5,
+   159→    reviewCount: 16,
+   160→    createdAt: NOW - 120 * DAY,
+   161→  },
+   162→  {
+   163→    name: "Alces BBQ Stick",
+   164→    subtitle: "Grillpinn",
+   165→    price: "kr 79",
+   166→    priceNok: 79,
+   167→    img: "https://sfile.chatglm.cn/images-ppt/3da1336c2030.jpg",
+   168→    stock: "1 på lager",
+   169→    stockCount: 1,
+   170→    category: "Camping",
+   171→    subcategory: "Kitchenware",
+   172→    sales90: 42,
+   173→    conversionRate: 0.072,
+   174→    inventoryHealth: 0.15,
+   175→    popularity: 58,
+   176→    seasonBoost: 0.85,
+   177→    margin: 0.45,
+   178→    rating: 4.4,
+   179→    reviewCount: 22,
+   180→    createdAt: NOW - 60 * DAY,
+   181→  },
+   182→  {
+   183→    name: "Allround Ferret XT",
+   184→    subtitle: "Backpacking light — 3 personer",
+   185→    price: "kr 5 499",
+   186→    priceNok: 5499,
+   187→    img: "https://sfile.chatglm.cn/images-ppt/ea2356160fba.jpg",
+   188→    stock: "1 på lager",
+   189→    stockCount: 1,
+   190→    category: "Camping",
+   191→    subcategory: "Pop-up tent",
+   192→    sales90: 14,
+   193→    conversionRate: 0.038,
+   194→    inventoryHealth: 0.15,
+   195→    popularity: 62,
+   196→    seasonBoost: 0.95,
+   197→    margin: 0.24,
+   198→    rating: 4.7,
+   199→    reviewCount: 18,
+   200→    createdAt: NOW - 90 * DAY,
+   201→  },
+   202→  {
+   203→    name: "All-round Taurus",
+   204→    subtitle: "Backpacking light — 3 personer",
+   205→    price: "kr 4 499",
+   206→    priceNok: 4499,
+   207→    img: "https://sfile.chatglm.cn/images-ppt/388366bc9760.jpg",
+   208→    stock: "1 på lager",
+   209→    stockCount: 1,
+   210→    category: "Camping",
+   211→    subcategory: "Pop-up tent",
+   212→    sales90: 16,
+   213→    conversionRate: 0.04,
+   214→    inventoryHealth: 0.15,
+   215→    popularity: 60,
+   216→    seasonBoost: 0.95,
+   217→    margin: 0.25,
+   218→    rating: 4.6,
+   219→    reviewCount: 14,
+   220→    createdAt: NOW - 90 * DAY,
+   221→  },
+   222→  {
+   223→    name: "Aluminium Box 2.0",
+   224→    subtitle: "For gasskomfy — ny forbedret utgave",
+   225→    price: "kr 4 740",
+   226→    priceNok: 4740,
+   227→    img: "https://sfile.chatglm.cn/images-ppt/882edf74a388.jpg",
+   228→    stock: "14 på lager",
+   229→    stockCount: 14,
+   230→    category: "Camping",
+   231→    subcategory: "Accessories",
+   232→    sales90: 28,
+   233→    conversionRate: 0.05,
+   234→    inventoryHealth: 0.7,
+   235→    popularity: 66,
+   236→    seasonBoost: 0.8,
+   237→    margin: 0.28,
+   238→    rating: 4.7,
+   239→    reviewCount: 32,
+   240→    createdAt: NOW - 35 * DAY,
+   241→    isNew: true,
+   242→  },
+   243→  {
+   244→    name: "Aoede SyncPack",
+   245→    subtitle: "Sort",
+   246→    price: "kr 1 800",
+   247→    priceNok: 1800,
+   248→    img: "https://sfile.chatglm.cn/images-ppt/9169cc45e6bc.jpg",
+   249→    stock: "2 på lager",
+   250→    stockCount: 2,
+   251→    category: "Camping",
+   252→    subcategory: "Bags",
+   253→    sales90: 12,
+   254→    conversionRate: 0.042,
+   255→    inventoryHealth: 0.25,
+   256→    popularity: 48,
+   257→    seasonBoost: 0.7,
+   258→    margin: 0.3,
+   259→    rating: 4.5,
+   260→    reviewCount: 8,
+   261→    createdAt: NOW - 70 * DAY,
+   262→  },
+   263→  {
+   264→    name: "Aqiila Airbird DUO VB1",
+   265→    subtitle: "2-i-1 støvsuger og luftblåser — oppladbar",
+   266→    price: "kr 699",
+   267→    priceNok: 699,
+   268→    img: "https://sfile.chatglm.cn/images-ppt/ed95c4b5f86b.jpg",
+   269→    stock: "2 på lager",
+   270→    stockCount: 2,
+   271→    category: "Camping",
+   272→    subcategory: "Vacuum",
+   273→    sales90: 22,
+   274→    conversionRate: 0.058,
+   275→    inventoryHealth: 0.25,
+   276→    popularity: 56,
+   277→    seasonBoost: 0.75,
+   278→    margin: 0.34,
+   279→    rating: 4.4,
+   280→    reviewCount: 12,
+   281→    createdAt: NOW - 50 * DAY,
+   282→    isNew: true,
+   283→  },
+   284→  {
+   285→    name: "Aqiila Powerbird B20B 20000mAh",
+   286→    subtitle: "Powerbank — 20W — sort",
+   287→    price: "kr 499",
+   288→    priceNok: 499,
+   289→    img: "https://sfile.chatglm.cn/images-ppt/b2562b193aae.jpg",
+   290→    stock: "6 på lager",
+   291→    stockCount: 6,
+   292→    category: "Camping",
+   293→    subcategory: "Accessories",
+   294→    sales90: 48,
+   295→    conversionRate: 0.082,
+   296→    inventoryHealth: 0.5,
+   297→    popularity: 74,
+   298→    seasonBoost: 0.9,
+   299→    margin: 0.36,
+   300→    rating: 4.6,
+   301→    reviewCount: 38,
+   302→    createdAt: NOW - 40 * DAY,
+   303→    isNew: true,
+   304→  },
+   305→  {
+   306→    name: "Aqiila Powerbird BS10",
+   307→    subtitle: "Solcelle powerbank 10000mAh",
+   308→    price: "kr 999",
+   309→    priceNok: 999,
+   310→    img: "https://sfile.chatglm.cn/images-ppt/56ae7e0a5b50.jpg",
+   311→    stock: "1 på lager",
+   312→    stockCount: 1,
+   313→    category: "Camping",
+   314→    subcategory: "Accessories",
+   315→    sales90: 18,
+   316→    conversionRate: 0.052,
+   317→    inventoryHealth: 0.15,
+   318→    popularity: 62,
+   319→    seasonBoost: 0.95,
+   320→    margin: 0.32,
+   321→    rating: 4.5,
+   322→    reviewCount: 16,
+   323→    createdAt: NOW - 30 * DAY,
+   324→    isNew: true,
+   325→  },
+   326→  {
+   327→    name: "Aqiila Tagbird Doorbell",
+   328→    subtitle: "Ringeklokke m/ sporingsbrikke — Apple & Android",
+   329→    price: "kr 499",
+   330→    priceNok: 499,
+   331→    img: "https://sfile.chatglm.cn/images-ppt/ddf193e5ba3c.jpg",
+   332→    stock: "3 på lager",
+   333→    stockCount: 3,
+   334→    category: "Camping",
+   335→    subcategory: "Search equipment",
+   336→    sales90: 14,
+   337→    conversionRate: 0.046,
+   338→    inventoryHealth: 0.4,
+   339→    popularity: 52,
+   340→    seasonBoost: 0.6,
+   341→    margin: 0.34,
+   342→    rating: 4.3,
+   343→    reviewCount: 8,
+   344→    createdAt: NOW - 25 * DAY,
+   345→    isNew: true,
+   346→  },
+   347→  {
+   348→    name: "Aqiila Tagbird Tracking Tag",
+   349→    subtitle: "Sporingsbrikke m/deksel — Apple & Android",
+   350→    price: "kr 349",
+   351→    priceNok: 349,
+   352→    img: "https://sfile.chatglm.cn/images-ppt/90ada0f6261a.jpg",
+   353→    stock: "16 på lager",
+   354→    stockCount: 16,
+   355→    category: "Camping",
+   356→    subcategory: "Search equipment",
+   357→    sales90: 36,
+   358→    conversionRate: 0.072,
+   359→    inventoryHealth: 0.8,
+   360→    popularity: 68,
+   361→    seasonBoost: 0.6,
+   362→    margin: 0.38,
+   363→    rating: 4.6,
+   364→    reviewCount: 22,
+   365→    createdAt: NOW - 25 * DAY,
+   366→    isNew: true,
+   367→  },
+   368→  {
+   369→    name: "Arbeidslampe LED",
+   370→    subtitle: "Oppladbar 7000lm",
+   371→    price: "kr 930",
+   372→    priceNok: 930,
+   373→    img: "https://sfile.chatglm.cn/images-ppt/14e0a29ef17c.jpg",
+   374→    stock: "8 på lager",
+   375→    stockCount: 8,
+   376→    category: "Camping",
+   377→    subcategory: "Light",
+   378→    sales90: 24,
+   379→    conversionRate: 0.054,
+   380→    inventoryHealth: 0.55,
+   381→    popularity: 60,
+   382→    seasonBoost: 0.7,
+   383→    margin: 0.3,
+   384→    rating: 4.5,
+   385→    reviewCount: 18,
+   386→    createdAt: NOW - 80 * DAY,
+   387→  },
+   388→  {
+   389→    name: "Proff Tripod Arbeidslampe",
+   390→    subtitle: "5000lm LED — stativ",
+   391→    price: "kr 2 799",
+   392→    priceNok: 2799,
+   393→    img: "https://sfile.chatglm.cn/images-ppt/165fe0ad0a11.jpg",
+   394→    stock: "3 på lager",
+   395→    stockCount: 3,
+   396→    category: "Camping",
+   397→    subcategory: "Light",
+   398→    sales90: 12,
+   399→    conversionRate: 0.042,
+   400→    inventoryHealth: 0.4,
+   401→    popularity: 54,
+   402→    seasonBoost: 0.7,
+   403→    margin: 0.26,
+   404→    rating: 4.6,
+   405→    reviewCount: 10,
+   406→    createdAt: NOW - 80 * DAY,
+   407→  },
+   408→  {
+   409→    name: "Army Cutlery Set",
+   410→    subtitle: "Bestikksett",
+   411→    price: "kr 199",
+   412→    priceNok: 199,
+   413→    img: "https://sfile.chatglm.cn/images-ppt/5bc42ac5a0b3.jpg",
+   414→    tag: "Bestselger",
+   415→    stock: "17 på lager",
+   416→    stockCount: 17,
+   417→    category: "Camping",
+   418→    subcategory: "Kitchenware",
+   419→    sales90: 88,
+   420→    conversionRate: 0.094,
+   421→    inventoryHealth: 0.78,
+   422→    popularity: 82,
+   423→    seasonBoost: 0.85,
+   424→    margin: 0.42,
+   425→    rating: 4.7,
+   426→    reviewCount: 54,
+   427→    createdAt: NOW - 150 * DAY,
+   428→  },
+   429→  {
+   430→    name: "Real Turmat — Asian Curry",
+   431→    subtitle: "Tørrmat",
+   432→    price: "kr 135",
+   433→    priceNok: 135,
+   434→    img: "https://sfile.chatglm.cn/images-ppt/9ac0322a02ef.jpg",
+   435→    stock: "11 på lager",
+   436→    stockCount: 11,
+   437→    category: "Camping",
+   438→    subcategory: "Kitchenware",
+   439→    sales90: 62,
+   440→    conversionRate: 0.082,
+   441→    inventoryHealth: 0.6,
+   442→    popularity: 76,
+   443→    seasonBoost: 0.9,
+   444→    margin: 0.4,
+   445→    rating: 4.6,
+   446→    reviewCount: 42,
+   447→    createdAt: NOW - 60 * DAY,
+   448→  },
+   449→  {
+   450→    name: "Real Turmat — Cod",
+   451→    subtitle: "Tørrmat — Bacalao",
+   452→    price: "kr 145",
+   453→    priceNok: 145,
+   454→    img: "https://sfile.chatglm.cn/images-ppt/66facb13a5ea.png",
+   455→    stock: "17 på lager",
+   456→    stockCount: 17,
+   457→    category: "Camping",
+   458→    subcategory: "Kitchenware",
+   459→    sales90: 54,
+   460→    conversionRate: 0.078,
+   461→    inventoryHealth: 0.78,
+   462→    popularity: 72,
+   463→    seasonBoost: 0.9,
+   464→    margin: 0.4,
+   465→    rating: 4.7,
+   466→    reviewCount: 38,
+   467→    createdAt: NOW - 60 * DAY,
+   468→  },
+   469→  {
+   470→    name: "Baltic United Moulders Bobbin — 2520",
+   471→    subtitle: "Fiske — bobbin",
+   472→    price: "kr 285",
+   473→    priceNok: 285,
+   474→    img: "https://sfile.chatglm.cn/images-ppt/77f175e25b22.jpg",
+   475→    stock: "10 på lager",
+   476→    stockCount: 10,
+   477→    category: "Camping",
+   478→    subcategory: "Accessories",
+   479→    sales90: 22,
+   480→    conversionRate: 0.048,
+   481→    inventoryHealth: 0.55,
+   482→    popularity: 48,
+   483→    seasonBoost: 0.7,
+   484→    margin: 0.36,
+   485→    rating: 4.4,
+   486→    reviewCount: 14,
+   487→    createdAt: NOW - 110 * DAY,
+   488→  },
+   489→  {
+   490→    name: "Guylines for Pop-Up Tent 4-pack",
+   491→    subtitle: "Standard bardun — Ifish",
+   492→    price: "kr 149",
+   493→    priceNok: 149,
+   494→    img: "https://sfile.chatglm.cn/images-ppt/9fda18bb75cc.jpg",
+   495→    stock: "20+ på lager",
+   496→    stockCount: 28,
+   497→    category: "Camping",
+   498→    subcategory: "Pop-up tent",
+   499→    sales90: 42,
+   500→    conversionRate: 0.068,
+   501→    inventoryHealth: 0.92,
+   502→    popularity: 64,
+   503→    seasonBoost: 0.8,
+   504→    margin: 0.45,
+   505→    rating: 4.6,
+   506→    reviewCount: 28,
+   507→    createdAt: NOW - 100 * DAY,
+   508→  },
+   509→  {
+   510→    name: "Oversize Guylines 4-pack",
+   511→    subtitle: "Forsterket bardun",
+   512→    price: "kr 199",
+   513→    priceNok: 199,
+   514→    img: "https://sfile.chatglm.cn/images-ppt/34a5663695ec.jpg",
+   515→    stock: "20+ på lager",
+   516→    stockCount: 26,
+   517→    category: "Camping",
+   518→    subcategory: "Pop-up tent",
+   519→    sales90: 34,
+   520→    conversionRate: 0.06,
+   521→    inventoryHealth: 0.9,
+   522→    popularity: 58,
+   523→    seasonBoost: 0.8,
+   524→    margin: 0.44,
+   525→    rating: 4.5,
+   526→    reviewCount: 22,
+   527→    createdAt: NOW - 100 * DAY,
+   528→  },
+   529→  {
+   530→    name: "Bardunstrammere 10-pk",
+   531→    subtitle: "Helsport",
+   532→    price: "kr 79",
+   533→    priceNok: 79,
+   534→    img: "https://sfile.chatglm.cn/images-ppt/9fda18bb75cc.jpg",
+   535→    stock: "1 på lager",
+   536→    stockCount: 1,
+   537→    category: "Camping",
+   538→    subcategory: "Pop-up tent",
+   539→    sales90: 38,
+   540→    conversionRate: 0.07,
+   541→    inventoryHealth: 0.15,
+   542→    popularity: 62,
+   543→    seasonBoost: 0.8,
+   544→    margin: 0.5,
+   545→    rating: 4.5,
+   546→    reviewCount: 24,
+   547→    createdAt: NOW - 180 * DAY,
+   548→  },
+   549→  {
+   550→    name: "Barents Arctic 3 Polar",
+   551→    subtitle: "Ekspedisjonsovepose",
+   552→    price: "kr 15 000",
+   553→    priceNok: 15000,
+   554→    img: "https://sfile.chatglm.cn/images-ppt/53b78937c6f4.png",
+   555→    tag: "Premium",
+   556→    stock: "1 på lager",
+   557→    stockCount: 1,
+   558→    category: "Camping",
+   559→    subcategory: "Sleeping Outside",
+   560→    sales90: 8,
+   561→    conversionRate: 0.034,
+   562→    inventoryHealth: 0.15,
+   563→    popularity: 70,
+   564→    seasonBoost: 0.95,
+   565→    margin: 0.22,
+   566→    rating: 4.9,
+   567→    reviewCount: 12,
+   568→    createdAt: NOW - 70 * DAY,
+   569→  },
+   570→  {
+   571→    name: "Batteri 6LF22 9V",
+   572→    subtitle: "Liten flat 9V",
+   573→    price: "kr 58",
+   574→    priceNok: 58,
+   575→    img: "https://sfile.chatglm.cn/images-ppt/35dec6a69d33.jpg",
+   576→    stock: "11 på lager",
+   577→    stockCount: 11,
+   578→    category: "Camping",
+   579→    subcategory: "Accessories",
+   580→    sales90: 48,
+   581→    conversionRate: 0.075,
+   582→    inventoryHealth: 0.6,
+   583→    popularity: 52,
+   584→    seasonBoost: 0.5,
+   585→    margin: 0.5,
+   586→    rating: 4.3,
+   587→    reviewCount: 18,
+   588→    createdAt: NOW - 250 * DAY,
+   589→  },
+   590→
+   591→  // ============ FISKE ============
+   592→  {
+   593→    name: "#Nord Vidda 8'",
+   594→    subtitle: "Komplett fiskesett",
+   595→    price: "kr 1 699",
+   596→    priceNok: 1699,
+   597→    img: "https://sfile.chatglm.cn/images-ppt/23bba380e05b.webp",
+   598→    tag: "Bestselger",
+   599→    stock: "20+ på lager",
+   600→    stockCount: 28,
+   601→    category: "Fiske",
+   602→    subcategory: "Fishing rods",
+   603→    sales90: 188,
+   604→    conversionRate: 0.094,
+   605→    inventoryHealth: 0.95,
+   606→    popularity: 95,
+   607→    seasonBoost: 1,
+   608→    margin: 0.24,
+   609→    rating: 4.9,
+   610→    reviewCount: 124,
+   611→    createdAt: NOW - 60 * DAY,
+   612→  },
+   613→  {
+   614→    name: "#Nord Fjæra 9'",
+   615→    subtitle: "Komplett fiskesett",
+   616→    price: "kr 1 799",
+   617→    priceNok: 1799,
+   618→    img: "https://sfile.chatglm.cn/images-ppt/6496eef3ed4e.jpg",
+   619→    stock: "15 på lager",
+   620→    stockCount: 15,
+   621→    category: "Fiske",
+   622→    subcategory: "Fishing rods",
+   623→    sales90: 112,
+   624→    conversionRate: 0.072,
+   625→    inventoryHealth: 0.7,
+   626→    popularity: 82,
+   627→    seasonBoost: 1,
+   628→    margin: 0.25,
+   629→    rating: 4.7,
+   630→    reviewCount: 76,
+   631→    createdAt: NOW - 60 * DAY,
+   632→  },
+   633→  {
+   634→    name: "Pool 12 Accelerator",
+   635→    subtitle: "Fluefiske combo",
+   636→    price: "kr 2 999",
+   637→    priceNok: 2999,
+   638→    img: "https://sfile.chatglm.cn/images-ppt/7c4578463445.jpg",
+   639→    tag: "Nyhet",
+   640→    stock: "10 på lager",
+   641→    stockCount: 10,
+   642→    category: "Fiske",
+   643→    subcategory: "Fly fishing",
+   644→    sales90: 42,
+   645→    conversionRate: 0.048,
+   646→    inventoryHealth: 0.6,
+   647→    popularity: 68,
+   648→    seasonBoost: 0.9,
+   649→    margin: 0.27,
+   650→    rating: 4.6,
+   651→    reviewCount: 32,
+   652→    createdAt: NOW - 15 * DAY,
+   653→    isNew: true,
+   654→  },
+   655→  {
+   656→    name: "Sølvkroken SX Special 40",
+   657→    subtitle: "Limited Edition 8' 4–18g",
+   658→    price: "kr 4 990",
+   659→    priceNok: 4990,
+   660→    img: "https://sfile.chatglm.cn/images-ppt/b08d3757a058.jpg",
+   661→    tag: "Begrenset",
+   662→    stock: "5 på lager",
+   663→    stockCount: 5,
+   664→    category: "Fiske",
+   665→    subcategory: "Fishing rods",
+   666→    sales90: 24,
+   667→    conversionRate: 0.038,
+   668→    inventoryHealth: 0.4,
+   669→    popularity: 58,
+   670→    seasonBoost: 0.8,
+   671→    margin: 0.3,
+   672→    rating: 4.8,
+   673→    reviewCount: 22,
+   674→    createdAt: NOW - 90 * DAY,
+   675→  },
+   676→  {
+   677→    name: "#Northern Alligator",
+   678→    subtitle: "Agn",
+   679→    price: "kr 69",
+   680→    priceNok: 69,
+   681→    img: "https://sfile.chatglm.cn/images-ppt/ec00f18b6c4c.jpg",
+   682→    stock: "100+ på lager",
+   683→    stockCount: 120,
+   684→    category: "Fiske",
+   685→    subcategory: "Bait",
+   686→    sales90: 340,
+   687→    conversionRate: 0.12,
+   688→    inventoryHealth: 1,
+   689→    popularity: 88,
+   690→    seasonBoost: 1,
+   691→    margin: 0.42,
+   692→    rating: 4.5,
+   693→    reviewCount: 156,
+   694→    createdAt: NOW - 300 * DAY,
+   695→  },
+   696→  {
+   697→    name: "#North Scorpio 13g",
+   698→    subtitle: "Agn",
+   699→    price: "kr 59",
+   700→    priceNok: 59,
+   701→    img: "https://sfile.chatglm.cn/images-ppt/391eff434f76.jpg",
+   702→    stock: "100+ på lager",
+   703→    stockCount: 110,
+   704→    category: "Fiske",
+   705→    subcategory: "Bait",
+   706→    sales90: 280,
+   707→    conversionRate: 0.11,
+   708→    inventoryHealth: 1,
+   709→    popularity: 84,
+   710→    seasonBoost: 1,
+   711→    margin: 0.4,
+   712→    rating: 4.4,
+   713→    reviewCount: 132,
+   714→    createdAt: NOW - 300 * DAY,
+   715→  },
+   716→
+   717→  // ============ FOOTWEAR ============
+   718→  {
+   719→    name: "Harkila Pro Hunter Boot",
+   720→    subtitle: "Vannavstøtende jaktko",
+   721→    price: "kr 3 490",
+   722→    priceNok: 3490,
+   723→    img: "https://sfile.chatglm.cn/images-ppt/b77fba9987e5.jpg",
+   724→    tag: "Bestselger",
+   725→    stock: "14 på lager",
+   726→    stockCount: 14,
+   727→    category: "Footwear",
+   728→    sales90: 64,
+   729→    conversionRate: 0.058,
+   730→    inventoryHealth: 0.7,
+   731→    popularity: 76,
+   732→    seasonBoost: 0.9,
+   733→    margin: 0.28,
+   734→    rating: 4.7,
+   735→    reviewCount: 52,
+   736→    createdAt: NOW - 100 * DAY,
+   737→  },
+   738→  {
+   739→    name: "Lundhags Tornby Sole",
+   740→    subtitle: "Allround fjellstøvel",
+   741→    price: "kr 2 890",
+   742→    priceNok: 2890,
+   743→    original: "kr 3 290",
+   744→    originalNok: 3290,
+   745→    img: "https://sfile.chatglm.cn/images-ppt/991d03607009.png",
+   746→    tag: "Tilbud",
+   747→    stock: "6 på lager",
+   748→    stockCount: 6,
+   749→    category: "Footwear",
+   750→    sales90: 38,
+   751→    conversionRate: 0.052,
+   752→    inventoryHealth: 0.5,
+   753→    popularity: 64,
+   754→    seasonBoost: 0.8,
+   755→    margin: 0.22,
+   756→    rating: 4.6,
+   757→    reviewCount: 38,
+   758→    createdAt: NOW - 150 * DAY,
+   759→  },
+   760→  {
+   761→    name: "Aigle Parcours 2 ISO",
+   762→    subtitle: "Vadestøvel med isolasjon",
+   763→    price: "kr 2 490",
+   764→    priceNok: 2490,
+   765→    img: "https://sfile.chatglm.cn/images-ppt/74620968cbac.jpg",
+   766→    stock: "9 på lager",
+   767→    stockCount: 9,
+   768→    category: "Footwear",
+   769→    sales90: 28,
+   770→    conversionRate: 0.044,
+   771→    inventoryHealth: 0.55,
+   772→    popularity: 58,
+   773→    seasonBoost: 0.9,
+   774→    margin: 0.26,
+   775→    rating: 4.5,
+   776→    reviewCount: 24,
+   777→    createdAt: NOW - 120 * DAY,
+   778→  },
+   779→
+   780→  // ============ GAVEKORT ============
+   781→  {
+   782→    name: "Gavekort kr 500",
+   783→    subtitle: "Digitalt gavekort",
+   784→    price: "kr 500",
+   785→    priceNok: 500,
+   786→    img: "https://sfile.chatglm.cn/images-ppt/ec7f1e008582.jpg",
+   787→    stock: "Ubegrenset",
+   788→    stockCount: 9999,
+   789→    category: "Gavekort",
+   790→    sales90: 220,
+   791→    conversionRate: 0.18,
+   792→    inventoryHealth: 1,
+   793→    popularity: 90,
+   794→    seasonBoost: 1,
+   795→    margin: 0.5,
+   796→    rating: 5,
+   797→    reviewCount: 0,
+   798→    createdAt: NOW - 365 * DAY,
+   799→  },
+   800→  {
+   801→    name: "Gavekort kr 1000",
+   802→    subtitle: "Digitalt gavekort",
+   803→    price: "kr 1 000",
+   804→    priceNok: 1000,
+   805→    img: "https://sfile.chatglm.cn/images-ppt/4ef7051f7361.jpg",
+   806→    tag: "Populært",
+   807→    stock: "Ubegrenset",
+   808→    stockCount: 9999,
+   809→    category: "Gavekort",
+   810→    sales90: 180,
+   811→    conversionRate: 0.16,
+   812→    inventoryHealth: 1,
+   813→    popularity: 85,
+   814→    seasonBoost: 1,
+   815→    margin: 0.5,
+   816→    rating: 5,
+   817→    reviewCount: 0,
+   818→    createdAt: NOW - 365 * DAY,
+   819→  },
+   820→  {
+   821→    name: "Gavekort kr 2500",
+   822→    subtitle: "Digitalt gavekort — fri frakt",
+   823→    price: "kr 2 500",
+   824→    priceNok: 2500,
+   825→    img: "https://sfile.chatglm.cn/images-ppt/9abfed96bd32.jpg",
+   826→    stock: "Ubegrenset",
+   827→    stockCount: 9999,
+   828→    category: "Gavekort",
+   829→    sales90: 90,
+   830→    conversionRate: 0.14,
+   831→    inventoryHealth: 1,
+   832→    popularity: 72,
+   833→    seasonBoost: 1,
+   834→    margin: 0.5,
+   835→    rating: 5,
+   836→    reviewCount: 0,
+   837→    createdAt: NOW - 365 * DAY,
+   838→  },
+   839→
+   840→  // ============ JAKT ============
+   841→  {
+   842→    name: "Sauer 100 Highland XLT",
+   843→    subtitle: "Presisjonsrifle",
+   844→    price: "kr 14 990",
+   845→    priceNok: 14990,
+   846→    img: "https://sfile.chatglm.cn/images-ppt/1e092c6839b8.jpg",
+   847→    tag: "Bestselger",
+   848→    stock: "4 på lager",
+   849→    stockCount: 4,
+   850→    category: "Jakt",
+   851→    sales90: 18,
+   852→    conversionRate: 0.038,
+   853→    inventoryHealth: 0.4,
+   854→    popularity: 78,
+   855→    seasonBoost: 0.9,
+   856→    margin: 0.18,
+   857→    rating: 4.9,
+   858→    reviewCount: 44,
+   859→    createdAt: NOW - 80 * DAY,
+   860→  },
+   861→  {
+   862→    name: "Zeiss Conquest HD 10x42",
+   863→    subtitle: "Kikkert",
+   864→    price: "kr 8 490",
+   865→    priceNok: 8490,
+   866→    original: "kr 9 990",
+   867→    originalNok: 9990,
+   868→    img: "https://sfile.chatglm.cn/images-ppt/aa16d454229c.webp",
+   869→    tag: "Tilbud",
+   870→    stock: "7 på lager",
+   871→    stockCount: 7,
+   872→    category: "Jakt",
+   873→    sales90: 32,
+   874→    conversionRate: 0.046,
+   875→    inventoryHealth: 0.5,
+   876→    popularity: 72,
+   877→    seasonBoost: 0.95,
+   878→    margin: 0.22,
+   879→    rating: 4.8,
+   880→    reviewCount: 58,
+   881→    createdAt: NOW - 130 * DAY,
+   882→  },
+   883→  {
+   884→    name: "ThermTec Cyclops 235",
+   885→    subtitle: "Termisk kamera",
+   886→    price: "kr 22 500",
+   887→    priceNok: 22500,
+   888→    img: "https://sfile.chatglm.cn/images-ppt/b7d97df6e6e1.png",
+   889→    tag: "Nyhet",
+   890→    stock: "3 på lager",
+   891→    stockCount: 3,
+   892→    category: "Jakt",
+   893→    sales90: 12,
+   894→    conversionRate: 0.028,
+   895→    inventoryHealth: 0.35,
+   896→    popularity: 65,
+   897→    seasonBoost: 0.9,
+   898→    margin: 0.2,
+   899→    rating: 4.7,
+   900→    reviewCount: 18,
+   901→    createdAt: NOW - 10 * DAY,
+   902→    isNew: true,
+   903→  },
+   904→
+   905→  // ============ HUSDYR ============
+   906→  {
+   907→    name: "Non-Stop Trekking Bowl",
+   908→    subtitle: "Trekking skål",
+   909→    price: "Fra kr 259",
+   910→    priceNok: 259,
+   911→    img: "https://sfile.chatglm.cn/images-ppt/f8e4ba8a50d3.jpg",
+   912→    stock: "9 på lager",
+   913→    stockCount: 9,
+   914→    category: "Husdyr",
+   915→    sales90: 48,
+   916→    conversionRate: 0.062,
+   917→    inventoryHealth: 0.55,
+   918→    popularity: 68,
+   919→    seasonBoost: 0.85,
+   920→    margin: 0.32,
+   921→    rating: 4.6,
+   922→    reviewCount: 34,
+   923→    createdAt: NOW - 100 * DAY,
+   924→  },
+   925→  {
+   926→    name: "Fjord Overall Regn Jakke",
+   927→    subtitle: "Sort — hund",
+   928→    price: "kr 1 499",
+   929→    priceNok: 1499,
+   930→    img: "https://sfile.chatglm.cn/images-ppt/d6a883334e47.jpg",
+   931→    stock: "13 på lager",
+   932→    stockCount: 13,
+   933→    category: "Husdyr",
+   934→    sales90: 36,
+   935→    conversionRate: 0.054,
+   936→    inventoryHealth: 0.7,
+   937→    popularity: 64,
+   938→    seasonBoost: 0.9,
+   939→    margin: 0.3,
+   940→    rating: 4.5,
+   941→    reviewCount: 28,
+   942→    createdAt: NOW - 110 * DAY,
+   943→  },
+   944→  {
+   945→    name: "Bungee Tau 2 m",
+   946→    subtitle: "Bungee leash",
+   947→    price: "kr 649",
+   948→    priceNok: 649,
+   949→    img: "https://sfile.chatglm.cn/images-ppt/c0a192b80802.jpg",
+   950→    stock: "På vei 07/07",
+   951→    stockCount: 0,
+   952→    category: "Husdyr",
+   953→    sales90: 22,
+   954→    conversionRate: 0.042,
+   955→    inventoryHealth: 0.2,
+   956→    popularity: 52,
+   957→    seasonBoost: 0.8,
+   958→    margin: 0.34,
+   959→    rating: 4.4,
+   960→    reviewCount: 16,
+   961→    createdAt: NOW - 90 * DAY,
+   962→  },
+   963→  {
+   964→    name: "Omega 3 Olje 300ml",
+   965→    subtitle: "Non-Stop Omega 3",
+   966→    price: "kr 258,75",
+   967→    priceNok: 258,
+   968→    img: "https://sfile.chatglm.cn/images-ppt/057f28164bd6.jpg",
+   969→    stock: "3 på lager",
+   970→    stockCount: 3,
+   971→    category: "Husdyr",
+   972→    sales90: 18,
+   973→    conversionRate: 0.038,
+   974→    inventoryHealth: 0.3,
+   975→    popularity: 48,
+   976→    seasonBoost: 0.7,
+   977→    margin: 0.38,
+   978→    rating: 4.5,
+   979→    reviewCount: 12,
+   980→    createdAt: NOW - 200 * DAY,
+   981→  },
+   982→  {
+   983→    name: "Provit Frossen Okse 3kg",
+   984→    subtitle: "m/vitaminer",
+   985→    price: "kr 199",
+   986→    priceNok: 199,
+   987→    img: "https://sfile.chatglm.cn/images-ppt/ca46f4f946e3.jpg",
+   988→    stock: "12 på lager",
+   989→    stockCount: 12,
+   990→    category: "Husdyr",
+   991→    sales90: 64,
+   992→    conversionRate: 0.07,
+   993→    inventoryHealth: 0.65,
+   994→    popularity: 72,
+   995→    seasonBoost: 0.85,
+   996→    margin: 0.36,
+   997→    rating: 4.7,
+   998→    reviewCount: 42,
+   999→    createdAt: NOW - 80 * DAY,
+  1000→  },
+  1001→
+  1002→  // ============ KLEVEN FLUER ============
+  1003→  {
+  1004→    name: "Kleven Flue — Røye Special",
+  1005→    subtitle: "Bundet for hånd",
+  1006→    price: "kr 49",
+  1007→    priceNok: 49,
+  1008→    img: "https://sfile.chatglm.cn/images-ppt/655eb41c69e7.jpg",
+  1009→    tag: "Bestselger",
+  1010→    stock: "100+ på lager",
+  1011→    stockCount: 150,
+  1012→    category: "Kleven Fluer",
+  1013→    sales90: 410,
+  1014→    conversionRate: 0.14,
+  1015→    inventoryHealth: 1,
+  1016→    popularity: 96,
+  1017→    seasonBoost: 1,
+  1018→    margin: 0.55,
+  1019→    rating: 4.9,
+  1020→    reviewCount: 88,
+  1021→    createdAt: NOW - 200 * DAY,
+  1022→  },
+  1023→  {
+  1024→    name: "Kleven Flue — Ørret Select",
+  1025→    subtitle: "Bundet for hånd",
+  1026→    price: "kr 49",
+  1027→    priceNok: 49,
+  1028→    img: "https://sfile.chatglm.cn/images-ppt/6ca9d31706cd.jpg",
+  1029→    stock: "100+ på lager",
+  1030→    stockCount: 140,
+  1031→    category: "Kleven Fluer",
+  1032→    sales90: 320,
+  1033→    conversionRate: 0.12,
+  1034→    inventoryHealth: 1,
+  1035→    popularity: 90,
+  1036→    seasonBoost: 1,
+  1037→    margin: 0.55,
+  1038→    rating: 4.8,
+  1039→    reviewCount: 64,
+  1040→    createdAt: NOW - 200 * DAY,
+  1041→  },
+  1042→  {
+  1043→    name: "Kleven Fluesett 12stk",
+  1044→    subtitle: "Assorterte fluer",
+  1045→    price: "kr 449",
+  1046→    priceNok: 449,
+  1047→    original: "kr 549",
+  1048→    originalNok: 549,
+  1049→    img: "https://sfile.chatglm.cn/images-ppt/e6eb82c6baa6.jpg",
+  1050→    tag: "Tilbud",
+  1051→    stock: "25 på lager",
+  1052→    stockCount: 25,
+  1053→    category: "Kleven Fluer",
+  1054→    sales90: 88,
+  1055→    conversionRate: 0.08,
+  1056→    inventoryHealth: 0.85,
+  1057→    popularity: 78,
+  1058→    seasonBoost: 1,
+  1059→    margin: 0.45,
+  1060→    rating: 4.7,
+  1061→    reviewCount: 36,
+  1062→    createdAt: NOW - 30 * DAY,
+  1063→    isNew: true,
+  1064→  },
+  1065→
+  1066→  // ============ BEKLEDNING ============
+  1067→  {
+  1068→    name: "Harkila Pro Hunter X",
+  1069→    subtitle: "Jaktkoøye",
+  1070→    price: "kr 5 990",
+  1071→    priceNok: 5990,
+  1072→    original: "kr 6 990",
+  1073→    originalNok: 6990,
+  1074→    img: "https://sfile.chatglm.cn/images-ppt/7dd4d6512c58.jpg",
+  1075→    tag: "Tilbud",
+  1076→    stock: "8 på lager",
+  1077→    stockCount: 8,
+  1078→    category: "Bekledning",
+  1079→    sales90: 42,
+  1080→    conversionRate: 0.052,
+  1081→    inventoryHealth: 0.5,
+  1082→    popularity: 70,
+  1083→    seasonBoost: 0.95,
+  1084→    margin: 0.24,
+  1085→    rating: 4.7,
+  1086→    reviewCount: 48,
+  1087→    createdAt: NOW - 140 * DAY,
+  1088→  },
+  1089→  {
+  1090→    name: "Fjellreven Skogso Jacket",
+  1091→    subtitle: "Friluftsjakke",
+  1092→    price: "kr 2 499",
+  1093→    priceNok: 2499,
+  1094→    img: "https://sfile.chatglm.cn/images-ppt/d6a883334e47.jpg",
+  1095→    stock: "11 på lager",
+  1096→    stockCount: 11,
+  1097→    category: "Bekledning",
+  1098→    sales90: 56,
+  1099→    conversionRate: 0.062,
+  1100→    inventoryHealth: 0.65,
+  1101→    popularity: 74,
+  1102→    seasonBoost: 0.9,
+  1103→    margin: 0.28,
+  1104→    rating: 4.6,
+  1105→    reviewCount: 62,
+  1106→    createdAt: NOW - 90 * DAY,
+  1107→  },
+  1108→  {
+  1109→    name: "Jerven Fjellduk Hunter",
+  1110→    subtitle: "Allsidig fjellduk",
+  1111→    price: "kr 1 990",
+  1112→    priceNok: 1990,
+  1113→    img: "https://sfile.chatglm.cn/images-ppt/1b317ecc40f9.png",
+  1114→    tag: "Bestselger",
+  1115→    stock: "16 på lager",
+  1116→    stockCount: 16,
+  1117→    category: "Bekledning",
+  1118→    sales90: 78,
+  1119→    conversionRate: 0.072,
+  1120→    inventoryHealth: 0.8,
+  1121→    popularity: 82,
+  1122→    seasonBoost: 0.95,
+  1123→    margin: 0.3,
+  1124→    rating: 4.8,
+  1125→    reviewCount: 71,
+  1126→    createdAt: NOW - 70 * DAY,
+  1127→  },
+  1128→
+  1129→  // ============ OUTLET ============
+  1130→  {
+  1131→    name: "Gulv til isfisketelt",
+  1132→    subtitle: "Gulv",
+  1133→    price: "Fra kr 1 470",
+  1134→    priceNok: 1470,
+  1135→    original: "kr 2 100",
+  1136→    originalNok: 2100,
+  1137→    img: "https://sfile.chatglm.cn/images-ppt/2ba5cae55a30.jpg",
+  1138→    tag: "-30%",
+  1139→    stock: "20+ på lager",
+  1140→    stockCount: 22,
+  1141→    category: "Outlet",
+  1142→    sales90: 28,
+  1143→    conversionRate: 0.058,
+  1144→    inventoryHealth: 0.85,
+  1145→    popularity: 60,
+  1146→    seasonBoost: 0.7,
+  1147→    margin: 0.15,
+  1148→    rating: 4.4,
+  1149→    reviewCount: 22,
+  1150→    createdAt: NOW - 250 * DAY,
+  1151→  },
+  1152→  {
+  1153→    name: "Lundhags Tornby Sole (Outlet)",
+  1154→    subtitle: "Allround fjellstøvel",
+  1155→    price: "kr 2 890",
+  1156→    priceNok: 2890,
+  1157→    original: "kr 3 290",
+  1158→    originalNok: 3290,
+  1159→    img: "https://sfile.chatglm.cn/images-ppt/991d03607009.png",
+  1160→    tag: "-12%",
+  1161→    stock: "6 på lager",
+  1162→    stockCount: 6,
+  1163→    category: "Outlet",
+  1164→    sales90: 18,
+  1165→    conversionRate: 0.048,
+  1166→    inventoryHealth: 0.4,
+  1167→    popularity: 54,
+  1168→    seasonBoost: 0.8,
+  1169→    margin: 0.18,
+  1170→    rating: 4.5,
+  1171→    reviewCount: 28,
+  1172→    createdAt: NOW - 180 * DAY,
+  1173→  },
+  1174→  {
+  1175→    name: "Harkila Pro Hunter X (Outlet)",
+  1176→    subtitle: "Jaktkoøye",
+  1177→    price: "kr 5 990",
+  1178→    priceNok: 5990,
+  1179→    original: "kr 6 990",
+  1180→    originalNok: 6990,
+  1181→    img: "https://sfile.chatglm.cn/images-ppt/7dd4d6512c58.jpg",
+  1182→    tag: "-14%",
+  1183→    stock: "4 på lager",
+  1184→    stockCount: 4,
+  1185→    category: "Outlet",
+  1186→    sales90: 14,
+  1187→    conversionRate: 0.042,
+  1188→    inventoryHealth: 0.35,
+  1189→    popularity: 58,
+  1190→    seasonBoost: 0.9,
+  1191→    margin: 0.16,
+  1192→    rating: 4.6,
+  1193→    reviewCount: 38,
+  1194→    createdAt: NOW - 200 * DAY,
+  1195→  },
+  1196→  {
+  1197→    name: "Zeiss Conquest HD 10x42 (Outlet)",
+  1198→    subtitle: "Kikkert",
+  1199→    price: "kr 8 490",
+  1200→    priceNok: 8490,
+  1201→    original: "kr 9 990",
+  1202→    originalNok: 9990,
+  1203→    img: "https://sfile.chatglm.cn/images-ppt/aa16d454229c.webp",
+  1204→    tag: "-15%",
+  1205→    stock: "3 på lager",
+  1206→    stockCount: 3,
+  1207→    category: "Outlet",
+  1208→    sales90: 16,
+  1209→    conversionRate: 0.046,
+  1210→    inventoryHealth: 0.3,
+  1211→    popularity: 62,
+  1212→    seasonBoost: 0.9,
+  1213→    margin: 0.14,
+  1214→    rating: 4.7,
+  1215→    reviewCount: 32,
+  1216→    createdAt: NOW - 220 * DAY,
+  1217→  },
+  1218→
+  1219→  // ============ VINTERSPORT ============
+  1220→  {
+  1221→    name: "Madshus Hyper R Skate",
+  1222→    subtitle: "Skøyteklasser",
+  1223→    price: "kr 3 490",
+  1224→    priceNok: 3490,
+  1225→    img: "https://sfile.chatglm.cn/images-ppt/d680255f301c.jpg",
+  1226→    tag: "Nyhet",
+  1227→    stock: "12 på lager",
+  1228→    stockCount: 12,
+  1229→    category: "Vintersport",
+  1230→    sales90: 38,
+  1231→    conversionRate: 0.052,
+  1232→    inventoryHealth: 0.7,
+  1233→    popularity: 72,
+  1234→    seasonBoost: 1,
+  1235→    margin: 0.26,
+  1236→    rating: 4.7,
+  1237→    reviewCount: 24,
+  1238→    createdAt: NOW - 12 * DAY,
+  1239→    isNew: true,
+  1240→  },
+  1241→  {
+  1242→    name: "Fischer Cruiser Crown",
+  1243→    subtitle: "Turski med feller",
+  1244→    price: "kr 2 290",
+  1245→    priceNok: 2290,
+  1246→    img: "https://sfile.chatglm.cn/images-ppt/5e0d4721eea5.jpg",
+  1247→    stock: "18 på lager",
+  1248→    stockCount: 18,
+  1249→    category: "Vintersport",
+  1250→    sales90: 52,
+  1251→    conversionRate: 0.064,
+  1252→    inventoryHealth: 0.85,
+  1253→    popularity: 78,
+  1254→    seasonBoost: 1,
+  1255→    margin: 0.28,
+  1256→    rating: 4.6,
+  1257→    reviewCount: 42,
+  1258→    createdAt: NOW - 40 * DAY,
+  1259→  },
+  1260→  {
+  1261→    name: "Rottefella Move Switch",
+  1262→    subtitle: "Binding",
+  1263→    price: "kr 1 190",
+  1264→    priceNok: 1190,
+  1265→    img: "https://sfile.chatglm.cn/images-ppt/8b3b12109609.png",
+  1266→    stock: "22 på lager",
+  1267→    stockCount: 22,
+  1268→    category: "Vintersport",
+  1269→    sales90: 44,
+  1270→    conversionRate: 0.058,
+  1271→    inventoryHealth: 0.9,
+  1272→    popularity: 70,
+  1273→    seasonBoost: 1,
+  1274→    margin: 0.3,
+  1275→    rating: 4.7,
+  1276→    reviewCount: 38,
+  1277→    createdAt: NOW - 60 * DAY,
+  1278→  },
+  1279→];
+  1280→
+  1281→const CATEGORIES = [
+  1282→  "Alle",
+  1283→  "Camping",
+  1284→  "Fiske",
+  1285→  "Footwear",
+  1286→  "Gavekort",
+  1287→  "Jakt",
+  1288→  "Husdyr",
+  1289→  "Kleven Fluer",
+  1290→  "Bekledning",
+  1291→  "Outlet",
+  1292→  "Vintersport",
+  1293→] as const;
+  1294→type CategoryFilter = (typeof CATEGORIES)[number];
+  1295→
+  1296→/**
+  1297→ * Subcategories — exact lists from klevenjaktogfiske.no.
+  1298→ * Shown as a secondary filter row when the relevant category is active.
+  1299→ */
+  1300→
+  1301→// Camping subcategories (from /camping)
+  1302→const CAMPING_SUBCATEGORIES = [
+  1303→  "Alle",
+  1304→  "Binoculars",
+  1305→  "The Wolverine",
+  1306→  "Map and compass",
+  1307→  "Nice to have",
+  1308→  "Kitchenware",
+  1309→  "Knife",
+  1310→  "Body warmer",
+  1311→  "Light",
+  1312→  "Against the Mosquito",
+  1313→  "Ovens",
+  1314→  "Pop-up tent",
+  1315→  "On the Water",
+  1316→  "Smoking room",
+  1317→  "Saw",
+  1318→  "Bags",
+  1319→  "Seat pad",
+  1320→  "Sunglasses",
+  1321→  "Sleeping Outside",
+  1322→  "Chairs",
+  1323→  "Souvenirs",
+  1324→  "Search equipment",
+  1325→  "Accessories",
+  1326→  "Vacuum",
+  1327→  "Axe",
+  1328→] as const;
+  1329→
+  1330→// Fishing subcategories (from /fiske)
+  1331→const FISHING_SUBCATEGORIES = [
+  1332→  "Alle",
+  1333→  "Bait",
+  1334→  "Various",
+  1335→  "Fishhooks",
+  1336→  "Fishing rods",
+  1337→  "Reels",
+  1338→  "Ice fishing",
+  1339→  "Fly fishing",
+  1340→  "Yarn",
+  1341→  "Sea fishing",
+  1342→  "Net",
+  1343→  "At the end of the line",
+  1344→  "Hooks",
+  1345→  "Storage",
+  1346→  "Otter, Harp & Winner",
+  1347→  "Tendon and lace",
+  1348→  "Equipment",
+  1349→] as const;
+  1350→
+  1351→// Map: category → its subcategories
+  1352→const SUBCATEGORIES_BY_CATEGORY: Partial<Record<Category, readonly string[]>> = {
+  1353→  Camping: CAMPING_SUBCATEGORIES,
+  1354→  Fiske: FISHING_SUBCATEGORIES,
+  1355→};
+  1356→
+  1357→type SubcategoryFilter = string;
+  1358→
+  1359→/**
+  1360→ * Compute the "Recommended" merchandising score for a product.
+  1361→ * Weighted blend of revenue proxy, conversion rate, inventory health,
+  1362→ * popularity, seasonality, and margin. Returns 0-100.
+  1363→ *
+  1364→ * Score =
+  1365→ *   (Revenue Weight × 30%)    — sales90 × priceNok (normalized)
+  1366→ * + (Conversion Rate × 25%)
+  1367→ * + (Inventory Health × 15%)
+  1368→ * + (Popularity × 15%)
+  1369→ * + (Seasonality × 10%)
+  1370→ * + (Margin × 5%)
+  1371→ */
+  1372→function recommendedScore(p: Product): number {
+  1373→  // Revenue proxy: normalize sales90 × priceNok to 0-1
+  1374→  const revenue = p.sales90 * p.priceNok;
+  1375→  const maxRevenue = 4_000_000; // approx max in catalog
+  1376→  const revenueNorm = Math.min(revenue / maxRevenue, 1);
+  1377→
+  1378→  const score =
+  1379→    revenueNorm * 30 +
+  1380→    p.conversionRate * 10 * 25 + // scale 0-0.2 → 0-50, then ×25%
+  1381→    p.inventoryHealth * 15 +
+  1382→    (p.popularity / 100) * 15 +
+  1383→    p.seasonBoost * 10 +
+  1384→    p.margin * 5;
+  1385→
+  1386→  // Inventory penalty: stock = 0 → -20, stock = 1 → -10
+  1387→  let penalty = 0;
+  1388→  if (p.stockCount === 0) penalty = -20;
+  1389→  else if (p.stockCount === 1) penalty = -10;
+  1390→  else if (p.stockCount > 20) penalty = 5; // boost well-stocked items
+  1391→
+  1392→  return Math.max(0, Math.min(100, score + penalty));
+  1393→}
+  1394→
+  1395→/**
+  1396→ * Discount percentage for a product (0-1). 0 if no original price.
+  1397→ */
+  1398→function discountPct(p: Product): number {
+  1399→  if (!p.originalNok || p.originalNok <= p.priceNok) return 0;
+  1400→  return (p.originalNok - p.priceNok) / p.originalNok;
+  1401→}
+  1402→
+  1403→const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  1404→  { value: "recommended", label: "Anbefalt" },
+  1405→  { value: "bestsellers", label: "Bestselgere" },
+  1406→  { value: "newest", label: "Nyheter" },
+  1407→  { value: "price_asc", label: "Pris stigende" },
+  1408→  { value: "price_desc", label: "Pris synkende" },
+  1409→  { value: "name_asc", label: "Navn A–Å" },
+  1410→  { value: "name_desc", label: "Navn Å–A" },
+  1411→  { value: "rating", label: "Høyest vurdert" },
+  1412→  { value: "reviews", label: "Flest anmeldelser" },
+  1413→  { value: "stock_first", label: "Lagerbeholdning synkende" },
+  1414→  { value: "stock_asc", label: "Lagerbeholdning stigende" },
+  1415→  { value: "itemno_asc", label: "Varenummer stigende" },
+  1416→  { value: "itemno_desc", label: "Varenummer synkende" },
+  1417→  { value: "discount", label: "Størst rabatt" },
+  1418→];
+  1419→
+  1420→export function ShopPage() {
+  1421→  const [active, setActive] = useState<CategoryFilter>("Alle");
+  1422→  const [subActive, setSubActive] = useState<SubcategoryFilter>("Alle");
+  1423→  const [sort, setSort] = useState<SortKey>("recommended");
+  1424→
+  1425→  const isOutlet = active === "Outlet";
+  1426→
+  1427→  // Subcategories available for the currently-active category (undefined if none)
+  1428→  const activeSubcats = SUBCATEGORIES_BY_CATEGORY[active];
+  1429→
+  1430→  // Auto-switch sort to "discount" when entering Outlet (per merchandising strategy)
+  1431→  const effectiveSort: SortKey = isOutlet && sort === "recommended" ? "discount" : sort;
+  1432→
+  1433→  // Reset subcategory filter when changing main category
+  1434→  const handleCategoryClick = (c: CategoryFilter) => {
+  1435→    setActive(c);
+  1436→    setSubActive("Alle");
+  1437→  };
+  1438→
+  1439→  const filtered = useMemo(() => {
+  1440→    let base =
+  1441→      active === "Alle"
+  1442→        ? PRODUCTS
+  1443→        : PRODUCTS.filter((p) => p.category === active);
+  1444→
+  1445→    // Apply subcategory filter (works for any category that has subcategories)
+  1446→    if (activeSubcats && subActive !== "Alle") {
+  1447→      base = base.filter((p) => p.subcategory === subActive);
+  1448→    }
+  1449→
+  1450→    const sorted = [...base];
+  1451→    switch (effectiveSort) {
+  1452→      case "recommended":
+  1453→        sorted.sort((a, b) => recommendedScore(b) - recommendedScore(a));
+  1454→        break;
+  1455→      case "bestsellers":
+  1456→        sorted.sort((a, b) => b.sales90 - a.sales90);
+  1457→        break;
+  1458→      case "newest":
+  1459→        sorted.sort((a, b) => b.createdAt - a.createdAt);
+  1460→        break;
+  1461→      case "price_asc":
+  1462→        sorted.sort((a, b) => a.priceNok - b.priceNok);
+  1463→        break;
+  1464→      case "price_desc":
+  1465→        sorted.sort((a, b) => b.priceNok - a.priceNok);
+  1466→        break;
+  1467→      case "name_asc":
+  1468→        sorted.sort((a, b) => a.name.localeCompare(b.name, "no"));
+  1469→        break;
+  1470→      case "name_desc":
+  1471→        sorted.sort((a, b) => b.name.localeCompare(a.name, "no"));
+  1472→        break;
+  1473→      case "rating":
+  1474→        sorted.sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount);
+  1475→        break;
+  1476→      case "reviews":
+  1477→        sorted.sort((a, b) => b.reviewCount - a.reviewCount);
+  1478→        break;
+  1479→      case "stock_first":
+  1480→        sorted.sort((a, b) => b.stockCount - a.stockCount);
+  1481→        break;
+  1482→      case "stock_asc":
+  1483→        sorted.sort((a, b) => a.stockCount - b.stockCount);
+  1484→        break;
+  1485→      case "itemno_asc":
+  1486→        // Simulated item number ordering using name hash (stable per session)
+  1487→        sorted.sort((a, b) => a.name.localeCompare(b.name, "en", { numeric: true }));
+  1488→        break;
+  1489→      case "itemno_desc":
+  1490→        sorted.sort((a, b) => b.name.localeCompare(a.name, "en", { numeric: true }));
+  1491→        break;
+  1492→      case "discount":
+  1493→        sorted.sort((a, b) => discountPct(b) - discountPct(a));
+  1494→        break;
+  1495→    }
+  1496→    return sorted;
+  1497→  }, [active, subActive, activeSubcats, effectiveSort]);
+  1498→
+  1499→  // Available sort options: hide "discount" unless in Outlet; show all others always
+  1500→  const visibleSortOptions = SORT_OPTIONS.filter((o) => {
+  1501→    if (o.value === "discount") return isOutlet;
+  1502→    return true;
+  1503→  });
+  1504→
+  1505→  return (
+  1506→    <div className="kj-page-enter">
+  1507→      {/* 1. Scrolling yellow banner */}
+  1508→      <ShippingBanner size="md" />
+  1509→
+  1510→      {/* 2. Shop header */}
+  1511→      <section className="w-full" style={{ backgroundColor: "#e9e5db" }}>
+  1512→        <div className="mx-auto max-w-[1280px] px-6 pt-16 pb-8 lg:px-10">
+  1513→          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
+  1514→            Vareutvalg
+  1515→          </div>
+  1516→          <h1
+  1517→            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#1f2d3a]"
+  1518→            style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+  1519→          >
+  1520→            Hele Butikken
+  1521→          </h1>
+  1522→          <p className="mt-3 max-w-xl text-[14px] font-light leading-relaxed text-[#6b7884]">
+  1523→            Over 1 200 håndplukkede artikler for jakt, fiske, friluftsliv og
+  1524→            vintersport. Bruk filteret for å finne akkurat det du leter etter.
+  1525→          </p>
+  1526→
+  1527→          {/* Category filter row */}
+  1528→          <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-[#d4cfc1] pb-5">
+  1529→            {CATEGORIES.map((c) => {
+  1530→              const isActive = active === c;
+  1531→              return (
+  1532→                <button
+  1533→                  key={c}
+  1534→                  onClick={() => handleCategoryClick(c)}
+  1535→                  className={`rounded-full px-3.5 py-1.5 text-[11px] font-medium transition-all duration-200 ${
+  1536→                    isActive
+  1537→                      ? "bg-[#1f2d3a] text-white"
+  1538→                      : "bg-white text-[#1f2d3a] hover:bg-[#f0c548]"
+  1539→                  }`}
+  1540→                >
+  1541→                  {c}
+  1542→                </button>
+  1543→              );
+  1544→            })}
+  1545→          </div>
+  1546→
+  1547→          {/* Subcategory filter row — shown when the active category has subcategories (Camping, Fiske, etc.) */}
+  1548→          {activeSubcats && activeSubcats.length > 0 && (
+  1549→            <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d4cfc1] pb-5">
+  1550→              <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
+  1551→                Underkategori:
+  1552→              </span>
+  1553→              {activeSubcats.map((sc) => {
+  1554→                const isActive = subActive === sc;
+  1555→                return (
+  1556→                  <button
+  1557→                    key={sc}
+  1558→                    onClick={() => setSubActive(sc)}
+  1559→                    className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all duration-200 ${
+  1560→                      isActive
+  1561→                        ? "bg-[#2d4a3e] text-white"
+  1562→                        : "bg-[#f5f1e8] text-[#3a4856] hover:bg-[#f0c548] hover:text-[#1f2d3a]"
+  1563→                    }`}
+  1564→                  >
+  1565→                    {sc}
+  1566→                  </button>
+  1567→                );
+  1568→              })}
+  1569→            </div>
+  1570→          )}
+  1571→
+  1572→          {/* Sort + count row */}
+  1573→          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+  1574→            <div className="text-[12px] font-light text-[#6b7884]">
+  1575→              Viser <span className="font-semibold text-[#1f2d3a]">{filtered.length}</span>{" "}
+  1576→              artikkel{filtered.length !== 1 ? "er" : ""}
+  1577→              {active !== "Alle" && (
+  1578→                <>
+  1579→                  {" "}i <span className="font-semibold text-[#1f2d3a]">{active}</span>
+  1580→                </>
+  1581→              )}
+  1582→              {activeSubcats && subActive !== "Alle" && (
+  1583→                <>
+  1584→                  {" "}→ <span className="font-semibold text-[#2d4a3e]">{subActive}</span>
+  1585→                </>
+  1586→              )}
+  1587→            </div>
+  1588→
+  1589→            <div className="flex items-center gap-2">
+  1590→              <SlidersHorizontal size={14} className="text-[#6b7884]" />
+  1591→              <span className="text-[12px] font-light text-[#6b7884]">Sorter:</span>
+  1592→              <Select
+  1593→                value={effectiveSort}
+  1594→                onValueChange={(v) => setSort(v as SortKey)}
+  1595→              >
+  1596→                <SelectTrigger className="h-9 w-[230px] rounded-full border border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1f2d3a] hover:bg-[#f5f1e8] focus:ring-0 focus:ring-offset-0">
+  1597→                  <SelectValue />
+  1598→                </SelectTrigger>
+  1599→                <SelectContent className="rounded-md border border-[#d4cfc1] bg-white">
+  1600→                  {visibleSortOptions.map((o) => (
+  1601→                    <SelectItem
+  1602→                      key={o.value}
+  1603→                      value={o.value}
+  1604→                      className="text-[13px] text-[#1f2d3a] focus:bg-[#f5f1e8] focus:text-[#1f2d3a]"
+  1605→                    >
+  1606→                      {o.label}
+  1607→                    </SelectItem>
+  1608→                  ))}
+  1609→                </SelectContent>
+  1610→              </Select>
+  1611→            </div>
+  1612→          </div>
+  1613→        </div>
+  1614→      </section>
+  1615→
+  1616→      {/* 3. Compact product grid (4 cols on desktop) */}
+  1617→      <section className="w-full pb-20" style={{ backgroundColor: "#e9e5db" }}>
+  1618→        <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
+  1619→          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+  1620→            {filtered.map((p) => (
+  1621→              <article
+  1622→                key={p.name + p.category}
+  1623→                className="group flex flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)]"
+  1624→              >
+  1625→                <div className="relative aspect-square overflow-hidden bg-[#f4f3ef]">
+  1626→                  {/* eslint-disable-next-line @next/next/no-img-element */}
+  1627→                  <img
+  1628→                    src={p.img}
+  1629→                    alt={p.name}
+  1630→                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+  1631→                  />
+  1632→                  {p.tag && (
+  1633→                    <span
+  1634→                      className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] ${
+  1635→                        p.tag.startsWith("-") || p.tag === "Tilbud"
+  1636→                          ? "bg-[#c75d2c] text-white"
+  1637→                          : p.tag === "Nyhet"
+  1638→                          ? "bg-[#1f2d3a] text-white"
+  1639→                          : p.tag === "Begrenset"
+  1640→                          ? "bg-[#2d4a3e] text-white"
+  1641→                          : "bg-[#f0c548] text-[#1f2d3a]"
+  1642→                      }`}
+  1643→                    >
+  1644→                      {p.tag}
+  1645→                    </span>
+  1646→                  )}
+  1647→                  <button
+  1648→                    aria-label="Legg i handlevogn"
+  1649→                    className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#1f2d3a] opacity-0 shadow-md transition-all duration-300 hover:bg-[#f0c548] group-hover:translate-y-0 group-hover:opacity-100"
+  1650→                  >
+  1651→                    <ArrowRight size={14} strokeWidth={2} />
+  1652→                  </button>
+  1653→                </div>
+  1654→
+  1655→                <div className="flex flex-1 flex-col gap-0.5 px-2.5 py-2">
+  1656→                  <div className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#8a96a1]">
+  1657→                    {p.category}
+  1658→                  </div>
+  1659→                  <h3 className="text-[12px] font-semibold leading-tight text-[#1f2d3a] line-clamp-2">
+  1660→                    {p.name}
+  1661→                  </h3>
+  1662→                  {p.subtitle && (
+  1663→                    <p className="text-[10px] font-light text-[#6b7884] line-clamp-1">
+  1664→                      {p.subtitle}
+  1665→                    </p>
+  1666→                  )}
+  1667→                  {p.stock && (
+  1668→                    <p className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.04em] text-[#3d5e4f]">
+  1669→                      {p.stock}
+  1670→                    </p>
+  1671→                  )}
+  1672→                  <div className="mt-1.5 flex items-baseline gap-1.5">
+  1673→                    <span className="text-[13px] font-bold text-[#1f2d3a]">
+  1674→                      {p.price}
+  1675→                    </span>
+  1676→                    {p.original && (
+  1677→                      <span className="text-[10px] font-light text-[#a0a8b0] line-through">
+  1678→                        {p.original}
+  1679→                      </span>
+  1680→                    )}
+  1681→                  </div>
+  1682→                  {/* Rating row */}
+  1683→                  {p.reviewCount > 0 && (
+  1684→                    <div className="mt-1 flex items-center gap-1 text-[9px] text-[#8a96a1]">
+  1685→                      <span className="text-[#f0c548]">★</span>
+  1686→                      <span className="font-semibold text-[#1f2d3a]">
+  1687→                        {p.rating.toFixed(1)}
+  1688→                      </span>
+  1689→                      <span>({p.reviewCount})</span>
+  1690→                    </div>
+  1691→                  )}
+  1692→                </div>
+  1693→              </article>
+  1694→            ))}
+  1695→          </div>
+  1696→
+  1697→          {/* Pagination placeholder */}
+  1698→          <div className="mt-10 flex items-center justify-center gap-2">
+  1699→            <button
+  1700→              aria-label="Forrige side"
+  1701→              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d4cfc1] bg-white text-[#1f2d3a] transition-colors hover:bg-[#1f2d3a] hover:text-white"
+  1702→            >
+  1703→              <ChevronLeft size={16} />
+  1704→            </button>
+  1705→            <span className="rounded-full bg-[#1f2d3a] px-3 py-1.5 text-[12px] font-semibold text-white">
+  1706→              1
+  1707→            </span>
+  1708→            <span className="px-2 py-1.5 text-[12px] font-light text-[#6b7884]">2</span>
+  1709→            <span className="px-2 py-1.5 text-[12px] font-light text-[#6b7884]">3</span>
+  1710→            <span className="px-1 text-[12px] font-light text-[#6b7884]">…</span>
+  1711→            <button
+  1712→              aria-label="Neste side"
+  1713→              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d4cfc1] bg-white text-[#1f2d3a] transition-colors hover:bg-[#1f2d3a] hover:text-white"
+  1714→            >
+  1715→              <ChevronRight size={16} />
+  1716→            </button>
+  1717→          </div>
+  1718→        </div>
+  1719→      </section>
+  1720→    </div>
+  1721→  );
+  1722→}
+  1723→

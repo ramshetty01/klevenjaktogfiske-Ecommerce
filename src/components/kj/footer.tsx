@@ -1,17 +1,26 @@
 "use client";
 
 import { Instagram, Facebook, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
-import type { PageId } from "./header";
+import type { PageId, NavContext } from "./header";
 
 interface FooterProps {
-  onNavigate: (page: PageId) => void;
+  onNavigate: (page: PageId, ctx?: NavContext) => void;
 }
 
 export function Footer({ onNavigate }: FooterProps) {
-  const go = (page: PageId) => {
-    onNavigate(page);
+  const go = (page: PageId, ctx?: NavContext) => {
+    onNavigate(page, ctx);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const categoryLinks: { label: string; slug?: string }[] = [
+    { label: "Jaktutstyr", slug: "jakt" },
+    { label: "Fiskeutstyr", slug: "fiske" },
+    { label: "Camping & Friluftsliv", slug: "camping" },
+    { label: "Kniver", slug: "kniver" },
+    { label: "Bekledning", slug: "bekledning" },
+    { label: "Vintersport", slug: "vintersport" },
+  ];
 
   return (
     <footer
@@ -93,17 +102,12 @@ export function Footer({ onNavigate }: FooterProps) {
               Kategorier
             </h4>
             <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
-              {[
-                { label: "Jaktutstyr", page: "shop" as PageId },
-                { label: "Fiskeutstyr", page: "shop" as PageId },
-                { label: "Camping & Friluftsliv", page: "shop" as PageId },
-                { label: "Kniver", page: "shop" as PageId },
-                { label: "Bekledning", page: "shop" as PageId },
-                { label: "Sekker & Ryggsekker", page: "shop" as PageId },
-              ].map((c) => (
+              {categoryLinks.map((c) => (
                 <button
                   key={c.label}
-                  onClick={() => go(c.page)}
+                  onClick={() =>
+                    go("shop", c.slug ? { shopFilters: { category: c.slug } } : undefined)
+                  }
                   className="text-left transition-colors hover:text-white"
                 >
                   {c.label}

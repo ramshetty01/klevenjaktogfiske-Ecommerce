@@ -1,65 +1,71 @@
 "use client";
 
-import { Crosshair, Fish, Tent, Utensils, Shirt, Backpack, ArrowRight } from "lucide-react";
-import type { PageId } from "../kj/header";
+import { useEffect, useState } from "react";
+import {
+  Crosshair, Fish, Tent, Utensils, Shirt, Backpack, Snowflake, PawPrint,
+  Footprints, Tag, Gift, ArrowRight,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import type { PageId, NavContext } from "../kj/header";
 import { CategoriesChip } from "../kj/footer";
+import type { CategoryNode } from "@/lib/kj/types";
 
 interface CategoriesPageProps {
-  onNavigate: (page: PageId) => void;
+  onNavigate: (page: PageId, ctx?: NavContext) => void;
 }
 
-const CATEGORIES = [
-  {
-    icon: Crosshair,
-    title: "Jakt",
-    description:
-      "Presisjonsvåpen fra Sauer og Tikka, optikk fra Zeiss og Swarovski, termobekledning og alt annet du trenger for en vellykket jakt. Vi fører kun utstyr fra autoriserte forhandlere — kvalitet du kan stole på når det gjelder.",
-    count: "320+ artikler",
-    brands: "Sauer · Zeiss · Harkila · ThermTec",
-  },
-  {
-    icon: Fish,
-    title: "Fiske",
-    description:
-      "Fra havfiske til fluefiske i fjellet. Vi har stenger, sneller, agn og tilbehør fra de beste merkene — for nybegynnere som for den erfarne sportsfisker. Ekspertene våre fisker selv, og vet hva som fungerer.",
-    count: "480+ artikler",
-    brands: "Abel · Guideline · Svartvass · Bull Bay",
-  },
-  {
-    icon: Tent,
-    title: "Camping & Friluftsliv",
-    description:
-      "Telt, soveposer, kokeutstyr, hodelykter og alt du trenger for overnattingsturer i norsk natur. Vi har valgt ut produkter som tåler de tøffeste forholdene — fra fjellet til skogen til kysten.",
-    count: "260+ artikler",
-    brands: "Bergans · Fjellreven · Jerven · Thermos",
-  },
-  {
-    icon: Utensils,
-    title: "Kniver",
-    description:
-      "Norsk tradisjon møter moderne design. Vi fører kniver fra Helle, Fallkniven, Morakniv og Leatherman — fra enklebrukskniver til profesjonelle jaktkniver med tuppfeste og multiverktøy for enhver oppgave.",
-    count: "95+ artikler",
-    brands: "Helle · Fallkniven · Morakniv · Leatherman",
-  },
-  {
-    icon: Shirt,
-    title: "Bekledning",
-    description:
-      "Jaktklær, friluftsbekledning og utstyr som holder deg varm og tørr gjennom hele sesongen. Vi fører Fjellreven, Bergans, Harkila og Jerven — bekledning designet for og testet i skandinaviske forhold.",
-    count: "180+ artikler",
-    brands: "Fjellreven · Bergans · Harkila · Jerven",
-  },
-  {
-    icon: Backpack,
-    title: "Sekker & Ryggsekker",
-    description:
-      "Dagsekker, ekspedisjonssekker og alt imellom. Bergans, Osprey, Fjellreven og Eagel Products — valgt for komfort, holdbarhet og funksjonalitet uansett hvor langt du skal gå.",
-    count: "75+ artikler",
-    brands: "Bergans · Osprey · Fjellreven · Eagel Products",
-  },
-];
+// Icon mapping by category slug — keeps the icon logic in one place
+const ICON_BY_SLUG: Record<string, React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>> = {
+  jakt: Crosshair,
+  fiske: Fish,
+  camping: Tent,
+  kniver: Utensils,
+  bekledning: Shirt,
+  vintersport: Snowflake,
+  husdyr: PawPrint,
+  footwear: Footprints,
+  outlet: Tag,
+  gavekort: Gift,
+};
+
+const DESCRIPTIONS: Record<string, string> = {
+  jakt: "Presisjonsvåpen fra Sauer og Tikka, optikk fra Zeiss og Swarovski, termobekledning og alt annet du trenger for en vellykket jakt. Vi fører kun utstyr fra autoriserte forhandlere — kvalitet du kan stole på når det gjelder.",
+  fiske: "Fra havfiske til fluefiske i fjellet. Vi har stenger, sneller, agn og tilbehør fra de beste merkene — for nybegynnere som for den erfarne sportsfisker. Ekspertene våre fisker selv, og vet hva som fungerer.",
+  camping: "Telt, soveposer, kokeutstyr, hodelykter og alt du trenger for overnattingsturer i norsk natur. Vi har valgt ut produkter som tåler de tøffeste forholdene — fra fjellet til skogen til kysten.",
+  kniver: "Norsk tradisjon møter moderne design. Vi fører kniver fra Helle, Fallkniven, Morakniv og Leatherman — fra enklebrukskniver til profesjonelle jaktkniver med tuppfeste og multiverktøy for enhver oppgave.",
+  bekledning: "Jaktklær, friluftsbekledning og utstyr som holder deg varm og tørr gjennom hele sesongen. Vi fører Fjellreven, Bergans, Harkila og Jerven — bekledning designet for og testet i skandinaviske forhold.",
+  vintersport: "Ski, skøyter, bindinger og tilbehør for vintersesongen. Madshus, Fischer og Rottefella — alt du trenger for å komme deg ut på snøen.",
+  husdyr: "Trekkingutstyr, hundemat og alt til din beste venn. Non-Stop Dogwear og Provit — for hundekjøring, canicross og hverdagslivet med hunden.",
+  footwear: "Jaktko, fjellstøvler og vadestøvler — fra Härkila, Lundhags og Aigle. Robust fottøy for alle årstider og underlag.",
+  outlet: "Kvalitetsutstyr til reduserte priser. Begrensede antall — først til mølla. Outlet-varer kan ha kosmetiske feil, men full funksjonalitet og garanti.",
+  gavekort: "Perfekt gave til jegeren eller fiskeren. Digitalt gavekort på 500, 1000 eller 2500 kroner — leveres på e-post, gyldig i 2 år.",
+};
 
 export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
+  const [categories, setCategories] = useState<CategoryNode[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/categories", { cache: "no-store" });
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          setCategories(data.categories ?? []);
+        }
+      } catch {
+        /* ignore */
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="kj-page-enter" style={{ backgroundColor: "#f5f1e8" }}>
       <section className="mx-auto max-w-[1100px] px-6 py-20 lg:px-10 lg:py-28">
@@ -83,32 +89,62 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
 
         {/* Category list */}
         <div className="flex flex-col">
-          {CATEGORIES.map((f) => {
-            const Icon = f.icon;
-            return (
-              <div
-                key={f.title}
-                className="border-t border-black/10 py-10 last:border-b"
-              >
-                {/* Icon + heading inline */}
-                <div className="mb-3 flex items-center gap-3 text-[#6b7884]">
-                  <Icon size={28} strokeWidth={1.4} />
-                  <h2 className="text-[22px] font-semibold text-[#1f2d3a]">
-                    {f.title}
-                  </h2>
-                  <span className="ml-2 rounded-full bg-[#f0c548]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
-                    {f.count}
-                  </span>
-                </div>
-                <p className="max-w-2xl pl-0 text-[17px] font-light leading-[1.75] text-[#3a4856] md:pl-10">
-                  {f.description}
-                </p>
-                <p className="mt-3 pl-0 text-[12px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1] md:pl-10">
-                  Merkevarer: <span className="text-[#1f2d3a]">{f.brands}</span>
-                </p>
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="border-t border-black/10 py-10 last:border-b">
+                <div className="h-6 w-40 animate-pulse rounded bg-black/5" />
+                <div className="mt-4 h-4 w-full max-w-2xl animate-pulse rounded bg-black/5" />
+                <div className="mt-2 h-4 w-3/4 max-w-2xl animate-pulse rounded bg-black/5" />
               </div>
-            );
-          })}
+            ))
+            : categories.map((c, idx) => {
+              const Icon = ICON_BY_SLUG[c.slug] ?? Tag;
+              const description = DESCRIPTIONS[c.slug] ?? "Håndplukkede produkter fra kvalitetsmerker.";
+              // Show subcategories as brand list
+              const subs = c.subcategories.filter((s) => s.count > 0);
+              return (
+                <motion.div
+                  key={c.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: idx * 0.03 }}
+                  className="border-t border-black/10 py-10 last:border-b"
+                >
+                  <div className="mb-3 flex items-center gap-3 text-[#6b7884]">
+                    <Icon size={28} strokeWidth={1.4} />
+                    <h2 className="text-[22px] font-semibold text-[#1f2d3a]">
+                      {c.name}
+                    </h2>
+                    <button
+                      onClick={() => onNavigate("shop", { shopFilters: { category: c.slug } })}
+                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#1f2d3a] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#15202b]"
+                    >
+                      Se alle ({c.count})
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                  <p className="max-w-2xl pl-0 text-[17px] font-light leading-[1.75] text-[#3a4856] md:pl-10">
+                    {description}
+                  </p>
+
+                  {/* Subcategory chips */}
+                  {subs.length > 0 && (
+                    <div className="mt-4 flex flex-wrap items-center gap-2 pl-0 md:pl-10">
+                      {subs.slice(0, 8).map((sub) => (
+                        <button
+                          key={sub.id}
+                          onClick={() => onNavigate("shop", { shopFilters: { subcategory: sub.slug } })}
+                          className="rounded-full bg-[#f0c548]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#f0c548] hover:text-[#1f2d3a]"
+                        >
+                          {sub.name} ({sub.count})
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
         </div>
 
         {/* Footer CTA area */}

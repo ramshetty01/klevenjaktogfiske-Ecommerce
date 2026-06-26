@@ -213,3 +213,27 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ---------- Mega menu scroll: thin styled scrollbar ---------- */
+.kj-mega-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.kj-mega-scroll::-webkit-scrollbar-thumb {
+  background: rgba(31, 45, 58, 0.15);
+  border-radius: 3px;
+}
+.kj-mega-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- Custom scrollbar for filter / cart panels ---------- */
+.kj-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.kj-scroll::-webkit-scrollbar-thumb {
+  background: rgba(31, 45, 58, 0.2);
+  border-radius: 4px;
+}
+.kj-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 45, 58, 0.35);
+}
