@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) Yes, the banner is taller/vertical now. 2) Yes, items are stacked vertically. 3) Yes, fade gradients are visible at top and bottom.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782482435,
+  "id": "202606262200218652d69976a54679",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262200218652d69976a54679",
+  "usage": {
+    "completion_tokens": 39,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 6271,
+    "prompt_tokens_details": {
+      "cached_tokens": 7
+    },
+    "total_tokens": 6310
+  }
+}

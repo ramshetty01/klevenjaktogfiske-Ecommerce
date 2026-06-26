@@ -167,6 +167,27 @@
   animation-play-state: paused;
 }
 
+/* ---------- Vertical marquee animation ---------- */
+@keyframes kj-marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.kj-marquee-vertical-track {
+  display: flex;
+  flex-direction: column;
+  animation: kj-marquee-vertical 18s linear infinite;
+  will-change: transform;
+}
+
+.kj-marquee-vertical-track:hover {
+  animation-play-state: paused;
+}
+
 /* ---------- Subtle fade-in for page transitions ---------- */
 @keyframes kj-fade-in {
   from {
