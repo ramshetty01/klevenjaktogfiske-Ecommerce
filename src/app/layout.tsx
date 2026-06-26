@@ -53,7 +53,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="no" suppressHydrationWarning>
+    <html lang="no" suppressHydrationWarning translate="no">
+      <head>
+        {/* Prevent Google Translate / Chrome auto-translation from wrapping
+            text nodes in <font> tags, which conflicts with React's virtual
+            DOM and causes "removeChild" runtime errors. */}
+        <meta name="google" content="notranslate" />
+      </head>
       <body
         className={`${montserrat.variable} ${inter.variable} antialiased bg-background text-foreground`}
         style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
