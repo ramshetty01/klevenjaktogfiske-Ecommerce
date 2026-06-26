@@ -159,8 +159,9 @@
 .kj-marquee-track {
   display: inline-flex;
   white-space: nowrap;
-  animation: kj-marquee 26s linear infinite;
+  animation: kj-marquee 36s linear infinite;
   will-change: transform;
+  /* force recompile */
 }
 
 .kj-marquee-track:hover {

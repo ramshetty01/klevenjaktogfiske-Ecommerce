@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) Yes, ~30px tall. 2) Yes, single horizontal row. 3) Yes, soft fade gradients on edges.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782483385,
+  "id": "202606262216235d89c1d70c9f4b19",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262216235d89c1d70c9f4b19",
+  "usage": {
+    "completion_tokens": 32,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1074,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 1106
+  }
+}

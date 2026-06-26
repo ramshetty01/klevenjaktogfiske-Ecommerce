@@ -19,7 +19,7 @@ interface ShippingBannerProps {
  */
 export function ShippingBanner({
   size = "md",
-  direction = "vertical",
+  direction = "horizontal",
   height = 110,
 }: ShippingBannerProps) {
   const fontSize = size === "sm" ? "text-[13px]" : "text-[15px]";
@@ -49,16 +49,31 @@ export function ShippingBanner({
     </div>
   );
 
-  /* ------- HORIZONTAL variant (original) ------- */
+  /* ------- HORIZONTAL variant ------- */
   if (direction === "horizontal") {
     return (
       <div
         className="relative w-full overflow-hidden"
         style={{ backgroundColor: "#f4d35e" }}
         role="marquee"
-        aria-label="Fraktfritt i Norge på ordre over 2500 kroner"
+        aria-label="Fraktfritt i Norge på ordre over 2500 kroner. Rask levering 2 til 4 dager."
       >
-        <div className={`kj-marquee-track ${size === "sm" ? "py-2.5" : "py-3.5"}`}>
+        {/* Left + right fade masks so items softly appear/disappear */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12"
+          style={{
+            background:
+              "linear-gradient(to right, #f4d35e 0%, rgba(244,211,94,0) 100%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12"
+          style={{
+            background:
+              "linear-gradient(to left, #f4d35e 0%, rgba(244,211,94,0) 100%)",
+          }}
+        />
+        <div className={`kj-marquee-track ${itemPad}`}>
           {Array.from({ length: 8 }).map((_, i) => (
             <Item key={i} index={i} />
           ))}
