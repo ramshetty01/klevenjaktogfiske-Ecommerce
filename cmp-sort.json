@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) Yes, product cards are small/compact (5 columns on desktop, smaller images, tight padding). 2) Yes, a 'Sorter:' dropdown is visible near the top showing 'Anbefalt'. 3) Yes, each product card shows: small badge (e.g., Nyhet/Bestselger/Tilbud), tiny category label, product name, subtitle, stock status, price, and a small rating row (star + rating + review count).",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782487047,
+  "id": "202606262317184f2e137d0b794e53",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262317184f2e137d0b794e53",
+  "usage": {
+    "completion_tokens": 98,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 6227,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 6325
+  }
+}
