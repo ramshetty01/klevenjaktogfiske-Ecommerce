@@ -138,8 +138,36 @@ export function Footer({ onNavigate }: FooterProps) {
             {/* Opening hours */}
             <div className="mt-6 rounded-md border border-white/10 bg-white/5 px-4 py-3 text-[12px] font-light text-[#b8c0c8]">
               <p className="font-semibold text-white">Åpningstider</p>
-              <p className="mt-1">Man–Fre: 09:00 – 17:00</p>
-              <p>Lør: 10:00 – 15:00</p>
+              <ul className="mt-2 space-y-1">
+                <li className="flex items-center justify-between gap-4">
+                  <span>Mandag</span>
+                  <span>08:30 – 16:30</span>
+                </li>
+                <li className="flex items-center justify-between gap-4">
+                  <span>Tirsdag</span>
+                  <span>08:30 – 16:30</span>
+                </li>
+                <li className="flex items-center justify-between gap-4">
+                  <span>Onsdag</span>
+                  <span>08:30 – 16:30</span>
+                </li>
+                <li className="flex items-center justify-between gap-4">
+                  <span>Torsdag</span>
+                  <span className="text-[#f0c548]">08:30 – 18:00</span>
+                </li>
+                <li className="flex items-center justify-between gap-4">
+                  <span>Fredag</span>
+                  <span>08:30 – 16:30</span>
+                </li>
+                <li className="flex items-center justify-between gap-4">
+                  <span>Lørdag</span>
+                  <span>10:00 – 15:00</span>
+                </li>
+                <li className="flex items-center justify-between gap-4">
+                  <span>Søndag</span>
+                  <span className="text-[#8a96a1]">Stengt</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

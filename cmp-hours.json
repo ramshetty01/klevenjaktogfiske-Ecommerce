@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "The opening hours match: Mandag/Tirsdag/Onsdag/Fredag 08:30–16:30, Torsdag 08:30–18:00 (highlighted), Lørdag 10:00–15:00, Søndag Stengt.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782485896,
+  "id": "2026062622581262edf072fa654079",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "2026062622581262edf072fa654079",
+  "usage": {
+    "completion_tokens": 66,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1080,
+    "prompt_tokens_details": {
+      "cached_tokens": 7
+    },
+    "total_tokens": 1146
+  }
+}
