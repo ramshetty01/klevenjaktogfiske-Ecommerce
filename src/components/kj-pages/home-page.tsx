@@ -53,8 +53,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
 
           {/* Single hero image — clean, no overlays, no chips */}
-          <div className="relative">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-15px_rgba(31,45,58,0.35)]">
+          <div className="relative flex justify-center">
+            <div className="relative aspect-[4/5] w-full max-w-[380px] overflow-hidden rounded-[12px] shadow-[0_30px_60px_-15px_rgba(31,45,58,0.35)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/kelven-hero.png"
