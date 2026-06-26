@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  Crosshair, Fish, Tent, Utensils, Shirt, Backpack, Snowflake, PawPrint,
-  Footprints, Tag, Gift, ArrowRight,
+  Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint,
+  Footprints, Tag, Gift, Bug, ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
@@ -14,31 +14,31 @@ interface CategoriesPageProps {
   onNavigate: (page: PageId, ctx?: NavContext) => void;
 }
 
-// Icon mapping by category slug — keeps the icon logic in one place
+// Icon mapping by category slug — matches the real Kleven catalog slugs.
 const ICON_BY_SLUG: Record<string, React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>> = {
   jakt: Crosshair,
   fiske: Fish,
   camping: Tent,
-  kniver: Utensils,
-  bekledning: Shirt,
+  klær: Shirt,
   vintersport: Snowflake,
-  husdyr: PawPrint,
-  footwear: Footprints,
+  kjæledyr: PawPrint,
+  fottøy1: Footprints,
   outlet: Tag,
-  gavekort: Gift,
+  "gift-card": Gift,
+  "kleven-fluer": Bug,
 };
 
 const DESCRIPTIONS: Record<string, string> = {
   jakt: "Presisjonsvåpen fra Sauer og Tikka, optikk fra Zeiss og Swarovski, termobekledning og alt annet du trenger for en vellykket jakt. Vi fører kun utstyr fra autoriserte forhandlere — kvalitet du kan stole på når det gjelder.",
   fiske: "Fra havfiske til fluefiske i fjellet. Vi har stenger, sneller, agn og tilbehør fra de beste merkene — for nybegynnere som for den erfarne sportsfisker. Ekspertene våre fisker selv, og vet hva som fungerer.",
   camping: "Telt, soveposer, kokeutstyr, hodelykter og alt du trenger for overnattingsturer i norsk natur. Vi har valgt ut produkter som tåler de tøffeste forholdene — fra fjellet til skogen til kysten.",
-  kniver: "Norsk tradisjon møter moderne design. Vi fører kniver fra Helle, Fallkniven, Morakniv og Leatherman — fra enklebrukskniver til profesjonelle jaktkniver med tuppfeste og multiverktøy for enhver oppgave.",
-  bekledning: "Jaktklær, friluftsbekledning og utstyr som holder deg varm og tørr gjennom hele sesongen. Vi fører Fjellreven, Bergans, Harkila og Jerven — bekledning designet for og testet i skandinaviske forhold.",
-  vintersport: "Ski, skøyter, bindinger og tilbehør for vintersesongen. Madshus, Fischer og Rottefella — alt du trenger for å komme deg ut på snøen.",
-  husdyr: "Trekkingutstyr, hundemat og alt til din beste venn. Non-Stop Dogwear og Provit — for hundekjøring, canicross og hverdagslivet med hunden.",
-  footwear: "Jaktko, fjellstøvler og vadestøvler — fra Härkila, Lundhags og Aigle. Robust fottøy for alle årstider og underlag.",
+  klær: "Jaktklær, friluftsbekledning og utstyr som holder deg varm og tørr gjennom hele sesongen. Vi fører Fjellreven, Bergans, Härkila og Jerven — bekledning designet for og testet i skandinaviske forhold.",
+  vintersport: "Ski, skøyter, bindinger og tilbehør for vintersesongen. Åsnes, Fischer og Swix — alt du trenger for å komme deg ut på snøen.",
+  kjæledyr: "Trekkingutstyr, hundemat og alt til din beste venn. Non-Stop Dogwear, Trixie og Provit — for hundekjøring, canicross og hverdagslivet med hunden.",
+  fottøy1: "Jaktko, fjellstøvler og vadestøvler — fra Lundhags, Hestra og Bergans. Robust fottøy for alle årstider og underlag.",
   outlet: "Kvalitetsutstyr til reduserte priser. Begrensede antall — først til mølla. Outlet-varer kan ha kosmetiske feil, men full funksjonalitet og garanti.",
-  gavekort: "Perfekt gave til jegeren eller fiskeren. Digitalt gavekort på 500, 1000 eller 2500 kroner — leveres på e-post, gyldig i 2 år.",
+  "gift-card": "Perfekt gave til jegeren eller fiskeren. Digitalt gavekort på 500, 1000 eller 2500 kroner — leveres på e-post, gyldig i 2 år.",
+  "kleven-fluer": "Håndbundne fluer fra Kleven Jakt & Fiske — laksefluer, ørretfluer, sjøørretfluer og tubefluer. Tradisjonsrikt håndverk fra Hammerfest.",
 };
 
 export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
@@ -81,7 +81,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
             Våre Kategorier
           </h1>
           <p className="mt-6 max-w-2xl text-[20px] font-light leading-relaxed text-[#3a4856]">
-            Seks hovedkategorier, over 1 200 artikler. Hver kategori er kuratert
+            Ti hovedkategorier, over 4 000 artikler. Hver kategori er kuratert
             av eksperter som kjenner utstyret innvendig — fordi de bruker det
             selv.
           </p>
@@ -154,7 +154,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
               Klar for å handle?
             </h3>
             <p className="mt-1 text-[14px] font-light text-[#6b7884]">
-              Utforsk hele sortimentet med over 1 200 artikler på lager.
+              Utforsk hele sortimentet med over 4 000 artikler på lager.
             </p>
           </div>
           <div className="flex items-center gap-3">

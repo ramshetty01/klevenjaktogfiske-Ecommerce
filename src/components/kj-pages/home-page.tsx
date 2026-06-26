@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Crosshair, Fish, Tent, Utensils, Shirt, Backpack } from "lucide-react";
+import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Footprints, Tag, Gift, Bug } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
 import { ShippingBanner } from "../kj/shipping-banner";
@@ -16,9 +16,13 @@ const CATEGORY_TILES = [
   { name: "Jakt", icon: Crosshair, slug: "jakt", color: "#2d4a3e" },
   { name: "Fiske", icon: Fish, slug: "fiske", color: "#1f6f8b" },
   { name: "Camping", icon: Tent, slug: "camping", color: "#c75d2c" },
-  { name: "Kniver", icon: Utensils, slug: "kniver", color: "#5d4037" },
-  { name: "Bekledning", icon: Shirt, slug: "bekledning", color: "#3d5e4f" },
-  { name: "Vintersport", icon: Backpack, slug: "vintersport", color: "#5b6e8a" },
+  { name: "Bekledning", icon: Shirt, slug: "klær", color: "#3d5e4f" },
+  { name: "Vintersport", icon: Snowflake, slug: "vintersport", color: "#5b6e8a" },
+  { name: "Husdyr", icon: PawPrint, slug: "kjæledyr", color: "#a06a3f" },
+  { name: "Fottøy", icon: Footprints, slug: "fottøy1", color: "#5d4037" },
+  { name: "Outlet", icon: Tag, slug: "outlet", color: "#8a5a44" },
+  { name: "Gavekort", icon: Gift, slug: "gift-card", color: "#c79a3f" },
+  { name: "Kleven Fluer", icon: Bug, slug: "kleven-fluer", color: "#2d4a3e" },
 ];
 
 export function HomePage({ onNavigate }: HomePageProps) {
@@ -148,7 +152,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 lg:gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
             {CATEGORY_TILES.map((c, i) => {
               const Icon = c.icon;
               const cat = categories.find((x) => x.slug === c.slug);
@@ -236,8 +240,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
               Merker vi stoler på
             </h2>
             <p className="mt-4 text-[15px] font-light leading-relaxed text-[#6b7884]">
-              Vi er autoriserte forhandlere for over 60 merkevarer — fra
-              Sauer og Zeiss til Helle, Fjellreven og Bergans.
+              Vi er autoriserte forhandlere for over 400 merkevarer — fra
+              Sauer og Zeiss til Helle, Fjällräven og Bergans.
             </p>
           </div>
 

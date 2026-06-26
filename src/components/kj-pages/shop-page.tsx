@@ -40,6 +40,9 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
   const [sort, setSort] = useState<SortKey>("recommended");
   const [page, setPage] = useState(1);
 
+  // Brand filter — show top 20 by default with a "show more" toggle
+  const [showAllBrands, setShowAllBrands] = useState(false);
+
   // Data
   const [products, setProducts] = useState<Product[] | null>(null);
   const [totalPages, setTotalPages] = useState(1);
@@ -139,7 +142,12 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
   // Available sort options: hide "discount" unless in Outlet; show all others always
   const visibleSortOptions = SORT_OPTIONS.filter((o) => {
+    // Hide "discount" unless we're in Outlet — no products have
+    // originalPrice set yet (catalog has no prices).
     if (o.value === "discount") return isOutlet;
+    // Hide price-based sorts while the catalog has no prices imported.
+    // (All products have price=0 so these would be no-ops.)
+    if (o.value === "price_asc" || o.value === "price_desc") return false;
     return true;
   });
 
@@ -217,7 +225,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
         </div>
       )}
 
-      {/* Brand */}
+      {/* Brand — top 20 with "show more" for the long tail */}
       <div>
         <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
           Merke
@@ -228,7 +236,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             checked={activeBrand === "alle"}
             onChange={() => setActiveBrand("alle")}
           />
-          {brands.map((b) => (
+          {(showAllBrands ? brands : brands.slice(0, 20)).map((b) => (
             <FilterRadio
               key={b.id}
               label={`${b.name} (${b.count})`}
@@ -236,10 +244,22 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               onChange={() => setActiveBrand(b.slug)}
             />
           ))}
+          {brands.length > 20 && (
+            <button
+              onClick={() => setShowAllBrands((v) => !v)}
+              className="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#c75d2c] hover:underline"
+            >
+              {showAllBrands ? "Vis mindre" : `Vis alle (${brands.length})`}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Price range */}
+      {/* Price range — hidden for now because the real Kleven catalog
+          doesn't ship prices (priceNok=0 for all products). The slider UI
+          stays in the source so it can be re-enabled once prices are
+          imported from the upstream product pages. */}
+      {false && (
       <div>
         <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
           Pris (kr)
@@ -258,6 +278,13 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             <span>Kr {priceRange[1].toLocaleString("no-NO")}+</span>
           </div>
         </div>
+      </div>
+      )}
+
+      {/* Price notice */}
+      <div className="rounded-md border border-[#f0c548]/40 bg-[#f0c548]/10 px-3 py-2 text-[11px] leading-relaxed text-[#3a4856]">
+        Priser kommer — Kleven-katalogen oppdateres for øyeblikket. Bruk
+        telefonnummeret på produktsiden for direkte pris forespørsel.
       </div>
 
       {/* In stock */}

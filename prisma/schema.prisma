@@ -47,8 +47,9 @@ model Product {
   slug           String   @unique
   subtitle       String?
   description    String?
-  /// Current price in NOK (kr)
-  price          Float
+  /// Current price in NOK (kr). 0 when catalog has no price (real Kleven
+  /// catalog only provides stock & image — UI shows "Se pris" instead).
+  price          Float    @default(0)
   /// Original (pre-discount) price in NOK. Null when not on sale.
   originalPrice  Float?
   /// Primary image URL
@@ -75,6 +76,12 @@ model Product {
   /// True when product is flagged as new
   isNew          Boolean  @default(false)
   createdAt      DateTime @default(now())
+  /// The original product id used by klevenjaktogfiske.no — kept so we can
+  /// sync against the upstream catalog later.
+  externalId     String?
+  /// Original klevenjaktogfiske.no product page URL — used for the
+  /// "Se produkt" fallback link when price is unknown.
+  externalUrl    String?
   /// Relations
   brandId        String?
   brand          Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
@@ -85,6 +92,10 @@ model Product {
   /// Child relations
   reviews        Review[]
   cartItems      CartItem[]
+
+  @@index([categoryId])
+  @@index([subcategoryId])
+  @@index([brandId])
 }
 
 /// Verified / unverified product review

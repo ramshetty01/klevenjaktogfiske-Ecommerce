@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
-  ChevronLeft, Star, Minus, Plus, ShoppingBag, Truck, Shield, RotateCcw,
+  ChevronLeft, Star, Minus, Plus, ShoppingBag, Truck, Shield, RotateCcw, Phone, ExternalLink,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import type { PageId, NavContext } from "../kj/header";
 import type { Product, Review, ProductDetail } from "@/lib/kj/types";
 import { formatNok, discountPercent } from "@/lib/kj/types";
 import { useCart } from "@/lib/kj/cart-store";
+
+const PLACEHOLDER = "/images/product-placeholder.svg";
 
 interface ProductDetailPageProps {
   slug: string;
@@ -35,6 +37,9 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     body: "",
   });
   const [submittingReview, setSubmittingReview] = useState(false);
+  // Track which image indices have failed to load → swap to placeholder.
+  // Reset whenever the slug changes (and thus a new product is fetched).
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   const { toast } = useToast();
   const add = useCart((s) => s.add);
@@ -45,6 +50,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     setError(null);
     setQty(1);
     setActiveImage(0);
+    setFailedImages(new Set());
     (async () => {
       try {
         const res = await fetch(`/api/products/${slug}`, { cache: "no-store" });
@@ -181,18 +187,35 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     );
   }
 
-  // Parse image array
+  // Parse image array — Kleven's catalog ships a single image per product
+  // (or sometimes none), so we deduplicate and fall back to the placeholder.
   let images: string[] = [];
   try {
     images = JSON.parse(product.images) as string[];
   } catch {
-    images = [product.imageUrl];
+    images = [];
   }
-  if (images.length === 0) images = [product.imageUrl];
+  const primary = product.imageUrl && product.imageUrl.trim().length > 0
+    ? product.imageUrl
+    : PLACEHOLDER;
+  // Dedupe while preserving order; ensure primary is first.
+  const seen = new Set<string>();
+  const uniqueImages: string[] = [];
+  for (const img of [primary, ...images, ...images]) {
+    if (!img || seen.has(img)) continue;
+    seen.add(img);
+    uniqueImages.push(img);
+  }
+  if (uniqueImages.length === 0) uniqueImages.push(PLACEHOLDER);
+  const galleryImages = uniqueImages;
 
   const discount = discountPercent(product);
   const inStock = product.stockCount > 0;
-  const galleryImages = images.length > 1 ? images : [product.imageUrl, product.imageUrl];
+  const priceUnknown = !product.price || product.price === 0;
+  const hasExternalUrl = !!product.externalUrl;
+
+  const srcFor = (idx: number) =>
+    failedImages.has(idx) ? PLACEHOLDER : galleryImages[idx] ?? PLACEHOLDER;
 
   return (
     <div className="kj-page-enter bg-white">
@@ -235,9 +258,16 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <div className="relative aspect-square overflow-hidden rounded-lg border border-black/5 bg-[#f4f3ef]">
               { }
               <img
-                src={galleryImages[activeImage]}
+                src={srcFor(activeImage)}
                 alt={product.name}
                 className="h-full w-full object-cover"
+                onError={() => {
+                  setFailedImages((prev) => {
+                    const next = new Set(prev);
+                    next.add(activeImage);
+                    return next;
+                  });
+                }}
               />
               {product.tag && (
                 <span
@@ -270,7 +300,18 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                     }`}
                   >
                     { }
-                    <img src={img} alt={`${product.name} bilde ${idx + 1}`} className="h-full w-full object-cover" />
+                    <img
+                      src={srcFor(idx)}
+                      alt={`${product.name} bilde ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                      onError={() => {
+                        setFailedImages((prev) => {
+                          const next = new Set(prev);
+                          next.add(idx);
+                          return next;
+                        });
+                      }}
+                    />
                   </button>
                 ))}
               </div>
@@ -331,10 +372,25 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
 
             {/* Price */}
             <div className="flex flex-wrap items-baseline gap-3">
-              <span className="text-[28px] font-bold text-[#1f2d3a]">
-                {formatNok(product.price)}
-              </span>
-              {product.originalPrice && (
+              {priceUnknown ? (
+                <div className="flex flex-col gap-1">
+                  <span className="text-[22px] font-bold text-[#1f2d3a]">
+                    Kontakt for pris
+                  </span>
+                  <a
+                    href="tel:+4778407140"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#2d4a3e] hover:underline"
+                  >
+                    <Phone size={13} strokeWidth={2} />
+                    78 40 71 40
+                  </a>
+                </div>
+              ) : (
+                <span className="text-[28px] font-bold text-[#1f2d3a]">
+                  {formatNok(product.price)}
+                </span>
+              )}
+              {!priceUnknown && product.originalPrice && (
                 <span className="text-[16px] font-light text-[#a0a8b0] line-through">
                   {formatNok(product.originalPrice)}
                 </span>
@@ -396,6 +452,18 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 <ShoppingBag size={16} className="mr-2" />
                 {inStock ? "Legg i handlevogn" : "Ikke på lager"}
               </Button>
+
+              {hasExternalUrl && (
+                <a
+                  href={product.externalUrl!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#d4cfc1] bg-white px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#f5f1e8]"
+                >
+                  <ExternalLink size={13} />
+                  Se hos Kleven
+                </a>
+              )}
             </div>
 
             {/* Trust badges */}

@@ -16,6 +16,11 @@ import { recommendedScore } from "@/lib/merchandising";
  * popular items appear first.
  *
  * Returns up to 30 results.
+ *
+ * Implementation: SQLite's LIKE is case-insensitive for ASCII characters,
+ * so we use Prisma's `contains` (no `mode` modifier needed for SQLite).
+ * We fetch up to 200 candidates and tier-rank them in JS to avoid scanning
+ * the full 4k catalog when the query is rare.
  */
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -34,7 +39,7 @@ export async function GET(req: NextRequest) {
         { sku: { contains: q } },
       ],
     },
-    take: 60,
+    take: 200,
     include: {
       brand: { select: { name: true, slug: true } },
       category: { select: { name: true, slug: true } },

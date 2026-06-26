@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { ArrowRight, Star, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@/lib/kj/types";
 import { formatNok, discountPercent } from "@/lib/kj/types";
 import { useCart } from "@/lib/kj/cart-store";
+
+const PLACEHOLDER = "/images/product-placeholder.svg";
 
 interface ProductCardProps {
   product: Product;
@@ -16,11 +19,13 @@ interface ProductCardProps {
 /**
  * Compact product card used in shop grids and the home page.
  *
- * - Image with hover-zoom
+ * - Image with hover-zoom (falls back to a branded placeholder on error
+ *   or empty image URL — Kleven's hotlink protection blocks some images)
  * - Tag badge (top-left): color-coded by tag type
  * - Discount % badge (top-right) when on sale
  * - Stock status line
- * - Price + struck-through original price
+ * - Price + struck-through original price (or "Se pris" when catalog has
+ *   no price — Kleven's catalog only ships stock + image, not prices)
  * - Rating row (stars hidden when no reviews)
  * - "Add to cart" button (appears on hover, bottom-right of image)
  *
@@ -33,6 +38,16 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
   const discount = discountPercent(product);
   const inStock = product.stockCount > 0;
+  const priceUnknown = !product.price || product.price === 0;
+
+  // Local image-fallback state. The lazy initializer runs whenever the
+  // component mounts (parents remount via key={p.id} when the product
+  // changes), so we don't need a sync effect here.
+  const [imgSrc, setImgSrc] = useState<string>(
+    product.imageUrl && product.imageUrl.trim().length > 0
+      ? product.imageUrl
+      : PLACEHOLDER,
+  );
 
   const handleAdd = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -87,12 +102,14 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f0c548]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#f4f3ef]">
-        { }
         <img
-          src={product.imageUrl}
+          src={imgSrc}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
+          onError={() => {
+            if (imgSrc !== PLACEHOLDER) setImgSrc(PLACEHOLDER);
+          }}
         />
 
         {/* Tag badge */}
@@ -127,7 +144,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       <div className={`flex flex-1 flex-col gap-0.5 ${compact ? "px-2.5 py-2" : "px-3 py-3"}`}>
         {/* Category label */}
         <div className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#8a96a1]">
-          {product.category?.name ?? "Kleven"}
+          {product.category?.name ?? product.brand?.name ?? "Kleven"}
         </div>
 
         {/* Name */}
@@ -159,10 +176,14 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
         {/* Price row */}
         <div className="mt-1.5 flex items-baseline gap-1.5">
-          <span className="text-[13px] font-bold text-[#1f2d3a]">
-            {formatNok(product.price)}
-          </span>
-          {product.originalPrice && (
+          {priceUnknown ? (
+            <span className="text-[13px] font-bold text-[#1f2d3a]">Se pris</span>
+          ) : (
+            <span className="text-[13px] font-bold text-[#1f2d3a]">
+              {formatNok(product.price)}
+            </span>
+          )}
+          {!priceUnknown && product.originalPrice && (
             <span className="text-[10px] font-light text-[#a0a8b0] line-through">
               {formatNok(product.originalPrice)}
             </span>

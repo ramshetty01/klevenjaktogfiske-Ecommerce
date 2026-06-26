@@ -17,6 +17,14 @@ import { recommendedScore, discountPct, type SortKey } from "@/lib/merchandising
  *   page         — 1-based page number (default 1)
  *   perPage      — items per page (default 24, max 60)
  *   includeCount — "1" / "true" to include totalCount in response
+ *
+ * Pagination strategy:
+ *   - For sort keys that map to a single DB column we use skip/take for
+ *     efficient DB-level pagination.
+ *   - For the "recommended" and "discount" sort keys (which require a
+ *     computed score) we fetch all matches, sort in JS, then slice. This
+ *     is still fast enough on a 4k catalog because we project to only the
+ *     columns needed for scoring + display.
  */
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -34,32 +42,38 @@ export async function GET(req: NextRequest) {
   const perPage = Math.min(60, Math.max(1, Number(p.get("perPage") ?? "24")));
   const includeCount = p.get("includeCount") === "1" || p.get("includeCount") === "true";
 
+  // Resolve slugs to IDs (single-row lookups, indexed)
   let categoryId: string | null = null;
   let subcategoryId: string | null = null;
   let brandId: string | null = null;
 
   if (subcategorySlug) {
-    const sub = await db.category.findUnique({ where: { slug: subcategorySlug } });
+    const sub = await db.category.findUnique({ where: { slug: subcategorySlug }, select: { id: true } });
     if (sub) subcategoryId = sub.id;
   }
   if (categorySlug && !subcategoryId) {
-    const cat = await db.category.findUnique({ where: { slug: categorySlug } });
+    const cat = await db.category.findUnique({ where: { slug: categorySlug }, select: { id: true } });
     if (cat) categoryId = cat.id;
   }
   if (brandSlug) {
-    const brand = await db.brand.findUnique({ where: { slug: brandSlug } });
+    const brand = await db.brand.findUnique({ where: { slug: brandSlug }, select: { id: true } });
     if (brand) brandId = brand.id;
   }
 
+  // Build the where clause
   const where: Record<string, unknown> = {};
   if (subcategoryId) where.subcategoryId = subcategoryId;
   else if (categoryId) where.categoryId = categoryId;
   if (brandId) where.brandId = brandId;
   if (inStock) where.stockCount = { gt: 0 };
-  if (minPrice !== null || maxPrice !== null) {
+  // Price filter: when both bounds are at the extremes, skip the clause so
+  // we don't filter out price=0 products by mistake.
+  const hasMinPrice = minPrice !== null && minPrice > 0;
+  const hasMaxPrice = maxPrice !== null && maxPrice < 25000;
+  if (hasMinPrice || hasMaxPrice) {
     where.price = {};
-    if (minPrice !== null) where.price.gte = minPrice;
-    if (maxPrice !== null) where.price.lte = maxPrice;
+    if (hasMinPrice) (where.price as { gte?: number }).gte = minPrice!;
+    if (hasMaxPrice) (where.price as { lte?: number }).lte = maxPrice!;
   }
   if (q) {
     where.OR = [
@@ -70,66 +84,100 @@ export async function GET(req: NextRequest) {
     ];
   }
 
-  const allMatches = await db.product.findMany({
-    where,
-    include: {
-      brand: { select: { name: true, slug: true } },
-      category: { select: { name: true, slug: true } },
-      subcategory: { select: { name: true, slug: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // The include clause shared by both code paths
+  const include = {
+    brand: { select: { name: true, slug: true } },
+    category: { select: { name: true, slug: true } },
+    subcategory: { select: { name: true, slug: true } },
+  } as const;
 
-  const sorted = [...allMatches];
-  switch (sort) {
-    case "recommended":
-      sorted.sort((a, b) => recommendedScore(b) - recommendedScore(a));
-      break;
-    case "bestsellers":
-      sorted.sort((a, b) => b.sales90 - a.sales90);
-      break;
-    case "newest":
-      sorted.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      break;
-    case "price_asc":
-      sorted.sort((a, b) => a.price - b.price);
-      break;
-    case "price_desc":
-      sorted.sort((a, b) => b.price - a.price);
-      break;
-    case "name_asc":
-      sorted.sort((a, b) => a.name.localeCompare(b.name, "no"));
-      break;
-    case "name_desc":
-      sorted.sort((a, b) => b.name.localeCompare(a.name, "no"));
-      break;
-    case "rating":
-      sorted.sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount);
-      break;
-    case "reviews":
-      sorted.sort((a, b) => b.reviewCount - a.reviewCount);
-      break;
-    case "stock_first":
-      sorted.sort((a, b) => b.stockCount - a.stockCount);
-      break;
-    case "stock_asc":
-      sorted.sort((a, b) => a.stockCount - b.stockCount);
-      break;
-    case "itemno_asc":
-      sorted.sort((a, b) => a.sku.localeCompare(b.sku, "en", { numeric: true }));
-      break;
-    case "itemno_desc":
-      sorted.sort((a, b) => b.sku.localeCompare(a.sku, "en", { numeric: true }));
-      break;
-    case "discount":
-      sorted.sort((a, b) => discountPct(b) - discountPct(a));
-      break;
+  // ---- Path A: DB-level pagination for sort keys that map to columns ----
+  const columnSorts: Partial<Record<SortKey, Record<string, "asc" | "desc">>> = {
+    newest: { createdAt: "desc" },
+    price_asc: { price: "asc" },
+    price_desc: { price: "desc" },
+    name_asc: { name: "asc" },
+    name_desc: { name: "desc" },
+    bestsellers: { sales90: "desc" },
+    rating: { rating: "desc" },
+    reviews: { reviewCount: "desc" },
+    stock_first: { stockCount: "desc" },
+    stock_asc: { stockCount: "asc" },
+    itemno_asc: { sku: "asc" },
+    itemno_desc: { sku: "desc" },
+  };
+
+  if (columnSorts[sort]) {
+    const [products, totalCount] = await Promise.all([
+      db.product.findMany({
+        where,
+        include,
+        orderBy: columnSorts[sort],
+        skip: (page - 1) * perPage,
+        take: perPage,
+      }),
+      includeCount ? db.product.count({ where }) : Promise.resolve(0),
+    ]);
+    const total = includeCount ? totalCount : 0;
+    const totalPages = includeCount
+      ? Math.max(1, Math.ceil(total / perPage))
+      : 1;
+    return NextResponse.json({
+      products,
+      page,
+      perPage,
+      totalPages,
+      totalCount: includeCount ? total : undefined,
+      sort,
+    });
   }
 
-  const totalCount = sorted.length;
+  // ---- Path B: in-memory sort for "recommended" and "discount" ----
+  // Two-phase fetch: first load only the scoring columns for all matches,
+  // sort in JS, then fetch the full records (with brand/category includes)
+  // for just the slice we need. This keeps the in-memory sort fast even on
+  // the full 4k catalog.
+  const light = await db.product.findMany({
+    where,
+    select: {
+      id: true,
+      sales90: true,
+      price: true,
+      conversionRate: true,
+      stockCount: true,
+      popularity: true,
+      seasonBoost: true,
+      margin: true,
+      originalPrice: true,
+    },
+  });
+
+  const scored = light.map((p) => ({
+    id: p.id,
+    score:
+      sort === "recommended"
+        ? recommendedScore(p)
+        : discountPct(p),
+  }));
+  scored.sort((a, b) => b.score - a.score);
+
+  const totalCount = scored.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / perPage));
   const start = (page - 1) * perPage;
-  const paged = sorted.slice(start, start + perPage);
+  const pageIds = scored.slice(start, start + perPage).map((s) => s.id);
+
+  // Fetch full records for just this page's IDs.
+  const pageRows = pageIds.length === 0
+    ? []
+    : await db.product.findMany({
+        where: { id: { in: pageIds } },
+        include,
+      });
+
+  // Re-order to match the score-sorted order (findMany doesn't preserve
+  // the IN-clause order).
+  const byId = new Map(pageRows.map((p) => [p.id, p]));
+  const paged = pageIds.map((id) => byId.get(id)).filter(Boolean) as typeof pageRows;
 
   return NextResponse.json({
     products: paged,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,6 +14,29 @@ interface CartPageProps {
 }
 
 const FREE_SHIPPING_THRESHOLD = 2500;
+const PLACEHOLDER = "/images/product-placeholder.svg";
+
+/**
+ * Image with onError fallback to the placeholder.
+ *
+ * Each cart line is keyed by `item.id` in the parent, so the component
+ * remounts when the underlying product changes — no sync effect needed.
+ */
+function CartImage({ src, alt }: { src: string; alt: string }) {
+  const [imgSrc, setImgSrc] = useState(
+    src && src.trim().length > 0 ? src : PLACEHOLDER,
+  );
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className="h-full w-full object-cover transition-transform hover:scale-105"
+      onError={() => {
+        if (imgSrc !== PLACEHOLDER) setImgSrc(PLACEHOLDER);
+      }}
+    />
+  );
+}
 
 export function CartPage({ onNavigate }: CartPageProps) {
   const { items, subtotal, totalCount, loading, initialized, hydrate, setQuantity, remove } = useCart();
@@ -130,11 +153,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                         className="aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#f4f3ef]"
                       >
                         { }
-                        <img
-                          src={item.product.imageUrl}
-                          alt={item.product.name}
-                          className="h-full w-full object-cover transition-transform hover:scale-105"
-                        />
+                        <CartImage src={item.product.imageUrl} alt={item.product.name} />
                       </button>
 
                       {/* Details */}
@@ -156,10 +175,18 @@ export function CartPage({ onNavigate }: CartPageProps) {
                           </p>
                         )}
                         <p className="text-[13px] font-bold text-[#1f2d3a]">
-                          {formatNok(item.product.price)}
-                          {item.product.originalPrice && (
-                            <span className="ml-2 text-[11px] font-light text-[#a0a8b0] line-through">
-                              {formatNok(item.product.originalPrice)}
+                          {item.product.price > 0 ? (
+                            <>
+                              {formatNok(item.product.price)}
+                              {item.product.originalPrice && (
+                                <span className="ml-2 text-[11px] font-light text-[#a0a8b0] line-through">
+                                  {formatNok(item.product.originalPrice)}
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#2d4a3e]">
+                              Pris: Se produkt
                             </span>
                           )}
                         </p>
@@ -188,7 +215,9 @@ export function CartPage({ onNavigate }: CartPageProps) {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-[14px] font-bold text-[#1f2d3a]">
-                            {formatNok(item.product.price * item.quantity)}
+                            {item.product.price > 0
+                              ? formatNok(item.product.price * item.quantity)
+                              : "—"}
                           </span>
                           <button
                             aria-label="Fjern artikkelen"

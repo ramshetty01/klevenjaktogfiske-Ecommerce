@@ -39,6 +39,8 @@ export interface Product {
   margin: number;
   isNew: boolean;
   createdAt: string;
+  externalId: string | null;
+  externalUrl: string | null;
   brandId: string | null;
   brand: BrandRef | null;
   categoryId: string | null;

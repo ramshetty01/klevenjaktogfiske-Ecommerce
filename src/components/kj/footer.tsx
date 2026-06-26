@@ -17,9 +17,11 @@ export function Footer({ onNavigate }: FooterProps) {
     { label: "Jaktutstyr", slug: "jakt" },
     { label: "Fiskeutstyr", slug: "fiske" },
     { label: "Camping & Friluftsliv", slug: "camping" },
-    { label: "Kniver", slug: "kniver" },
-    { label: "Bekledning", slug: "bekledning" },
+    { label: "Bekledning", slug: "klær" },
     { label: "Vintersport", slug: "vintersport" },
+    { label: "Husdyr", slug: "kjæledyr" },
+    { label: "Fottøy", slug: "fottøy1" },
+    { label: "Outlet", slug: "outlet" },
   ];
 
   return (

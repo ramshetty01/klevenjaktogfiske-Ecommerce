@@ -1,0 +1,918 @@
+     1→/**
+     2→ * Seed script for Kleven Jakt & Fiske AS
+     3→ *
+     4→ * Populates the database with:
+     5→ *   - 14 brands (Berkley, Abu Garcia, Penn, Fenwick, Shakespeare, Harkila,
+     6→ *     Fjellreven, Bergans, Helle, Brusletto, Sauer, Zeiss, LotusGrill,
+     7→ *     Non-Stop Dogwear, plus a few more)
+     8→ *   - Top-level categories (Jakt, Fiske, Camping, Kniver, Bekledning,
+     9→ *     Vintersport, Husdyr, Outlet, Gavekort, Footwear)
+    10→ *   - Subcategories for Fiske and Camping (matching the original site)
+    11→ *   - 40+ products with full merchandising metadata
+    12→ *   - 5–10 reviews per top product
+    13→ *
+    14→ * Run with:  bun run prisma/seed.ts
+    15→ */
+    16→
+    17→import { PrismaClient } from "@prisma/client";
+    18→
+    19→const db = new PrismaClient();
+    20→
+    21→// Fixed reference date so merchandising "createdAt" stays stable across runs
+    22→const NOW = new Date("2026-06-26T12:00:00Z").getTime();
+    23→const DAY = 24 * 60 * 60 * 1000;
+    24→function daysAgo(n: number) {
+    25→  return new Date(NOW - n * DAY);
+    26→}
+    27→
+    28→function slugify(s: string): string {
+    29→  return s
+    30→    .toLowerCase()
+    31→    .replace(/[æ]/g, "ae")
+    32→    .replace(/[ø]/g, "o")
+    33→    .replace(/[å]/g, "a")
+    34→    .replace(/[^a-z0-9]+/g, "-")
+    35→    .replace(/^-+|-+$/g, "");
+    36→}
+    37→
+    38→// ---------- BRANDS ----------
+    39→const BRANDS = [
+    40→  { name: "Berkley", country: "USA", description: "Sveiseliner, agn og fisketilbehør fra Pure Fishing-konsernet." },
+    41→  { name: "Abu Garcia", country: "Sverige", description: "Svensk tradisjon — sneller, røykeovner og fiskeutstyr siden 1921." },
+    42→  { name: "Penn", country: "USA", description: "Amerikanske sneller bygget for havfiske og store arter." },
+    43→  { name: "Fenwick", country: "USA", description: "Innovative fiskestenger med over 50 års tradisjon." },
+    44→  { name: "Shakespeare", country: "Storbritannia", description: "Britisk merkevare for hele familien — stenger, sneller og sett." },
+    45→  { name: "Härkila", country: "Danmark", description: "Premium jaktklær og utstyr designet for nordiske forhold." },
+    46→  { name: "Fjellräven", country: "Sverige", description: "Klassisk svensk friluftsmerke — G-1000 og Skogso." },
+    47→  { name: "Bergans", country: "Norge", description: "Norskproduserte sekker, telt og bekledning siden 1908." },
+    48→  { name: "Helle", country: "Norge", description: "Norsk håndlagde kniver fra Holmedal — siden 1932." },
+    49→  { name: "Brusletto", country: "Norge", description: "Tradisjonsrike norske kniver fra Geilo." },
+    50→  { name: "Sauer", country: "Tyskland", description: "Tyske presisjonsrifler med over 250 års tradisjon." },
+    51→  { name: "Zeiss", country: "Tyskland", description: "Tysk optikk i verdensklasse — kikkerter og sikter." },
+    52→  { name: "LotusGrill", country: "Tyskland", description: "Bærbare røykfrie griller med batteridrevet vifte." },
+    53→  { name: "Non-Stop Dogwear", country: "Norge", description: "Trekking- og hundekjøringutstyr fra Norge." },
+    54→  { name: "ThermTec", country: "USA", description: "Termiske kameraer og optikk for jakt og overvåking." },
+    55→  { name: "Madshus", country: "Norge", description: "Norske langrennsski og skøyter — Norges eldste skifabrikk." },
+    56→  { name: "Fischer", country: "Østerrike", description: "Østerrikske ski og langrennsutstyr i verdensklasse." },
+    57→  { name: "Rottefella", country: "Norge", description: "Norsk produserte langrennsbindinger." },
+    58→  { name: "Lundhags", country: "Sverige", description: "Svenske fjellstøvler og friluftsutstyr." },
+    59→  { name: "Aigle", country: "Frankrike", description: "Franske vadestøvler og gummiklær med håndverkstradisjon." },
+    60→  { name: "Jerven", country: "Norge", description: "Norskproduserte fjellduker og jaktoverdel." },
+    61→  { name: "Barents", country: "Norge", description: "Ekspedisjonsoveposer for arktiske forhold." },
+    62→  { name: "Real Turmat", country: "Norge", description: "Norsk produsert tørrmat for friluftsliv og ekspedisjon." },
+    63→  { name: "Ifish", country: "Norge", description: "Barduner og tilbehør til pop-up telt." },
+    64→  { name: "Kleven Fluer", country: "Norge", description: "Håndbundne fluer fra Kleven — bygget for norsk fiske." },
+    65→  { name: "Aqiila", country: "Kina", description: "Powerbanker, solcellepaneler og frilufts-elektronikk." },
+    66→  { name: "Helsport", country: "Norge", description: "Norske telt, soveposer og kokeutstyr." },
+    67→  { name: "Provit", country: "Norge", description: "Norskprodusert hundemat og tilskudd." },
+    68→];
+    69→
+    70→// ---------- CATEGORIES ----------
+    71→// Top-level + subcategories. parentId is set programmatically below.
+    72→const TOP_CATEGORIES = [
+    73→  { name: "Jakt", icon: "Crosshair" },
+    74→  { name: "Fiske", icon: "Fish" },
+    75→  { name: "Camping", icon: "Tent" },
+    76→  { name: "Kniver", icon: "Utensils" },
+    77→  { name: "Bekledning", icon: "Shirt" },
+    78→  { name: "Vintersport", icon: "Snowflake" },
+    79→  { name: "Husdyr", icon: "PawPrint" },
+    80→  { name: "Footwear", icon: "Footprints" },
+    81→  { name: "Outlet", icon: "Tag" },
+    82→  { name: "Gavekort", icon: "Gift" },
+    83→];
+    84→
+    85→const FISKE_SUBCATEGORIES = [
+    86→  "Agn", "Diverse", "Fiskekroker", "Fiskestenger", "Sneller",
+    87→  "Isfiske", "Fluefiske", "Garn", "Havfiske", "Liner", "Kroker",
+    88→  "Oppbevaring", "Utendørslinje", "Sene og snøre", "Utstyr",
+    89→];
+    90→
+    91→const CAMPING_SUBCATEGORIES = [
+    92→  "Kikkerter", "Wolverine", "Kart og kompass", "Hygge", "Kjøkkenutstyr",
+    93→  "Kniv", "Pledd", "Lys", "Mygg", "Ovner", "Pop-up telt", "På vannet",
+    94→  "Røykeovn", "Sag", "Bager", "Setepute", "Solbriller", "Soveposer",
+    95→  "Stoler", "Souvenirer", "Søkeutstyr", "Tilbehør", "Støvsuger", "Øks",
+    96→];
+    97→
+    98→const JAKT_SUBCATEGORIES = ["Våpen", "Optikk", "Termisk", "Bekledning", "Tilbehør"];
+    99→const VINTERSPORT_SUBCATEGORIES = ["Ski", "Skøyter", "Bindinger"];
+   100→const KNIVER_SUBCATEGORIES = ["Jaktkniv", "Allround", "Multiverktøy"];
+   101→const BEKLEDNING_SUBCATEGORIES = ["Jaktkoøye", "Friluftsjakke", "Fjellduk", "Regntøy"];
+   102→
+   103→// ---------- PRODUCTS ----------
+   104→// Helper to format a NOK price string from a number
+   105→function nok(n: number): string {
+   106→  // 1499 -> "kr 1 499"
+   107→  return "kr " + n.toLocaleString("no-NO").replace(/\u00a0/g, " ");
+   108→}
+   109→
+   110→interface SeedProduct {
+   111→  name: string;
+   112→  subtitle?: string;
+   113→  description?: string;
+   114→  priceNok: number;
+   115→  originalNok?: number;
+   116→  img: string;
+   117→  tag?: string;
+   118→  stock?: string;
+   119→  stockCount: number;
+   120→  category: string;        // top-level category name
+   121→  subcategory?: string;    // subcategory name (must exist above)
+   122→  brand?: string;          // brand name (must exist above)
+   123→  sales90: number;
+   124→  conversionRate: number;
+   125→  popularity: number;
+   126→  seasonBoost: number;
+   127→  margin: number;
+   128→  rating: number;
+   129→  reviewCount: number;
+   130→  ageDays: number;
+   131→  isNew?: boolean;
+   132→}
+   133→
+   134→const PRODUCTS: SeedProduct[] = [
+   135→  // ============ CAMPING — Pop-up telt ============
+   136→  {
+   137→    name: "#Nord 6 Model 2025", subtitle: "Pop-up telt for hele året",
+   138→    description: "Pop-up telt med 6 sift og god plass til 2–3 personer. Vannsøyle 5000 mm, aluminiumsramme, innertelt i ventilerende polyester. Leveres med barduner og plugg.",
+   139→    priceNok: 14999, img: "https://sfile.chatglm.cn/images-ppt/e8afc2db251f.jpg",
+   140→    tag: "Bestselger", stock: "20+ på lager", stockCount: 25,
+   141→    category: "Camping", subcategory: "Pop-up telt", brand: "Helsport",
+   142→    sales90: 142, conversionRate: 0.082, popularity: 92, seasonBoost: 1, margin: 0.22,
+   143→    rating: 4.8, reviewCount: 87, ageDays: 45,
+   144→  },
+   145→  {
+   146→    name: "#Nord 8 Model 2025", subtitle: "Pop-up telt for hele året",
+   147→    description: "Større utgave av #Nord med 8 sift — perfekt for lengre turer og familien. Vannsøyle 5000 mm og robust aluminiumsramme.",
+   148→    priceNok: 16999, img: "https://sfile.chatglm.cn/images-ppt/68aba7a27084.jpg",
+   149→    stock: "20+ på lager", stockCount: 22,
+   150→    category: "Camping", subcategory: "Pop-up telt", brand: "Helsport",
+   151→    sales90: 98, conversionRate: 0.068, popularity: 85, seasonBoost: 1, margin: 0.23,
+   152→    rating: 4.7, reviewCount: 64, ageDays: 45,
+   153→  },
+   154→  {
+   155→    name: "#Nord 9 Model 2025", subtitle: "Pop-up telt for hele året",
+   156→    description: "Største modell i #Nord-serien — 9 sift, god takhøyde og ekstra plass til utstyr.",
+   157→    priceNok: 16999, img: "https://sfile.chatglm.cn/images-ppt/f1163f0b7bce.jpg",
+   158→    stock: "20+ på lager", stockCount: 20,
+   159→    category: "Camping", subcategory: "Pop-up telt", brand: "Helsport",
+   160→    sales90: 76, conversionRate: 0.062, popularity: 80, seasonBoost: 1, margin: 0.23,
+   161→    rating: 4.6, reviewCount: 52, ageDays: 45,
+   162→  },
+   163→  {
+   164→    name: "Allround Ferret XT", subtitle: "Backpacking light — 3 personer",
+   165→    description: "Lettpakk telt for backpacking med opp til 3 personer. Lav vekt, liten pakkstørrelse.",
+   166→    priceNok: 5499, img: "https://sfile.chatglm.cn/images-ppt/ea2356160fba.jpg",
+   167→    stock: "1 på lager", stockCount: 1,
+   168→    category: "Camping", subcategory: "Pop-up telt", brand: "Bergans",
+   169→    sales90: 14, conversionRate: 0.038, popularity: 62, seasonBoost: 0.95, margin: 0.24,
+   170→    rating: 4.7, reviewCount: 18, ageDays: 90,
+   171→  },
+   172→  {
+   173→    name: "All-round Taurus", subtitle: "Backpacking light — 3 personer",
+   174→    description: "Allround telt for 3 personer med god ventilasjon og solid konstruksjon.",
+   175→    priceNok: 4499, img: "https://sfile.chatglm.cn/images-ppt/388366bc9760.jpg",
+   176→    stock: "1 på lager", stockCount: 1,
+   177→    category: "Camping", subcategory: "Pop-up telt", brand: "Helsport",
+   178→    sales90: 16, conversionRate: 0.04, popularity: 60, seasonBoost: 0.95, margin: 0.25,
+   179→    rating: 4.6, reviewCount: 14, ageDays: 90,
+   180→  },
+   181→
+   182→  // ============ CAMPING — Røykeovn / Bålpanne / Grill ============
+   183→  {
+   184→    name: "Abu Røken Small", subtitle: "Røykeovn med spritbrenner",
+   185→    description: "Kompakt røykeovn fra Abu Garcia med spritbrenner. Perfekt for røyking av fisk og småfelt vilt.",
+   186→    priceNok: 799, img: "https://sfile.chatglm.cn/images-ppt/aefa144deda5.jpg",
+   187→    stock: "3 på lager", stockCount: 3,
+   188→    category: "Camping", subcategory: "Røykeovn", brand: "Abu Garcia",
+   189→    sales90: 18, conversionRate: 0.044, popularity: 54, seasonBoost: 0.7, margin: 0.32,
+   190→    rating: 4.5, reviewCount: 16, ageDays: 120,
+   191→  },
+   192→  {
+   193→    name: "Bålpanne / Ildsted", subtitle: "Bålpanne / Ildsted",
+   194→    description: "Robust bålpanne i stål — perfekt for bålbrenning og matlaging utendørs. Inkluderer rist og askefang.",
+   195→    priceNok: 2799, img: "https://sfile.chatglm.cn/images-ppt/511d20454805.jpg",
+   196→    stock: "8 på lager", stockCount: 8,
+   197→    category: "Camping", subcategory: "Ovner", brand: "Helsport",
+   198→    sales90: 34, conversionRate: 0.06, popularity: 70, seasonBoost: 0.9, margin: 0.27,
+   199→    rating: 4.7, reviewCount: 24, ageDays: 60,
+   200→  },
+   201→  {
+   202→    name: "LotusGrill Classic", subtitle: "Bærbar grill",
+   203→    description: "Bærbar røykfri grill med batteridrevet vifte. Reduserer røyk med opptil 95%.klar på 4 minutter.",
+   204→    priceNok: 3140, img: "https://sfile.chatglm.cn/images-ppt/68a193c4b5cb.jpg",
+   205→    tag: "Bestselger", stock: "12 på lager", stockCount: 12,
+   206→    category: "Camping", subcategory: "Ovner", brand: "LotusGrill",
+   207→    sales90: 56, conversionRate: 0.07, popularity: 78, seasonBoost: 0.95, margin: 0.26,
+   208→    rating: 4.8, reviewCount: 42, ageDays: 50,
+   209→  },
+   210→  {
+   211→    name: "Alces BBQ Stick", subtitle: "Grillpinn",
+   212→    description: "Grillpinn i rustfritt stål — perfekte for pølser og brød over bålet.",
+   213→    priceNok: 79, img: "https://sfile.chatglm.cn/images-ppt/3da1336c2030.jpg",
+   214→    stock: "1 på lager", stockCount: 1,
+   215→    category: "Camping", subcategory: "Kjøkkenutstyr", brand: "Helsport",
+   216→    sales90: 42, conversionRate: 0.072, popularity: 58, seasonBoost: 0.85, margin: 0.45,
+   217→    rating: 4.4, reviewCount: 22, ageDays: 60,
+   218→  },
+   219→
+   220→  // ============ CAMPING — Kjøkkenutstyr ============
+   221→  {
+   222→    name: "Army Cutlery Set", subtitle: "Bestikksett",
+   223→    description: "Klassisk militært bestikksett i rustfritt stål. Kniv, gaffel, skje og åpner i kompakt etui.",
+   224→    priceNok: 199, img: "https://sfile.chatglm.cn/images-ppt/5bc42ac5a0b3.jpg",
+   225→    tag: "Bestselger", stock: "17 på lager", stockCount: 17,
+   226→    category: "Camping", subcategory: "Kjøkkenutstyr",
+   227→    sales90: 88, conversionRate: 0.094, popularity: 82, seasonBoost: 0.85, margin: 0.42,
+   228→    rating: 4.7, reviewCount: 54, ageDays: 150,
+   229→  },
+   230→  {
+   231→    name: "Real Turmat — Asian Curry", subtitle: "Tørrmat",
+   232→    description: "Norskprodusert tørrmat med asiatiske curriesmaker. Bare tilsett vann — klar på 8 minutter. 600 kcal/porsjon.",
+   233→    priceNok: 135, img: "https://sfile.chatglm.cn/images-ppt/9ac0322a02ef.jpg",
+   234→    stock: "11 på lager", stockCount: 11,
+   235→    category: "Camping", subcategory: "Kjøkkenutstyr", brand: "Real Turmat",
+   236→    sales90: 62, conversionRate: 0.082, popularity: 76, seasonBoost: 0.9, margin: 0.4,
+   237→    rating: 4.6, reviewCount: 42, ageDays: 60,
+   238→  },
+   239→  {
+   240→    name: "Real Turmat — Cod", subtitle: "Tørrmat — Bacalao",
+   241→    description: "Klassisk bacalao fra Real Turmat. Norsk klippfisk med tomat, potet og pimiento.",
+   242→    priceNok: 145, img: "https://sfile.chatglm.cn/images-ppt/66facb13a5ea.png",
+   243→    stock: "17 på lager", stockCount: 17,
+   244→    category: "Camping", subcategory: "Kjøkkenutstyr", brand: "Real Turmat",
+   245→    sales90: 54, conversionRate: 0.078, popularity: 72, seasonBoost: 0.9, margin: 0.4,
+   246→    rating: 4.7, reviewCount: 38, ageDays: 60,
+   247→  },
+   248→  {
+   249→    name: "Non-Stop Trekking Bowl", subtitle: "Trekking skål",
+   250→    description: "Robust skål for trekking og hundekjøring — nålestopp materiale som tåler ekstrem kulde.",
+   251→    priceNok: 259, img: "https://sfile.chatglm.cn/images-ppt/f8e4ba8a50d3.jpg",
+   252→    stock: "9 på lager", stockCount: 9,
+   253→    category: "Camping", subcategory: "Kjøkkenutstyr", brand: "Non-Stop Dogwear",
+   254→    sales90: 48, conversionRate: 0.062, popularity: 68, seasonBoost: 0.85, margin: 0.32,
+   255→    rating: 4.6, reviewCount: 34, ageDays: 100,
+   256→  },
+   257→
+   258→  // ============ CAMPING — Sovepose ============
+   259→  {
+   260→    name: "Barents Arctic 3 Polar", subtitle: "Ekspedisjonsovepose",
+   261→    description: "Profesjonell ekspedisjonsovepose for arktiske forhold. Komfort -25°C, ekstrem -40°C. Ned fyllkraft 800.",
+   262→    priceNok: 15000, img: "https://sfile.chatglm.cn/images-ppt/53b78937c6f4.png",
+   263→    tag: "Premium", stock: "1 på lager", stockCount: 1,
+   264→    category: "Camping", subcategory: "Soveposer", brand: "Barents",
+   265→    sales90: 8, conversionRate: 0.034, popularity: 70, seasonBoost: 0.95, margin: 0.22,
+   266→    rating: 4.9, reviewCount: 12, ageDays: 70,
+   267→  },
+   268→
+   269→  // ============ CAMPING — Lys ============
+   270→  {
+   271→    name: "Arbeidslampe LED", subtitle: "Oppladbar 7000lm",
+   272→    description: "Oppladbar LED-arbeidslampe med 7000 lumen. Vannavstøtende IP65, 4 lysmoduser og stativfeste.",
+   273→    priceNok: 930, img: "https://sfile.chatglm.cn/images-ppt/14e0a29ef17c.jpg",
+   274→    stock: "8 på lager", stockCount: 8,
+   275→    category: "Camping", subcategory: "Lys",
+   276→    sales90: 24, conversionRate: 0.054, popularity: 60, seasonBoost: 0.7, margin: 0.3,
+   277→    rating: 4.5, reviewCount: 18, ageDays: 80,
+   278→  },
+   279→  {
+   280→    name: "Proff Tripod Arbeidslampe", subtitle: "5000lm LED — stativ",
+   281→    description: "Stativmontert arbeidslampe med 5000 lumen. Inkluderer teleskopstativ (opptil 2m) og 2x USB-uttak.",
+   282→    priceNok: 2799, img: "https://sfile.chatglm.cn/images-ppt/165fe0ad0a11.jpg",
+   283→    stock: "3 på lager", stockCount: 3,
+   284→    category: "Camping", subcategory: "Lys",
+   285→    sales90: 12, conversionRate: 0.042, popularity: 54, seasonBoost: 0.7, margin: 0.26,
+   286→    rating: 4.6, reviewCount: 10, ageDays: 80,
+   287→  },
+   288→
+   289→  // ============ CAMPING — Tilbehør / Pop-up telt ============
+   290→  {
+   291→    name: "Aluminium Box 2.0", subtitle: "For gasskomfy — ny forbedret utgave",
+   292→    description: "Aluminiumsboks 2.0 for gasskomfy — ny forbedret utgave med bedre isolasjon og justerbar ventilasjon.",
+   293→    priceNok: 4740, img: "https://sfile.chatglm.cn/images-ppt/882edf74a388.jpg",
+   294→    stock: "14 på lager", stockCount: 14,
+   295→    category: "Camping", subcategory: "Tilbehør",
+   296→    sales90: 28, conversionRate: 0.05, popularity: 66, seasonBoost: 0.8, margin: 0.28,
+   297→    rating: 4.7, reviewCount: 32, ageDays: 35, isNew: true,
+   298→  },
+   299→  {
+   300→    name: "Guylines for Pop-Up Tent 4-pack", subtitle: "Standard bardun — Ifish",
+   301→    description: "Standard bardun 4-pakning for pop-up telt. 4 mm polyester med justerbar spenne.",
+   302→    priceNok: 149, img: "https://sfile.chatglm.cn/images-ppt/9fda18bb75cc.jpg",
+   303→    stock: "20+ på lager", stockCount: 28,
+   304→    category: "Camping", subcategory: "Pop-up telt", brand: "Ifish",
+   305→    sales90: 42, conversionRate: 0.068, popularity: 64, seasonBoost: 0.8, margin: 0.45,
+   306→    rating: 4.6, reviewCount: 28, ageDays: 100,
+   307→  },
+   308→  {
+   309→    name: "Oversize Guylines 4-pack", subtitle: "Forsterket bardun",
+   310→    description: "Forsterket bardun for ekstremvær — 6 mm polyester med refleks og bruddstyrke 250 kg.",
+   311→    priceNok: 199, img: "https://sfile.chatglm.cn/images-ppt/34a5663695ec.jpg",
+   312→    stock: "20+ på lager", stockCount: 26,
+   313→    category: "Camping", subcategory: "Pop-up telt", brand: "Ifish",
+   314→    sales90: 34, conversionRate: 0.06, popularity: 58, seasonBoost: 0.8, margin: 0.44,
+   315→    rating: 4.5, reviewCount: 22, ageDays: 100,
+   316→  },
+   317→  {
+   318→    name: "Bardunstrammere 10-pk", subtitle: "Helsport",
+   319→    description: "Bardunstrammere 10-pakning fra Helsport — standard aluminiumstype som passer de fleste telt.",
+   320→    priceNok: 79, img: "https://sfile.chatglm.cn/images-ppt/9fda18bb75cc.jpg",
+   321→    stock: "1 på lager", stockCount: 1,
+   322→    category: "Camping", subcategory: "Pop-up telt", brand: "Helsport",
+   323→    sales90: 38, conversionRate: 0.07, popularity: 62, seasonBoost: 0.8, margin: 0.5,
+   324→    rating: 4.5, reviewCount: 24, ageDays: 180,
+   325→  },
+   326→  {
+   327→    name: "Aoede SyncPack", subtitle: "Sort",
+   328→    description: "Vannavstøtende sync-pakning for elektronikk på tur. Kapasitet 5 L, ladbart via USB-C.",
+   329→    priceNok: 1800, img: "https://sfile.chatglm.cn/images-ppt/9169cc45e6bc.jpg",
+   330→    stock: "2 på lager", stockCount: 2,
+   331→    category: "Camping", subcategory: "Bager",
+   332→    sales90: 12, conversionRate: 0.042, popularity: 48, seasonBoost: 0.7, margin: 0.3,
+   333→    rating: 4.5, reviewCount: 8, ageDays: 70,
+   334→  },
+   335→  {
+   336→    name: "Baltic United Moulders Bobbin — 2520", subtitle: "Fiske — bobbin",
+   337→    description: "Bobbin for fluefiske fra Baltic United. Klassisk design i messing med justerbar spenning.",
+   338→    priceNok: 285, img: "https://sfile.chatglm.cn/images-ppt/77f175e25b22.jpg",
+   339→    stock: "10 på lager", stockCount: 10,
+   340→    category: "Camping", subcategory: "Tilbehør",
+   341→    sales90: 22, conversionRate: 0.048, popularity: 48, seasonBoost: 0.7, margin: 0.36,
+   342→    rating: 4.4, reviewCount: 14, ageDays: 110,
+   343→  },
+   344→  {
+   345→    name: "Batteri 6LF22 9V", subtitle: "Liten flat 9V",
+   346→    description: "Standard 9V batteri (6LF22). Alkalisk, lang holdbarhet — passer til lys, elektronikk og dødmannsknapper.",
+   347→    priceNok: 58, img: "https://sfile.chatglm.cn/images-ppt/35dec6a69d33.jpg",
+   348→    stock: "11 på lager", stockCount: 11,
+   349→    category: "Camping", subcategory: "Tilbehør",
+   350→    sales90: 48, conversionRate: 0.075, popularity: 52, seasonBoost: 0.5, margin: 0.5,
+   351→    rating: 4.3, reviewCount: 18, ageDays: 250,
+   352→  },
+   353→
+   354→  // ============ CAMPING — Søkeutstyr / Tilbehør ============
+   355→  {
+   356→    name: "Aqiila Airbird DUO VB1", subtitle: "2-i-1 støvsuger og luftblåser — oppladbar",
+   357→    description: "Oppladbar 2-i-1 støvsuger og luftblåser. 130W motor, 35 min driftstid, HEPA-filter.",
+   358→    priceNok: 699, img: "https://sfile.chatglm.cn/images-ppt/ed95c4b5f86b.jpg",
+   359→    stock: "2 på lager", stockCount: 2,
+   360→    category: "Camping", subcategory: "Støvsuger", brand: "Aqiila",
+   361→    sales90: 22, conversionRate: 0.058, popularity: 56, seasonBoost: 0.75, margin: 0.34,
+   362→    rating: 4.4, reviewCount: 12, ageDays: 50, isNew: true,
+   363→  },
+   364→  {
+   365→    name: "Aqiila Powerbird B20B 20000mAh", subtitle: "Powerbank — 20W — sort",
+   366→    description: "Powerbank med 20000 mAh og 20W PD hurtiglading. To USB-C og én USB-A. IPX4 vanntett.",
+   367→    priceNok: 499, img: "https://sfile.chatglm.cn/images-ppt/b2562b193aae.jpg",
+   368→    stock: "6 på lager", stockCount: 6,
+   369→    category: "Camping", subcategory: "Tilbehør", brand: "Aqiila",
+   370→    sales90: 48, conversionRate: 0.082, popularity: 74, seasonBoost: 0.9, margin: 0.36,
+   371→    rating: 4.6, reviewCount: 38, ageDays: 40, isNew: true,
+   372→  },
+   373→  {
+   374→    name: "Aqiila Powerbird BS10", subtitle: "Solcelle powerbank 10000mAh",
+   375→    description: "Solcelle-drevet powerbank med 10000 mAh. Lidfet 20W PD, integrert LED-lys og kompass.",
+   376→    priceNok: 999, img: "https://sfile.chatglm.cn/images-ppt/56ae7e0a5b50.jpg",
+   377→    stock: "1 på lager", stockCount: 1,
+   378→    category: "Camping", subcategory: "Tilbehør", brand: "Aqiila",
+   379→    sales90: 18, conversionRate: 0.052, popularity: 62, seasonBoost: 0.95, margin: 0.32,
+   380→    rating: 4.5, reviewCount: 16, ageDays: 30, isNew: true,
+   381→  },
+   382→  {
+   383→    name: "Aqiila Tagbird Doorbell", subtitle: "Ringeklokke m/ sporingsbrikke — Apple & Android",
+   384→    description: "Ringeklokke med integrert sporingsbrikke (Apple Find My & Android). 2K video, toveis lyd.",
+   385→    priceNok: 499, img: "https://sfile.chatglm.cn/images-ppt/ddf193e5ba3c.jpg",
+   386→    stock: "3 på lager", stockCount: 3,
+   387→    category: "Camping", subcategory: "Søkeutstyr", brand: "Aqiila",
+   388→    sales90: 14, conversionRate: 0.046, popularity: 52, seasonBoost: 0.6, margin: 0.34,
+   389→    rating: 4.3, reviewCount: 8, ageDays: 25, isNew: true,
+   390→  },
+   391→  {
+   392→    name: "Aqiila Tagbird Tracking Tag", subtitle: "Sporingsbrikke m/deksel — Apple & Android",
+   393→    description: "Sporingsbrikke med deksel — fungerer med både Apple Find My og Android. 1 års batteritid.",
+   394→    priceNok: 349, img: "https://sfile.chatglm.cn/images-ppt/90ada0f6261a.jpg",
+   395→    stock: "16 på lager", stockCount: 16,
+   396→    category: "Camping", subcategory: "Søkeutstyr", brand: "Aqiila",
+   397→    sales90: 36, conversionRate: 0.072, popularity: 68, seasonBoost: 0.6, margin: 0.38,
+   398→    rating: 4.6, reviewCount: 22, ageDays: 25, isNew: true,
+   399→  },
+   400→
+   401→  // ============ FISKE — Fiskestenger / Fluefiske / Agn ============
+   402→  {
+   403→    name: "#Nord Vidda 8'", subtitle: "Komplett fiskesett",
+   404→    description: "Komplett fiskesett med 8-fots stang, snelle og linje. Perfekt for nybegynnere og som sekundærstang.",
+   405→    priceNok: 1699, img: "https://sfile.chatglm.cn/images-ppt/23bba380e05b.webp",
+   406→    tag: "Bestselger", stock: "20+ på lager", stockCount: 28,
+   407→    category: "Fiske", subcategory: "Fiskestenger",
+   408→    sales90: 188, conversionRate: 0.094, popularity: 95, seasonBoost: 1, margin: 0.24,
+   409→    rating: 4.9, reviewCount: 124, ageDays: 60,
+   410→  },
+   411→  {
+   412→    name: "#Nord Fjæra 9'", subtitle: "Komplett fiskesett",
+   413→    description: "9-fots stang med snelle og linje — bygget for kystfiske. Bedre kastelengde enn Vidda 8'.",
+   414→    priceNok: 1799, img: "https://sfile.chatglm.cn/images-ppt/6496eef3ed4e.jpg",
+   415→    stock: "15 på lager", stockCount: 15,
+   416→    category: "Fiske", subcategory: "Fiskestenger",
+   417→    sales90: 112, conversionRate: 0.072, popularity: 82, seasonBoost: 1, margin: 0.25,
+   418→    rating: 4.7, reviewCount: 76, ageDays: 60,
+   419→  },
+   420→  {
+   421→    name: "Pool 12 Accelerator", subtitle: "Fluefiske combo",
+   422→    description: "Komplett fluefiske-sett — 9' #5 stang, snelle med justerbar brems og flytende fluesnøre.",
+   423→    priceNok: 2999, img: "https://sfile.chatglm.cn/images-ppt/7c4578463445.jpg",
+   424→    tag: "Nyhet", stock: "10 på lager", stockCount: 10,
+   425→    category: "Fiske", subcategory: "Fluefiske",
+   426→    sales90: 42, conversionRate: 0.048, popularity: 68, seasonBoost: 0.9, margin: 0.27,
+   427→    rating: 4.6, reviewCount: 32, ageDays: 15, isNew: true,
+   428→  },
+   429→  {
+   430→    name: "Sølvkroken SX Special 40", subtitle: "Limited Edition 8' 4–18g",
+   431→    description: "Limited Edition 8-fots stang fra Sølvkroken — kast vekt 4–18g. Numerert serie på 500 eksemplarer.",
+   432→    priceNok: 4990, img: "https://sfile.chatglm.cn/images-ppt/b08d3757a058.jpg",
+   433→    tag: "Begrenset", stock: "5 på lager", stockCount: 5,
+   434→    category: "Fiske", subcategory: "Fiskestenger",
+   435→    sales90: 24, conversionRate: 0.038, popularity: 58, seasonBoost: 0.8, margin: 0.3,
+   436→    rating: 4.8, reviewCount: 22, ageDays: 90,
+   437→  },
+   438→  {
+   439→    name: "#Northern Alligator", subtitle: "Agn",
+   440→    description: "Realistisk wobbler i 6 cm — perfekt for ørret og røye. Dybde 0.5–1.2 m.",
+   441→    priceNok: 69, img: "https://sfile.chatglm.cn/images-ppt/ec00f18b6c4c.jpg",
+   442→    stock: "100+ på lager", stockCount: 120,
+   443→    category: "Fiske", subcategory: "Agn",
+   444→    sales90: 340, conversionRate: 0.12, popularity: 88, seasonBoost: 1, margin: 0.42,
+   445→    rating: 4.5, reviewCount: 156, ageDays: 300,
+   446→  },
+   447→  {
+   448→    name: "#North Scorpio 13g", subtitle: "Agn",
+   449→    description: "13g juksa / pirk med tasteflikker — perfekt for torsk og hyse i saltvann.",
+   450→    priceNok: 59, img: "https://sfile.chatglm.cn/images-ppt/391eff434f76.jpg",
+   451→    stock: "100+ på lager", stockCount: 110,
+   452→    category: "Fiske", subcategory: "Agn",
+   453→    sales90: 280, conversionRate: 0.11, popularity: 84, seasonBoost: 1, margin: 0.4,
+   454→    rating: 4.4, reviewCount: 132, ageDays: 300,
+   455→  },
+   456→
+   457→  // ============ FOOTWEAR ============
+   458→  {
+   459→    name: "Harkila Pro Hunter Boot", subtitle: "Vannavstøtende jaktko",
+   460→    description: "Vannavstøtende jaktko fra Härkila med membran. Membran 10 000 mm, forsterket tå og hæl.",
+   461→    priceNok: 3490, img: "https://sfile.chatglm.cn/images-ppt/b77fba9987e5.jpg",
+   462→    tag: "Bestselger", stock: "14 på lager", stockCount: 14,
+   463→    category: "Footwear", brand: "Härkila",
+   464→    sales90: 64, conversionRate: 0.058, popularity: 76, seasonBoost: 0.9, margin: 0.28,
+   465→    rating: 4.7, reviewCount: 52, ageDays: 100,
+   466→  },
+   467→  {
+   468→    name: "Lundhags Tornby Sole", subtitle: "Allround fjellstøvel",
+   469→    description: "Allround fjellstøvel fra Lundhags med utskiftbare såler. Lær överdel og robust gummi-konstruksjon.",
+   470→    priceNok: 2890, originalNok: 3290,
+   471→    img: "https://sfile.chatglm.cn/images-ppt/991d03607009.png",
+   472→    tag: "Tilbud", stock: "6 på lager", stockCount: 6,
+   473→    category: "Footwear", brand: "Lundhags",
+   474→    sales90: 38, conversionRate: 0.052, popularity: 64, seasonBoost: 0.8, margin: 0.22,
+   475→    rating: 4.6, reviewCount: 38, ageDays: 150,
+   476→  },
+   477→  {
+   478→    name: "Aigle Parcours 2 ISO", subtitle: "Vadestøvel med isolasjon",
+   479→    description: "Isolert vadestøvel fra Aigle — 4.5 mm neopren for varme ved kaldt vannfiske.",
+   480→    priceNok: 2490, img: "https://sfile.chatglm.cn/images-ppt/74620968cbac.jpg",
+   481→    stock: "9 på lager", stockCount: 9,
+   482→    category: "Footwear", brand: "Aigle",
+   483→    sales90: 28, conversionRate: 0.044, popularity: 58, seasonBoost: 0.9, margin: 0.26,
+   484→    rating: 4.5, reviewCount: 24, ageDays: 120,
+   485→  },
+   486→
+   487→  // ============ GAVEKORT ============
+   488→  {
+   489→    name: "Gavekort kr 500", subtitle: "Digitalt gavekort",
+   490→    description: "Digitalt gavekort på 500 kroner — leveres på e-post innen 24 timer. Gyldig i 2 år.",
+   491→    priceNok: 500, img: "https://sfile.chatglm.cn/images-ppt/ec7f1e008582.jpg",
+   492→    stock: "Ubegrenset", stockCount: 9999,
+   493→    category: "Gavekort",
+   494→    sales90: 220, conversionRate: 0.18, popularity: 90, seasonBoost: 1, margin: 0.5,
+   495→    rating: 5, reviewCount: 0, ageDays: 365,
+   496→  },
+   497→  {
+   498→    name: "Gavekort kr 1000", subtitle: "Digitalt gavekort",
+   499→    description: "Digitalt gavekort på 1000 kroner — perfekt gave til jegeren eller fiskeren. Gyldig i 2 år.",
+   500→    priceNok: 1000, img: "https://sfile.chatglm.cn/images-ppt/4ef7051f7361.jpg",
+   501→    tag: "Populært", stock: "Ubegrenset", stockCount: 9999,
+   502→    category: "Gavekort",
+   503→    sales90: 180, conversionRate: 0.16, popularity: 85, seasonBoost: 1, margin: 0.5,
+   504→    rating: 5, reviewCount: 0, ageDays: 365,
+   505→  },
+   506→  {
+   507→    name: "Gavekort kr 2500", subtitle: "Digitalt gavekort — fri frakt",
+   508→    description: "Digitalt gavekort på 2500 kroner med fri frakt i Norge. Gyldig i 2 år fra utstedelse.",
+   509→    priceNok: 2500, img: "https://sfile.chatglm.cn/images-ppt/9abfed96bd32.jpg",
+   510→    stock: "Ubegrenset", stockCount: 9999,
+   511→    category: "Gavekort",
+   512→    sales90: 90, conversionRate: 0.14, popularity: 72, seasonBoost: 1, margin: 0.5,
+   513→    rating: 5, reviewCount: 0, ageDays: 365,
+   514→  },
+   515→
+   516→  // ============ JAKT ============
+   517→  {
+   518→    name: "Sauer 100 Highland XLT", subtitle: "Presisjonsrifle",
+   519→    description: "Sauer 100 Highland XLT — tysk presisjonsrifle i .308 Win. Sauer-lås, justerbar avtrekk, 3+1 skudd.",
+   520→    priceNok: 14990, img: "https://sfile.chatglm.cn/images-ppt/1e092c6839b8.jpg",
+   521→    tag: "Bestselger", stock: "4 på lager", stockCount: 4,
+   522→    category: "Jakt", subcategory: "Våpen", brand: "Sauer",
+   523→    sales90: 18, conversionRate: 0.038, popularity: 78, seasonBoost: 0.9, margin: 0.18,
+   524→    rating: 4.9, reviewCount: 44, ageDays: 80,
+   525→  },
+   526→  {
+   527→    name: "Zeiss Conquest HD 10x42", subtitle: "Kikkert",
+   528→    description: "Zeiss Conquest HD 10x42 — tysk optikk med HD-linser, 10x forstørrelse og 42 mm objektiv. Vanntett og gassfylt.",
+   529→    priceNok: 8490, originalNok: 9990,
+   530→    img: "https://sfile.chatglm.cn/images-ppt/aa16d454229c.webp",
+   531→    tag: "Tilbud", stock: "7 på lager", stockCount: 7,
+   532→    category: "Jakt", subcategory: "Optikk", brand: "Zeiss",
+   533→    sales90: 32, conversionRate: 0.046, popularity: 72, seasonBoost: 0.95, margin: 0.22,
+   534→    rating: 4.8, reviewCount: 58, ageDays: 130,
+   535→  },
+   536→  {
+   537→    name: "ThermTec Cyclops 235", subtitle: "Termisk kamera",
+   538→    description: "ThermTec Cyclops 235 — termisk kamera for jakt og overvåking. 384×288 sensor, 35 mK sensitivitet, WiFi.",
+   539→    priceNok: 22500, img: "https://sfile.chatglm.cn/images-ppt/b7d97df6e6e1.png",
+   540→    tag: "Nyhet", stock: "3 på lager", stockCount: 3,
+   541→    category: "Jakt", subcategory: "Termisk", brand: "ThermTec",
+   542→    sales90: 12, conversionRate: 0.028, popularity: 65, seasonBoost: 0.9, margin: 0.2,
+   543→    rating: 4.7, reviewCount: 18, ageDays: 10, isNew: true,
+   544→  },
+   545→
+   546→  // ============ HUSDYR ============
+   547→  {
+   548→    name: "Non-Stop Trekking Bowl", subtitle: "Trekking skål",
+   549→    description: "Trekking skål fra Non-Stop Dogwear — i myk, fleksibel silikon. Folds sammen, vekt kun 95 g.",
+   550→    priceNok: 259, img: "https://sfile.chatglm.cn/images-ppt/f8e4ba8a50d3.jpg",
+   551→    stock: "9 på lager", stockCount: 9,
+   552→    category: "Husdyr", brand: "Non-Stop Dogwear",
+   553→    sales90: 48, conversionRate: 0.062, popularity: 68, seasonBoost: 0.85, margin: 0.32,
+   554→    rating: 4.6, reviewCount: 34, ageDays: 100,
+   555→  },
+   556→  {
+   557→    name: "Fjord Overall Regn Jakke", subtitle: "Sort — hund",
+   558→    description: "Regnjakke/overall til hund fra Fjord. Vannsøyle 5000 mm, justerbare ben, refleksdetaljer.",
+   559→    priceNok: 1499, img: "https://sfile.chatglm.cn/images-ppt/d6a883334e47.jpg",
+   560→    stock: "13 på lager", stockCount: 13,
+   561→    category: "Husdyr",
+   562→    sales90: 36, conversionRate: 0.054, popularity: 64, seasonBoost: 0.9, margin: 0.3,
+   563→    rating: 4.5, reviewCount: 28, ageDays: 110,
+   564→  },
+   565→  {
+   566→    name: "Bungee Tau 2 m", subtitle: "Bungee leash",
+   567→    description: "Bungee-tau 2 m med integrated støtdemper. For hundekjøring og canicross.",
+   568→    priceNok: 649, img: "https://sfile.chatglm.cn/images-ppt/c0a192b80802.jpg",
+   569→    stock: "På vei 07/07", stockCount: 0,
+   570→    category: "Husdyr", brand: "Non-Stop Dogwear",
+   571→    sales90: 22, conversionRate: 0.042, popularity: 52, seasonBoost: 0.8, margin: 0.34,
+   572→    rating: 4.4, reviewCount: 16, ageDays: 90,
+   573→  },
+   574→  {
+   575→    name: "Omega 3 Olje 300ml", subtitle: "Non-Stop Omega 3",
+   576→    description: "Omega 3-olje til hund — 300 ml. Fremmer glansfull pels, leddhelse og immunforsvar.",
+   577→    priceNok: 258, img: "https://sfile.chatglm.cn/images-ppt/057f28164bd6.jpg",
+   578→    stock: "3 på lager", stockCount: 3,
+   579→    category: "Husdyr", brand: "Non-Stop Dogwear",
+   580→    sales90: 18, conversionRate: 0.038, popularity: 48, seasonBoost: 0.7, margin: 0.38,
+   581→    rating: 4.5, reviewCount: 12, ageDays: 200,
+   582→  },
+   583→  {
+   584→    name: "Provit Frossen Okse 3kg", subtitle: "m/vitaminer",
+   585→    description: "Provit frossen hundemat med oksekjøtt og vitaminer — 3 kg porsjonspakning.",
+   586→    priceNok: 199, img: "https://sfile.chatglm.cn/images-ppt/ca46f4f946e3.jpg",
+   587→    stock: "12 på lager", stockCount: 12,
+   588→    category: "Husdyr", brand: "Provit",
+   589→    sales90: 64, conversionRate: 0.07, popularity: 72, seasonBoost: 0.85, margin: 0.36,
+   590→    rating: 4.7, reviewCount: 42, ageDays: 80,
+   591→  },
+   592→
+   593→  // ============ KLEVEN FLUER (under Fiske > Fluefiske) ============
+   594→  {
+   595→    name: "Kleven Flue — Røye Special", subtitle: "Bundet for hånd",
+   596→    description: "Håndbundet røyeflue fra Kleven — bundet for norske høyfjellsstasjoner. Våtflue size 12.",
+   597→    priceNok: 49, img: "https://sfile.chatglm.cn/images-ppt/655eb41c69e7.jpg",
+   598→    tag: "Bestselger", stock: "100+ på lager", stockCount: 150,
+   599→    category: "Fiske", subcategory: "Fluefiske", brand: "Kleven Fluer",
+   600→    sales90: 410, conversionRate: 0.14, popularity: 96, seasonBoost: 1, margin: 0.55,
+   601→    rating: 4.9, reviewCount: 88, ageDays: 200,
+   602→  },
+   603→  {
+   604→    name: "Kleven Flue — Ørret Select", subtitle: "Bundet for hånd",
+   605→    description: "Håndbundet ørretflue fra Kleven — tørrflue size 14. Klassisk pattern for kveldsfiske.",
+   606→    priceNok: 49, img: "https://sfile.chatglm.cn/images-ppt/6ca9d31706cd.jpg",
+   607→    stock: "100+ på lager", stockCount: 140,
+   608→    category: "Fiske", subcategory: "Fluefiske", brand: "Kleven Fluer",
+   609→    sales90: 320, conversionRate: 0.12, popularity: 90, seasonBoost: 1, margin: 0.55,
+   610→    rating: 4.8, reviewCount: 64, ageDays: 200,
+   611→  },
+   612→  {
+   613→    name: "Kleven Fluesett 12stk", subtitle: "Assorterte fluer",
+   614→    description: "Kleven fluesett — 12 håndbundne fluer i gaveeske. Blanding av våt- og tørrfluer for norsk fiske.",
+   615→    priceNok: 449, originalNok: 549,
+   616→    img: "https://sfile.chatglm.cn/images-ppt/e6eb82c6baa6.jpg",
+   617→    tag: "Tilbud", stock: "25 på lager", stockCount: 25,
+   618→    category: "Fiske", subcategory: "Fluefiske", brand: "Kleven Fluer",
+   619→    sales90: 88, conversionRate: 0.08, popularity: 78, seasonBoost: 1, margin: 0.45,
+   620→    rating: 4.7, reviewCount: 36, ageDays: 30, isNew: true,
+   621→  },
+   622→
+   623→  // ============ BEKLEDNING ============
+   624→  {
+   625→    name: "Harkila Pro Hunter X", subtitle: "Jaktkoøye",
+   626→    description: "Härkila Pro Hunter X jaktkoøye — 2-lags membran, justerbar hette og ventilasjon. Vannsøyle 20 000 mm.",
+   627→    priceNok: 5990, originalNok: 6990,
+   628→    img: "https://sfile.chatglm.cn/images-ppt/7dd4d6512c58.jpg",
+   629→    tag: "Tilbud", stock: "8 på lager", stockCount: 8,
+   630→    category: "Bekledning", subcategory: "Jaktkoøye", brand: "Härkila",
+   631→    sales90: 42, conversionRate: 0.052, popularity: 70, seasonBoost: 0.95, margin: 0.24,
+   632→    rating: 4.7, reviewCount: 48, ageDays: 140,
+   633→  },
+   634→  {
+   635→    name: "Fjellreven Skogso Jacket", subtitle: "Friluftsjakke",
+   636→    description: "Fjellräven Skogso Jacket — G-1000 Eco med justerbar hette. Klassisk friluftsjakke for allsidig bruk.",
+   637→    priceNok: 2499, img: "https://sfile.chatglm.cn/images-ppt/d6a883334e47.jpg",
+   638→    stock: "11 på lager", stockCount: 11,
+   639→    category: "Bekledning", subcategory: "Friluftsjakke", brand: "Fjellräven",
+   640→    sales90: 56, conversionRate: 0.062, popularity: 74, seasonBoost: 0.9, margin: 0.28,
+   641→    rating: 4.6, reviewCount: 62, ageDays: 90,
+   642→  },
+   643→  {
+   644→    name: "Jerven Fjellduk Hunter", subtitle: "Allsidig fjellduk",
+   645→    description: "Jerven Fjellduk Hunter — flerfunksjons fjellduk som kan brukes som poncho, vindsekk eller sitteunderlag.",
+   646→    priceNok: 1990, img: "https://sfile.chatglm.cn/images-ppt/1b317ecc40f9.png",
+   647→    tag: "Bestselger", stock: "16 på lager", stockCount: 16,
+   648→    category: "Bekledning", subcategory: "Fjellduk", brand: "Jerven",
+   649→    sales90: 78, conversionRate: 0.072, popularity: 82, seasonBoost: 0.95, margin: 0.3,
+   650→    rating: 4.8, reviewCount: 71, ageDays: 70,
+   651→  },
+   652→  {
+   653→    name: "Bergans Hetland 70L", subtitle: "Ekspedisjonssekk",
+   654→    description: "Bergans Hetland 70L — ekspedisjonssekk med justerbart ryggsystem. God bæreevne for lengre turer.",
+   655→    priceNok: 2890, img: "https://sfile.chatglm.cn/images-ppt/9169cc45e6bc.jpg",
+   656→    stock: "10 på lager", stockCount: 10,
+   657→    category: "Camping", subcategory: "Bager", brand: "Bergans",
+   658→    sales90: 36, conversionRate: 0.05, popularity: 72, seasonBoost: 0.85, margin: 0.27,
+   659→    rating: 4.7, reviewCount: 40, ageDays: 75,
+   660→  },
+   661→
+   662→  // ============ KNIVER ============
+   663→  {
+   664→    name: "Brusletto Bamsen Masur", subtitle: "Knallgod Allround Kniv",
+   665→    description: "Brusletto Bamsen — klassisk norsk allroundkniv med masurbjørk håndtak. 3 mm Sandvik 12C27 blad, 92 mm lengde.",
+   666→    priceNok: 1599, img: "https://sfile.chatglm.cn/images-ppt/718b6c83dd87.jpg",
+   667→    tag: "Bestselger", stock: "9 på lager", stockCount: 9,
+   668→    category: "Kniver", subcategory: "Allround", brand: "Brusletto",
+   669→    sales90: 44, conversionRate: 0.07, popularity: 80, seasonBoost: 0.95, margin: 0.3,
+   670→    rating: 4.8, reviewCount: 56, ageDays: 100,
+   671→  },
+   672→  {
+   673→    name: "Helle Vegge Kniv", subtitle: "Norsk håndlagd kniv",
+   674→    description: "Helle Vegge — håndlagd norsk jaktkniv med ask håndtak og sandblåst finish. Triple-laminert rustfritt stål.",
+   675→    priceNok: 1450, img: "https://sfile.chatglm.cn/images-ppt/718b6c83dd87.jpg",
+   676→    tag: "Nyhet", stock: "12 på lager", stockCount: 12,
+   677→    category: "Kniver", subcategory: "Jaktkniv", brand: "Helle",
+   678→    sales90: 28, conversionRate: 0.055, popularity: 72, seasonBoost: 0.9, margin: 0.28,
+   679→    rating: 4.7, reviewCount: 32, ageDays: 20, isNew: true,
+   680→  },
+   681→
+   682→  // ============ OUTLET ============
+   683→  {
+   684→    name: "Gulv til isfisketelt", subtitle: "Gulv",
+   685→    description: "Gulv til isfisketelt — i kraftig PE-plast. Vannavstøtende, sammenleggbart.",
+   686→    priceNok: 1470, originalNok: 2100,
+   687→    img: "https://sfile.chatglm.cn/images-ppt/2ba5cae55a30.jpg",
+   688→    tag: "-30%", stock: "20+ på lager", stockCount: 22,
+   689→    category: "Outlet",
+   690→    sales90: 28, conversionRate: 0.058, popularity: 60, seasonBoost: 0.7, margin: 0.15,
+   691→    rating: 4.4, reviewCount: 22, ageDays: 250,
+   692→  },
+   693→  {
+   694→    name: "Lundhags Tornby Sole (Outlet)", subtitle: "Allround fjellstøvel",
+   695→    description: "Lundhags Tornby Sole — outletvare med kosmetisk feil. Full funksjonalitet, begrenset antall.",
+   696→    priceNok: 2890, originalNok: 3290,
+   697→    img: "https://sfile.chatglm.cn/images-ppt/991d03607009.png",
+   698→    tag: "-12%", stock: "6 på lager", stockCount: 6,
+   699→    category: "Outlet", brand: "Lundhags",
+   700→    sales90: 18, conversionRate: 0.048, popularity: 54, seasonBoost: 0.8, margin: 0.18,
+   701→    rating: 4.5, reviewCount: 28, ageDays: 180,
+   702→  },
+   703→  {
+   704→    name: "Harkila Pro Hunter X (Outlet)", subtitle: "Jaktkoøye",
+   705→    description: "Härkila Pro Hunter X jaktkoøye — outletvare fra forrige sesong. Størrelser S–XL til sterke priser.",
+   706→    priceNok: 5990, originalNok: 6990,
+   707→    img: "https://sfile.chatglm.cn/images-ppt/7dd4d6512c58.jpg",
+   708→    tag: "-14%", stock: "4 på lager", stockCount: 4,
+   709→    category: "Outlet", brand: "Härkila",
+   710→    sales90: 14, conversionRate: 0.042, popularity: 58, seasonBoost: 0.9, margin: 0.16,
+   711→    rating: 4.6, reviewCount: 38, ageDays: 200,
+   712→  },
+   713→  {
+   714→    name: "Zeiss Conquest HD 10x42 (Outlet)", subtitle: "Kikkert",
+   715→    description: "Zeiss Conquest HD 10x42 — outletvare med åpnet emballasje. Full garanti, full funksjonalitet.",
+   716→    priceNok: 8490, originalNok: 9990,
+   717→    img: "https://sfile.chatglm.cn/images-ppt/aa16d454229c.webp",
+   718→    tag: "-15%", stock: "3 på lager", stockCount: 3,
+   719→    category: "Outlet", brand: "Zeiss",
+   720→    sales90: 16, conversionRate: 0.046, popularity: 62, seasonBoost: 0.9, margin: 0.14,
+   721→    rating: 4.7, reviewCount: 32, ageDays: 220,
+   722→  },
+   723→
+   724→  // ============ VINTERSPORT ============
+   725→  {
+   726→    name: "Madshus Hyper R Skate", subtitle: "Skøyteklasser",
+   727→    description: "Madshus Hyper R Skate — toppmodell skøyt ski for konkurranseracing. Nanograff bunn, karbonkonstruksjon.",
+   728→    priceNok: 3490, img: "https://sfile.chatglm.cn/images-ppt/d680255f301c.jpg",
+   729→    tag: "Nyhet", stock: "12 på lager", stockCount: 12,
+   730→    category: "Vintersport", subcategory: "Skøyter", brand: "Madshus",
+   731→    sales90: 38, conversionRate: 0.052, popularity: 72, seasonBoost: 1, margin: 0.26,
+   732→    rating: 4.7, reviewCount: 24, ageDays: 12, isNew: true,
+   733→  },
+   734→  {
+   735→    name: "Fischer Cruiser Crown", subtitle: "Turski med feller",
+   736→    description: "Fischer Cruiser Crown — turski med integrerte feller. Perfekt for inngående og tur i preparerte løyper.",
+   737→    priceNok: 2290, img: "https://sfile.chatglm.cn/images-ppt/5e0d4721eea5.jpg",
+   738→    stock: "18 på lager", stockCount: 18,
+   739→    category: "Vintersport", subcategory: "Ski", brand: "Fischer",
+   740→    sales90: 52, conversionRate: 0.064, popularity: 78, seasonBoost: 1, margin: 0.28,
+   741→    rating: 4.6, reviewCount: 42, ageDays: 40,
+   742→  },
+   743→  {
+   744→    name: "Rottefella Move Switch", subtitle: "Binding",
+   745→    description: "Rottefella Move Switch — justerbar langrennsbinding. Skift posisjon for klatring/gli under kjøring.",
+   746→    priceNok: 1190, img: "https://sfile.chatglm.cn/images-ppt/8b3b12109609.png",
+   747→    stock: "22 på lager", stockCount: 22,
+   748→    category: "Vintersport", subcategory: "Bindinger", brand: "Rottefella",
+   749→    sales90: 44, conversionRate: 0.058, popularity: 70, seasonBoost: 1, margin: 0.3,
+   750→    rating: 4.7, reviewCount: 38, ageDays: 60,
+   751→  },
+   752→];
+   753→
+   754→// ---------- REVIEWS ----------
+   755→// 5–10 reviews per top product. We attach by product slug below.
+   756→const REVIEW_AUTHORS = [
+   757→  "Lars P.", "Inger H.", "Øystein K.", "Marit B.", "Thomas S.",
+   758→  "Anne L.", "Bjørn T.", "Sigrid M.", "Helge F.", "Kari N.",
+   759→  "Eivind R.", "Tora A.", "Petter Ø.", "Hanne D.", "Tor J.",
+   760→];
+   761→
+   762→const REVIEW_TEMPLATES = [
+   763→  { title: "Fantastisk kvalitet!", body: "Brukt i flere sesonger nå og holder fortsatt som ny. Anbefaler sterkt." },
+   764→  { title: "Perfekt på fjellet", body: "Testet i alt vær — fungerer utmerket. God passform og god funksjonalitet." },
+   765→  { title: "God verdi for pengene", body: "Litt dyr, men kvaliteten forsvare prisen. Ville kjøpt igjen." },
+   766→  { title: "Nøyde kunde", body: "Rask levering og produktet er som beskrevet. Kleven har god service." },
+   767→  { title: "Topp produkt", body: "Har testet mye utstyr opp gjennom årene — dette er blant det beste." },
+   768→  { title: "Anbefales!", body: "Bruker det ukentlig. Enkelt, robust og fungerer som forventet." },
+   769→  { title: "Brukervennlig", body: "Enkelt å bruke selv for nybegynnere. God instruksjonsmanual." },
+   770→  { title: "Holder mål", body: "Ingen klager så langt. Tåler en del juling i skogen." },
+   771→  { title: "Tilfredsstillende", body: "Ikke spesielt fancy, men gjør jobben sin. Grei pris." },
+   772→  { title: "Kjempegodt!", body: "Ville ikke vært uten. Får mye skryt av kameratene på tur." },
+   773→];
+   774→
+   775→async function main() {
+   776→  console.log("🗑️  Cleaning existing data…");
+   777→  await db.cartItem.deleteMany();
+   778→  await db.review.deleteMany();
+   779→  await db.product.deleteMany();
+   780→  await db.category.deleteMany();
+   781→  await db.brand.deleteMany();
+   782→
+   783→  console.log(`🏷️  Creating ${BRANDS.length} brands…`);
+   784→  const brandBySlug: Record<string, { id: string; name: string }> = {};
+   785→  for (const b of BRANDS) {
+   786→    const slug = slugify(b.name);
+   787→    const created = await db.brand.create({
+   788→      data: { name: b.name, slug, country: b.country, description: b.description },
+   789→    });
+   790→    brandBySlug[slug] = { id: created.id, name: created.name };
+   791→    brandBySlug[b.name] = { id: created.id, name: created.name };
+   792→  }
+   793→
+   794→  console.log(`📂 Creating ${TOP_CATEGORIES.length} top categories + subcategories…`);
+   795→  const categoryByPath: Record<string, string> = {}; // "Fiske" or "Fiske>Fluefiske" → id
+   796→
+   797→  for (const top of TOP_CATEGORIES) {
+   798→    const slug = slugify(top.name);
+   799→    const created = await db.category.create({
+   800→      data: { name: top.name, slug, icon: top.icon },
+   801→    });
+   802→    categoryByPath[top.name] = created.id;
+   803→
+   804→    // Add subcategories
+   805→    let subs: string[] = [];
+   806→    if (top.name === "Fiske") subs = FISKE_SUBCATEGORIES;
+   807→    else if (top.name === "Camping") subs = CAMPING_SUBCATEGORIES;
+   808→    else if (top.name === "Jakt") subs = JAKT_SUBCATEGORIES;
+   809→    else if (top.name === "Vintersport") subs = VINTERSPORT_SUBCATEGORIES;
+   810→    else if (top.name === "Kniver") subs = KNIVER_SUBCATEGORIES;
+   811→    else if (top.name === "Bekledning") subs = BEKLEDNING_SUBCATEGORIES;
+   812→
+   813→    for (const subName of subs) {
+   814→      const subSlug = slug + "-" + slugify(subName);
+   815→      const sub = await db.category.create({
+   816→        data: { name: subName, slug: subSlug, parentId: created.id },
+   817→      });
+   818→      categoryByPath[`${top.name}>${subName}`] = sub.id;
+   819→    }
+   820→  }
+   821→
+   822→  console.log(`📦 Creating ${PRODUCTS.length} products…`);
+   823→  let productCounter = 0;
+   824→  let reviewCounter = 0;
+   825→  const createdProductSlugs: string[] = [];
+   826→
+   827→  for (const p of PRODUCTS) {
+   828→    const baseSlug = slugify(p.name);
+   829→    // Ensure unique slug
+   830→    let slug = baseSlug;
+   831→    let suffix = 1;
+   832→    while (createdProductSlugs.includes(slug)) {
+   833→      slug = `${baseSlug}-${suffix++}`;
+   834→    }
+   835→    createdProductSlugs.push(slug);
+   836→
+   837→    const sku = "KLV-" + String(++productCounter).padStart(4, "0") + "-" + baseSlug.slice(0, 8);
+   838→
+   839→    const categoryId = categoryByPath[p.category];
+   840→    const subcategoryId = p.subcategory
+   841→      ? categoryByPath[`${p.category}>${p.subcategory}`]
+   842→      : null;
+   843→    const brandId = p.brand ? brandBySlug[p.brand]?.id : null;
+   844→
+   845→    // Use 2 image variants for the gallery (same image repeated is fine for demo)
+   846→    const images = JSON.stringify([p.img, p.img]);
+   847→
+   848→    const created = await db.product.create({
+   849→      data: {
+   850→        name: p.name,
+   851→        slug,
+   852→        subtitle: p.subtitle ?? null,
+   853→        description: p.description ?? null,
+   854→        price: p.priceNok,
+   855→        originalPrice: p.originalNok ?? null,
+   856→        imageUrl: p.img,
+   857→        images,
+   858→        sku,
+   859→        stockCount: p.stockCount,
+   860→        stockLabel: p.stock ?? null,
+   861→        tag: p.tag ?? null,
+   862→        rating: p.rating,
+   863→        reviewCount: p.reviewCount,
+   864→        sales90: p.sales90,
+   865→        conversionRate: p.conversionRate,
+   866→        popularity: p.popularity,
+   867→        seasonBoost: p.seasonBoost,
+   868→        margin: p.margin,
+   869→        isNew: p.isNew ?? false,
+   870→        createdAt: daysAgo(p.ageDays),
+   871→        brandId: brandId ?? null,
+   872→        categoryId: categoryId ?? null,
+   873→        subcategoryId: subcategoryId ?? null,
+   874→      },
+   875→    });
+   876→
+   877→    // Generate 5–10 reviews for top products (rating >= 4.7 OR reviewCount > 30)
+   878→    const shouldAddReviews = p.rating >= 4.7 || p.reviewCount > 30;
+   879→    if (shouldAddReviews) {
+   880→      const numReviews = Math.min(10, Math.max(5, Math.floor(p.reviewCount / 8)));
+   881→      // Spread ratings near the average rating
+   882→      for (let i = 0; i < numReviews; i++) {
+   883→        const deviation = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+   884→        let rating = Math.round(p.rating) + deviation;
+   885→        rating = Math.max(3, Math.min(5, rating));
+   886→        const tpl = REVIEW_TEMPLATES[i % REVIEW_TEMPLATES.length];
+   887→        const author = REVIEW_AUTHORS[(i + productCounter) % REVIEW_AUTHORS.length];
+   888→        const ageD = Math.floor(Math.random() * 200) + 1;
+   889→        await db.review.create({
+   890→          data: {
+   891→            productId: created.id,
+   892→            authorName: author,
+   893→            rating,
+   894→            title: tpl.title,
+   895→            body: tpl.body,
+   896→            verified: Math.random() > 0.3,
+   897→            createdAt: daysAgo(ageD),
+   898→          },
+   899→        });
+   900→        reviewCounter++;
+   901→      }
+   902→    }
+   903→  }
+   904→
+   905→  console.log(`✅ Seeded ${PRODUCTS.length} products and ${reviewCounter} reviews.`);
+   906→  console.log(`   Brands: ${BRANDS.length}, Categories: ${TOP_CATEGORIES.length} tops + subcategories.`);
+   907→}
+   908→
+   909→main()
+   910→  .then(async () => {
+   911→    await db.$disconnect();
+   912→  })
+   913→  .catch(async (e) => {
+   914→    console.error(e);
+   915→    await db.$disconnect();
+   916→    process.exit(1);
+   917→  });
+   918→
