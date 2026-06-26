@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "A man in a red sweater and black boots holds two large fish, showing them to a young boy in a dark sweater and striped pants, standing on a grassy, wooded path with trees and a cloudy sky in the background. The mood is warm and nostalgic, capturing a moment of shared pride in a fishing achievement.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782481986,
+  "id": "202606262152480deec286a7094dac",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262152480deec286a7094dac",
+  "usage": {
+    "completion_tokens": 67,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2556,
+    "prompt_tokens_details": {
+      "cached_tokens": 5
+    },
+    "total_tokens": 2623
+  }
+}

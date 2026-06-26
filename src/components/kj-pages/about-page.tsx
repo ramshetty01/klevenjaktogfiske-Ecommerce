@@ -40,8 +40,8 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[8px] shadow-[0_20px_50px_rgba(31,45,58,0.25)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://sfile.chatglm.cn/images-ppt/3006bb14d140.jpg"
-                alt="Fluefisker i norsk elv ved solnedgang"
+                src="/images/about-heritage.png"
+                alt="En mann i rød genser viser stolt frem to store fisker til en ung gutt på en skogsti — et øyeblikk av tradisjonsoverføring"
                 className="h-full w-full object-cover"
               />
             </div>
@@ -49,9 +49,9 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             <div className="absolute -bottom-5 -right-5 hidden rounded-lg bg-white px-5 py-4 shadow-[0_10px_25px_rgba(31,45,58,0.18)] sm:block">
               <div className="text-[24px] font-bold text-[#1f2d3a]">40+</div>
               <div className="text-[11px] font-light uppercase tracking-[0.1em] text-[#8a96a1]">
-                År på fjellet
+                År med felles
                 <br />
-                og i skogen
+                opplevelser
               </div>
             </div>
           </div>
@@ -79,6 +79,12 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               innvendig — fordi de selv bruker det hver eneste sesong. Hos oss
               får du råd fra mennesker som faktisk har vært ute i skogen, på
               fjellet eller på havet.
+            </p>
+            <p className="mt-6 text-[18px] font-light leading-[1.85] text-[#3a4856]">
+              For oss handler jakt og fiske om mer enn utstyr. Det handler om
+              tradisjoner som føres videre — fra den som viser en ung gutt sin
+              første fisk, til felles opplevelser rundt leirbålet. Derfor
+              selger vi bare utstyr vi selv ville delt med våre egne barn.
             </p>
 
             {/* Signature */}

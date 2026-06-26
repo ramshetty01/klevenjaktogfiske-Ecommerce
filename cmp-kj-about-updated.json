@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Yes, the image and text work together: the photo shows a man in a red sweater holding fish next to a boy (not a fly fisherman), is well-cropped, the \"40+\" badge is in the bottom-right, and the text mentions traditions being passed on (\"tradisjoner som føres videre\"), aligning the visual of intergenerational sharing with the text’s theme.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782482097,
+  "id": "20260626215438e1337fad38eb4a38",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260626215438e1337fad38eb4a38",
+  "usage": {
+    "completion_tokens": 83,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 3572,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 3655
+  }
+}
