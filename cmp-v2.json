@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) ~48px tall. 2) 4 text lines. 3) Tightly packed (minimal vertical gap). 4) Small (~16px) fade masks.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782482691,
+  "id": "20260626220444556d75a4acb3420d",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260626220444556d75a4acb3420d",
+  "usage": {
+    "completion_tokens": 40,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 6191,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 6231
+  }
+}

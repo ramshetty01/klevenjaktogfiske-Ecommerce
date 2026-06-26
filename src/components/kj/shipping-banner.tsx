@@ -20,25 +20,26 @@ interface ShippingBannerProps {
 export function ShippingBanner({
   size = "md",
   direction = "vertical",
-  height = 140,
+  height = 110,
 }: ShippingBannerProps) {
   const fontSize = size === "sm" ? "text-[13px]" : "text-[15px]";
-  const itemPad = size === "sm" ? "py-2" : "py-3";
+  // Tight vertical padding so items sit close together (only ~2px gap)
+  const itemPad = size === "sm" ? "py-0.5" : "py-0.5";
 
   /* Each item is one line: icon + text + bullet separator */
   const Item = ({ index }: { index: number }) => (
     <div
-      className={`flex items-center justify-center gap-3 px-4 ${itemPad}`}
+      className={`flex items-center justify-center gap-3 px-4 leading-tight ${itemPad}`}
       aria-hidden={index >= 4 ? "true" : undefined}
     >
-      <Truck size={18} strokeWidth={2} className="text-[#1f2d3a]" />
+      <Truck size={16} strokeWidth={2} className="text-[#1f2d3a]" />
       <span
         className={`font-semibold uppercase tracking-[0.18em] text-[#1f2d3a] ${fontSize}`}
       >
         Fraktfritt i Norge over 2500,-
       </span>
       <span className="px-1 text-[#1f2d3a]/40">•</span>
-      <Clock size={16} strokeWidth={2} className="text-[#1f2d3a]" />
+      <Clock size={14} strokeWidth={2} className="text-[#1f2d3a]" />
       <span
         className={`font-semibold uppercase tracking-[0.18em] text-[#1f2d3a] ${fontSize}`}
       >
@@ -79,14 +80,14 @@ export function ShippingBanner({
     >
       {/* Top + bottom fade masks so items softly appear/disappear */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-8"
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-4"
         style={{
           background:
             "linear-gradient(to bottom, #f4d35e 0%, rgba(244,211,94,0) 100%)",
         }}
       />
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-8"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-4"
         style={{
           background:
             "linear-gradient(to top, #f4d35e 0%, rgba(244,211,94,0) 100%)",

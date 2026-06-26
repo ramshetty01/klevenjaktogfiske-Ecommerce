@@ -180,7 +180,7 @@
 .kj-marquee-vertical-track {
   display: flex;
   flex-direction: column;
-  animation: kj-marquee-vertical 18s linear infinite;
+  animation: kj-marquee-vertical 36s linear infinite;
   will-change: transform;
 }
 

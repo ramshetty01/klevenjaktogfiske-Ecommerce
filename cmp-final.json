@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) Yes, multiple stacked Norwegian shipping lines scroll vertically. 2) Lines are tightly packed with minimal vertical gap. 3) Banner is ~110px tall (5 lines visible).",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782482800,
+  "id": "202606262206331efc6560d3094e32",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262206331efc6560d3094e32",
+  "usage": {
+    "completion_tokens": 41,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1085,
+    "prompt_tokens_details": {
+      "cached_tokens": 6
+    },
+    "total_tokens": 1126
+  }
+}
