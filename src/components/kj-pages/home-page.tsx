@@ -21,7 +21,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           }}
         />
 
-        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-10 pt-12 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-14 lg:pt-16">
+        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-10 pt-2 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-14 lg:pt-6">
           {/* Text column */}
           <div className="flex flex-col items-start">
             <h1
