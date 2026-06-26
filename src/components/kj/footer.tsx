@@ -173,7 +173,7 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         <div className="mt-12 flex flex-col gap-1 border-t border-white/10 pt-6 text-[12px] font-light text-[#8a96a1] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Kleven Hunting &amp; Fishing AS. Organisasjonsnr. 962 398 251.</p>
+          <p>© 2026 Kleven Hunting &amp; Fishing AS. Organisasjonsnr. 962 398 251.</p>
           <p>Fraktfritt i Norge på ordre over 2 500,- (gjelder ikke pulker og våpenskap)</p>
         </div>
       </div>

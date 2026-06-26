@@ -23,14 +23,15 @@ export function ShippingBanner({
   height = 110,
 }: ShippingBannerProps) {
   const fontSize = size === "sm" ? "text-[13px]" : "text-[15px]";
-  // Tight vertical padding so items sit close together (only ~2px gap)
-  const itemPad = size === "sm" ? "py-0.5" : "py-0.5";
+  const itemPad = "py-0.5";
 
-  /* Each item is one line: icon + text + bullet separator */
-  const Item = ({ index }: { index: number }) => (
+  // Render one marquee item as inline JSX (not a nested component — avoids
+  // React remounting children on every render, which can cause removeChild errors).
+  const renderItem = (key: string | number, ariaHidden?: boolean) => (
     <div
+      key={key}
       className={`flex items-center justify-center gap-3 px-4 leading-tight ${itemPad}`}
-      aria-hidden={index >= 4 ? "true" : undefined}
+      aria-hidden={ariaHidden ? "true" : undefined}
     >
       <Truck size={16} strokeWidth={2} className="text-[#1f2d3a]" />
       <span
@@ -74,16 +75,13 @@ export function ShippingBanner({
           }}
         />
         <div className={`kj-marquee-track ${itemPad}`}>
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Item key={i} index={i} />
-          ))}
+          {Array.from({ length: 8 }).map((_, i) => renderItem(i, i >= 4))}
         </div>
       </div>
     );
   }
 
-  /* ------- VERTICAL variant (new) ------- */
-  // Render the item list TWICE so the -50% translateY loop is seamless.
+  /* ------- VERTICAL variant ------- */
   const items = Array.from({ length: 4 }).map((_, i) => i);
 
   return (
@@ -93,7 +91,7 @@ export function ShippingBanner({
       role="marquee"
       aria-label="Fraktfritt i Norge på ordre over 2500 kroner. Rask levering 2 til 4 dager."
     >
-      {/* Top + bottom fade masks so items softly appear/disappear */}
+      {/* Top + bottom fade masks */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-10 h-4"
         style={{
@@ -110,14 +108,8 @@ export function ShippingBanner({
       />
 
       <div className="kj-marquee-vertical-track">
-        {/* First set */}
-        {items.map((i) => (
-          <Item key={`a-${i}`} index={i} />
-        ))}
-        {/* Duplicate set for seamless loop */}
-        {items.map((i) => (
-          <Item key={`b-${i}`} index={i + 4} />
-        ))}
+        {items.map((i) => renderItem(`a-${i}`, i >= 4))}
+        {items.map((i) => renderItem(`b-${i}`, true))}
       </div>
     </div>
   );

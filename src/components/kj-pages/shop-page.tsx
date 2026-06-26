@@ -64,7 +64,9 @@ interface Product {
   isNew?: boolean;
 }
 
-const NOW = Date.now();
+// Fixed reference date (not Date.now()) so server and client produce
+// identical sort orders — prevents React hydration "removeChild" errors.
+const NOW = new Date("2026-06-26T12:00:00Z").getTime();
 const DAY = 24 * 60 * 60 * 1000;
 
 const PRODUCTS: Product[] = [
