@@ -57,6 +57,7 @@ interface Product {
   stock?: string;
   stockCount: number; // numeric stock for sorting (0 if unknown)
   category: Category;
+  subcategory?: string; // for Camping: Binoculars, Pop-up tent, Light, etc.
   // Merchandising metadata
   sales90: number; // units sold last 90 days
   conversionRate: number; // 0-1
@@ -87,6 +88,7 @@ const PRODUCTS: Product[] = [
     stock: "20+ på lager",
     stockCount: 25,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 142,
     conversionRate: 0.082,
     inventoryHealth: 0.9,
@@ -106,6 +108,7 @@ const PRODUCTS: Product[] = [
     stock: "20+ på lager",
     stockCount: 22,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 98,
     conversionRate: 0.068,
     inventoryHealth: 0.85,
@@ -125,6 +128,7 @@ const PRODUCTS: Product[] = [
     stock: "20+ på lager",
     stockCount: 20,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 76,
     conversionRate: 0.062,
     inventoryHealth: 0.82,
@@ -144,6 +148,7 @@ const PRODUCTS: Product[] = [
     stock: "3 på lager",
     stockCount: 3,
     category: "Camping",
+    subcategory: "Smoking room",
     sales90: 18,
     conversionRate: 0.044,
     inventoryHealth: 0.4,
@@ -163,6 +168,7 @@ const PRODUCTS: Product[] = [
     stock: "1 på lager",
     stockCount: 1,
     category: "Camping",
+    subcategory: "Kitchenware",
     sales90: 42,
     conversionRate: 0.072,
     inventoryHealth: 0.15,
@@ -182,6 +188,7 @@ const PRODUCTS: Product[] = [
     stock: "1 på lager",
     stockCount: 1,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 14,
     conversionRate: 0.038,
     inventoryHealth: 0.15,
@@ -201,6 +208,7 @@ const PRODUCTS: Product[] = [
     stock: "1 på lager",
     stockCount: 1,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 16,
     conversionRate: 0.04,
     inventoryHealth: 0.15,
@@ -220,6 +228,7 @@ const PRODUCTS: Product[] = [
     stock: "14 på lager",
     stockCount: 14,
     category: "Camping",
+    subcategory: "Accessories",
     sales90: 28,
     conversionRate: 0.05,
     inventoryHealth: 0.7,
@@ -240,6 +249,7 @@ const PRODUCTS: Product[] = [
     stock: "2 på lager",
     stockCount: 2,
     category: "Camping",
+    subcategory: "Bags",
     sales90: 12,
     conversionRate: 0.042,
     inventoryHealth: 0.25,
@@ -259,6 +269,7 @@ const PRODUCTS: Product[] = [
     stock: "2 på lager",
     stockCount: 2,
     category: "Camping",
+    subcategory: "Vacuum",
     sales90: 22,
     conversionRate: 0.058,
     inventoryHealth: 0.25,
@@ -279,6 +290,7 @@ const PRODUCTS: Product[] = [
     stock: "6 på lager",
     stockCount: 6,
     category: "Camping",
+    subcategory: "Accessories",
     sales90: 48,
     conversionRate: 0.082,
     inventoryHealth: 0.5,
@@ -299,6 +311,7 @@ const PRODUCTS: Product[] = [
     stock: "1 på lager",
     stockCount: 1,
     category: "Camping",
+    subcategory: "Accessories",
     sales90: 18,
     conversionRate: 0.052,
     inventoryHealth: 0.15,
@@ -319,6 +332,7 @@ const PRODUCTS: Product[] = [
     stock: "3 på lager",
     stockCount: 3,
     category: "Camping",
+    subcategory: "Search equipment",
     sales90: 14,
     conversionRate: 0.046,
     inventoryHealth: 0.4,
@@ -339,6 +353,7 @@ const PRODUCTS: Product[] = [
     stock: "16 på lager",
     stockCount: 16,
     category: "Camping",
+    subcategory: "Search equipment",
     sales90: 36,
     conversionRate: 0.072,
     inventoryHealth: 0.8,
@@ -359,6 +374,7 @@ const PRODUCTS: Product[] = [
     stock: "8 på lager",
     stockCount: 8,
     category: "Camping",
+    subcategory: "Light",
     sales90: 24,
     conversionRate: 0.054,
     inventoryHealth: 0.55,
@@ -378,6 +394,7 @@ const PRODUCTS: Product[] = [
     stock: "3 på lager",
     stockCount: 3,
     category: "Camping",
+    subcategory: "Light",
     sales90: 12,
     conversionRate: 0.042,
     inventoryHealth: 0.4,
@@ -398,6 +415,7 @@ const PRODUCTS: Product[] = [
     stock: "17 på lager",
     stockCount: 17,
     category: "Camping",
+    subcategory: "Kitchenware",
     sales90: 88,
     conversionRate: 0.094,
     inventoryHealth: 0.78,
@@ -417,6 +435,7 @@ const PRODUCTS: Product[] = [
     stock: "11 på lager",
     stockCount: 11,
     category: "Camping",
+    subcategory: "Kitchenware",
     sales90: 62,
     conversionRate: 0.082,
     inventoryHealth: 0.6,
@@ -436,6 +455,7 @@ const PRODUCTS: Product[] = [
     stock: "17 på lager",
     stockCount: 17,
     category: "Camping",
+    subcategory: "Kitchenware",
     sales90: 54,
     conversionRate: 0.078,
     inventoryHealth: 0.78,
@@ -455,6 +475,7 @@ const PRODUCTS: Product[] = [
     stock: "10 på lager",
     stockCount: 10,
     category: "Camping",
+    subcategory: "Accessories",
     sales90: 22,
     conversionRate: 0.048,
     inventoryHealth: 0.55,
@@ -474,6 +495,7 @@ const PRODUCTS: Product[] = [
     stock: "20+ på lager",
     stockCount: 28,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 42,
     conversionRate: 0.068,
     inventoryHealth: 0.92,
@@ -493,6 +515,7 @@ const PRODUCTS: Product[] = [
     stock: "20+ på lager",
     stockCount: 26,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 34,
     conversionRate: 0.06,
     inventoryHealth: 0.9,
@@ -512,6 +535,7 @@ const PRODUCTS: Product[] = [
     stock: "1 på lager",
     stockCount: 1,
     category: "Camping",
+    subcategory: "Pop-up tent",
     sales90: 38,
     conversionRate: 0.07,
     inventoryHealth: 0.15,
@@ -532,6 +556,7 @@ const PRODUCTS: Product[] = [
     stock: "1 på lager",
     stockCount: 1,
     category: "Camping",
+    subcategory: "Sleeping Outside",
     sales90: 8,
     conversionRate: 0.034,
     inventoryHealth: 0.15,
@@ -551,6 +576,7 @@ const PRODUCTS: Product[] = [
     stock: "11 på lager",
     stockCount: 11,
     category: "Camping",
+    subcategory: "Accessories",
     sales90: 48,
     conversionRate: 0.075,
     inventoryHealth: 0.6,
@@ -1262,6 +1288,39 @@ const CATEGORIES = [
 type CategoryFilter = (typeof CATEGORIES)[number];
 
 /**
+ * Camping subcategories — exact list from klevenjaktogfiske.no/camping.
+ * Shown as a secondary filter row when the Camping category is active.
+ */
+const CAMPING_SUBCATEGORIES = [
+  "Alle",
+  "Binoculars",
+  "The Wolverine",
+  "Map and compass",
+  "Nice to have",
+  "Kitchenware",
+  "Knife",
+  "Body warmer",
+  "Light",
+  "Against the Mosquito",
+  "Ovens",
+  "Pop-up tent",
+  "On the Water",
+  "Smoking room",
+  "Saw",
+  "Bags",
+  "Seat pad",
+  "Sunglasses",
+  "Sleeping Outside",
+  "Chairs",
+  "Souvenirs",
+  "Search equipment",
+  "Accessories",
+  "Vacuum",
+  "Axe",
+] as const;
+type SubcategoryFilter = (typeof CAMPING_SUBCATEGORIES)[number];
+
+/**
  * Compute the "Recommended" merchandising score for a product.
  * Weighted blend of revenue proxy, conversion rate, inventory health,
  * popularity, seasonality, and margin. Returns 0-100.
@@ -1324,18 +1383,31 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 
 export function ShopPage() {
   const [active, setActive] = useState<CategoryFilter>("Alle");
+  const [subActive, setSubActive] = useState<SubcategoryFilter>("Alle");
   const [sort, setSort] = useState<SortKey>("recommended");
 
   const isOutlet = active === "Outlet";
+  const isCamping = active === "Camping";
 
   // Auto-switch sort to "discount" when entering Outlet (per merchandising strategy)
   const effectiveSort: SortKey = isOutlet && sort === "recommended" ? "discount" : sort;
 
+  // Reset subcategory filter when leaving Camping
+  const handleCategoryClick = (c: CategoryFilter) => {
+    setActive(c);
+    setSubActive("Alle");
+  };
+
   const filtered = useMemo(() => {
-    const base =
+    let base =
       active === "Alle"
         ? PRODUCTS
         : PRODUCTS.filter((p) => p.category === active);
+
+    // Apply Camping subcategory filter
+    if (isCamping && subActive !== "Alle") {
+      base = base.filter((p) => p.subcategory === subActive);
+    }
 
     const sorted = [...base];
     switch (effectiveSort) {
@@ -1384,7 +1456,7 @@ export function ShopPage() {
         break;
     }
     return sorted;
-  }, [active, effectiveSort]);
+  }, [active, subActive, isCamping, effectiveSort]);
 
   // Available sort options: hide "discount" unless in Outlet; show all others always
   const visibleSortOptions = SORT_OPTIONS.filter((o) => {
@@ -1421,7 +1493,7 @@ export function ShopPage() {
               return (
                 <button
                   key={c}
-                  onClick={() => setActive(c)}
+                  onClick={() => handleCategoryClick(c)}
                   className={`rounded-full px-3.5 py-1.5 text-[11px] font-medium transition-all duration-200 ${
                     isActive
                       ? "bg-[#1f2d3a] text-white"
@@ -1434,6 +1506,31 @@ export function ShopPage() {
             })}
           </div>
 
+          {/* Camping subcategory filter row — only shown when Camping is active */}
+          {isCamping && (
+            <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d4cfc1] pb-5">
+              <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
+                Underkategori:
+              </span>
+              {CAMPING_SUBCATEGORIES.map((sc) => {
+                const isActive = subActive === sc;
+                return (
+                  <button
+                    key={sc}
+                    onClick={() => setSubActive(sc)}
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-[#2d4a3e] text-white"
+                        : "bg-[#f5f1e8] text-[#3a4856] hover:bg-[#f0c548] hover:text-[#1f2d3a]"
+                    }`}
+                  >
+                    {sc}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* Sort + count row */}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="text-[12px] font-light text-[#6b7884]">
@@ -1442,6 +1539,11 @@ export function ShopPage() {
               {active !== "Alle" && (
                 <>
                   {" "}i <span className="font-semibold text-[#1f2d3a]">{active}</span>
+                </>
+              )}
+              {isCamping && subActive !== "Alle" && (
+                <>
+                  {" "}→ <span className="font-semibold text-[#2d4a3e]">{subActive}</span>
                 </>
               )}
             </div>
