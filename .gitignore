@@ -52,3 +52,26 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# Development artifacts — screenshots, comparison JSON, uploaded assets
+/preview-*.png
+/current-page.png
+/screenshot*.json
+/cmp-*.json
+/img_*.json
+/kleven-current.json
+/kleven-img-desc.json
+/page-analysis.json
+/page-text.json
+/ref-look.json
+/uploaded-img-desc.json
+/check-translate.json
+
+# Uploaded client assets (HTML exports, raw screenshots)
+/upload/
+
+# Agent browser recordings
+/*.webm
+
+# Z-AI SDK runtime
+/.zscripts/
