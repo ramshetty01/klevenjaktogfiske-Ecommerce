@@ -57,8 +57,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[12px] shadow-[0_30px_60px_-15px_rgba(31,45,58,0.35)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://sfile.chatglm.cn/images-ppt/c38ec7daf628.jpg"
-                alt="Norsk fjord landskap med tåke over fjellene"
+                src="/images/kelven-hero.png"
+                alt="Kleven Jakt & Fiske butikkbygning ved brygge med båt, snødekte fjell og nordlys i stjernehimmelen"
                 className="h-full w-full object-cover"
               />
             </div>

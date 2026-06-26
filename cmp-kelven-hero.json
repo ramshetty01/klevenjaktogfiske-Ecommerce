@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) Yes, the hero image on the right shows the wooden building labeled 'KLEVEN JAKT & FISKE' by a dock with a boat, snow-capped mountains, and aurora borealis in a starry sky. 2) Yes, the image is well-cropped and visible. 3) Yes, the hero text 'Ut på tur, aldri sur!' and 'Handle Nå' button are on the left.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782484861,
+  "id": "20260626224057733194ce8dc8401d",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260626224057733194ce8dc8401d",
+  "usage": {
+    "completion_tokens": 96,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2461,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 2557
+  }
+}
