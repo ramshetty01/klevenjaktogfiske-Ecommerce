@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 
-export type PageId = "home" | "shop" | "about" | "commitment";
+export type PageId = "home" | "shop" | "about" | "categories";
 
 interface HeaderProps {
   current: PageId;
@@ -11,9 +11,9 @@ interface HeaderProps {
 }
 
 const NAV_LINKS: { label: string; page: PageId }[] = [
-  { label: "Shop All", page: "shop" },
-  { label: "About", page: "about" },
-  { label: "Our Commitment", page: "commitment" },
+  { label: "Butikk", page: "shop" },
+  { label: "Om Oss", page: "about" },
+  { label: "Våre Kategorier", page: "categories" },
 ];
 
 export function Header({ current, onNavigate }: HeaderProps) {
@@ -36,25 +36,28 @@ export function Header({ current, onNavigate }: HeaderProps) {
   return (
     <header
       className="sticky top-0 z-50 w-full"
-      style={{ backgroundColor: "#2c3e50" }}
+      style={{ backgroundColor: "#1f2d3a" }}
     >
       <div
         className={`transition-shadow duration-300 ${
-          scrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.18)]" : ""
+          scrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.25)]" : ""
         }`}
       >
         <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-6 lg:px-10">
           {/* Left: brand */}
           <button
             onClick={() => handleNav("home")}
-            className="flex items-center gap-2 text-left"
-            aria-label="Lemon & Ardent home"
+            className="flex flex-col items-start gap-0.5 text-left"
+            aria-label="Kleven Jakt & Fiske — forsiden"
           >
             <span
-              className="text-[18px] font-medium tracking-[0.02em] text-white"
+              className="text-[18px] font-semibold tracking-[0.04em] text-white"
               style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
-              Lemon <span className="opacity-70">&amp;</span> Ardent
+              KLEVEN
+            </span>
+            <span className="text-[10px] font-light uppercase tracking-[0.35em] text-[#f0c548]">
+              Jakt &amp; Fiske
             </span>
           </button>
 
@@ -66,13 +69,13 @@ export function Header({ current, onNavigate }: HeaderProps) {
                 <button
                   key={link.page}
                   onClick={() => handleNav(link.page)}
-                  className={`relative text-[14px] font-medium tracking-[0.08em] uppercase transition-colors duration-200 ${
-                    active ? "text-white" : "text-white/80 hover:text-white"
+                  className={`relative text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
+                    active ? "text-white" : "text-white/75 hover:text-white"
                   }`}
                 >
                   {link.label}
                   <span
-                    className={`absolute -bottom-1.5 left-0 h-px bg-white transition-all duration-300 ${
+                    className={`absolute -bottom-1.5 left-0 h-px bg-[#f0c548] transition-all duration-300 ${
                       active ? "w-full" : "w-0"
                     }`}
                   />
@@ -84,28 +87,28 @@ export function Header({ current, onNavigate }: HeaderProps) {
           {/* Right: actions */}
           <div className="flex items-center gap-5">
             <button
-              aria-label="Search"
+              aria-label="Søk"
               className="hidden text-white/85 transition-colors hover:text-white sm:block"
             >
               <Search size={18} strokeWidth={1.6} />
             </button>
             <button
-              aria-label="Account"
+              aria-label="Min konto"
               className="hidden text-white/85 transition-colors hover:text-white sm:block"
             >
               <User size={18} strokeWidth={1.6} />
             </button>
             <button
-              aria-label="Cart"
+              aria-label="Handlevogn"
               className="relative text-white/85 transition-colors hover:text-white"
             >
               <ShoppingBag size={18} strokeWidth={1.6} />
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#f7dc6f] px-1 text-[10px] font-semibold text-[#2c3e50]">
+              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#f0c548] px-1 text-[10px] font-semibold text-[#1f2d3a]">
                 0
               </span>
             </button>
             <button
-              aria-label="Menu"
+              aria-label="Meny"
               onClick={() => setMobileOpen((v) => !v)}
               className="ml-1 text-white md:hidden"
             >
@@ -124,7 +127,7 @@ export function Header({ current, onNavigate }: HeaderProps) {
                   <button
                     key={link.page}
                     onClick={() => handleNav(link.page)}
-                    className={`flex items-center justify-between border-b border-white/5 py-3 text-[13px] font-medium uppercase tracking-[0.08em] ${
+                    className={`flex items-center justify-between border-b border-white/5 py-3 text-[12px] font-medium uppercase tracking-[0.12em] ${
                       active ? "text-white" : "text-white/80"
                     }`}
                   >

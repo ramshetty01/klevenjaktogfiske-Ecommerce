@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Header, type PageId } from "@/components/la/header";
-import { Footer } from "@/components/la/footer";
-import { HomePage } from "@/components/pages/home-page";
-import { ShopPage } from "@/components/pages/shop-page";
-import { AboutPage } from "@/components/pages/about-page";
-import { CommitmentPage } from "@/components/pages/commitment-page";
+import { Header, type PageId } from "@/components/kj/header";
+import { Footer } from "@/components/kj/footer";
+import { HomePage } from "@/components/kj-pages/home-page";
+import { ShopPage } from "@/components/kj-pages/shop-page";
+import { AboutPage } from "@/components/kj-pages/about-page";
+import { CategoriesPage } from "@/components/kj-pages/categories-page";
 
 export default function Home() {
   const [page, setPage] = useState<PageId>("home");
@@ -21,7 +21,7 @@ export default function Home() {
         {page === "home" && <HomePage onNavigate={navigate} />}
         {page === "shop" && <ShopPage />}
         {page === "about" && <AboutPage onNavigate={navigate} />}
-        {page === "commitment" && <CommitmentPage onNavigate={navigate} />}
+        {page === "categories" && <CategoriesPage onNavigate={navigate} />}
       </main>
 
       <Footer onNavigate={navigate} />

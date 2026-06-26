@@ -44,24 +44,29 @@
 }
 
 :root {
-  /* Lemon & Ardent brand tokens */
+  /* Kleven Jakt & Fiske brand tokens */
   --radius: 0.625rem;
 
-  /* Brand palette (extracted from screenshots) */
-  --la-navy: #2c3e50;          /* header / footer background */
-  --la-navy-deep: #1f2d3a;     /* hover navy */
-  --la-cream: #f8f5f0;         /* commitment page background */
-  --la-yellow: #f7dc6f;        /* primary CTA yellow */
-  --la-yellow-bright: #f0f447; /* shipping banner yellow */
-  --la-yellow-deep: #f1c40f;   /* hover yellow */
-  --la-blue-soft: #a8c5d6;     /* hero background light blue */
-  --la-blue-light: #c4d8e5;    /* hero gradient bottom */
-  --la-text-dark: #2d3748;     /* primary text on light */
-  --la-text-muted: #4a5568;    /* secondary text */
-  --la-text-icon: #718096;     /* icons / dividers */
-  --la-bg-gray: #e6e9ed;       /* shop page background */
-  --la-divider: #d4d8dd;       /* divider line */
-  --la-footer-text: #bdc3c7;   /* footer secondary text */
+  /* Brand palette — Norwegian hunting & fishing */
+  --kj-navy: #1f2d3a;          /* header / footer deep navy (forest night) */
+  --kj-navy-deep: #15202b;     /* hover navy */
+  --kj-forest: #2d4a3e;        /* deep Norwegian forest green */
+  --kj-forest-light: #3d5e4f;
+  --kj-cream: #f5f1e8;         /* warm cream — paper / commitment bg */
+  --kj-paper: #efe9dc;         /* slightly darker cream */
+  --kj-yellow: #f0c548;        /* warm Norwegian sunset yellow */
+  --kj-yellow-bright: #f4d35e; /* shipping banner */
+  --kj-yellow-deep: #d9a838;   /* hover yellow */
+  --kj-orange: #c75d2c;        /* burnt orange — accent for hunting */
+  --kj-blue-soft: #b9cdd9;     /* hero gradient — soft nordic sky */
+  --kj-blue-light: #d2e0e8;
+  --kj-text-dark: #1f2d3a;     /* primary text */
+  --kj-text-body: #3a4856;     /* body text */
+  --kj-text-muted: #6b7884;    /* secondary text */
+  --kj-text-icon: #8a96a1;     /* icons / dividers */
+  --kj-bg-gray: #e9e5db;       /* shop page background */
+  --kj-divider: #d4cfc1;
+  --kj-footer-text: #b8c0c8;
 
   /* shadcn tokens */
   --background: oklch(1 0 0);
@@ -142,7 +147,7 @@
 }
 
 /* ---------- Marquee animation for shipping banner ---------- */
-@keyframes la-marquee {
+@keyframes kj-marquee {
   0% {
     transform: translateX(0);
   }
@@ -151,19 +156,19 @@
   }
 }
 
-.la-marquee-track {
+.kj-marquee-track {
   display: inline-flex;
   white-space: nowrap;
-  animation: la-marquee 22s linear infinite;
+  animation: kj-marquee 26s linear infinite;
   will-change: transform;
 }
 
-.la-marquee-track:hover {
+.kj-marquee-track:hover {
   animation-play-state: paused;
 }
 
 /* ---------- Subtle fade-in for page transitions ---------- */
-@keyframes la-fade-in {
+@keyframes kj-fade-in {
   from {
     opacity: 0;
     transform: translateY(8px);
@@ -174,15 +179,15 @@
   }
 }
 
-.la-page-enter {
-  animation: la-fade-in 0.35s ease-out both;
+.kj-page-enter {
+  animation: kj-fade-in 0.35s ease-out both;
 }
 
 /* ---------- Hide horizontal scrollbar on carousels ---------- */
-.la-no-scrollbar::-webkit-scrollbar {
+.kj-no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-.la-no-scrollbar {
+.kj-no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

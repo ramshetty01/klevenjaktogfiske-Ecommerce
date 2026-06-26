@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Yes, it looks professional, coherent, and ready for a client demo. All key elements (header, hero, trust badges, category strip, products) are present, styled consistently, and aligned with the brand’s outdoor/hunting/fishing theme.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782480038,
+  "id": "202606262120319a68d796577e483f",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262120319a68d796577e483f",
+  "usage": {
+    "completion_tokens": 53,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 5622,
+    "prompt_tokens_details": {
+      "cached_tokens": 6
+    },
+    "total_tokens": 5675
+  }
+}

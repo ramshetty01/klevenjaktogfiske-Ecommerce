@@ -16,31 +16,34 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lemon & Ardent — Adventure Awaits",
+  title: "Kleven Jakt & Fiske — Ut på tur aldri sur!",
   description:
-    "Lemon & Ardent — premium outdoor adventure gear. Equip for exciting journeys. Shop backpacks, jackets, tents, and boots.",
+    "Kleven Jakt & Fiske AS — Norsk utstyr for jakt, fiske og friluftsliv. Ut på tur aldri sur!",
   keywords: [
-    "Lemon & Ardent",
-    "outdoor gear",
-    "adventure",
-    "backpacking",
-    "hiking",
+    "Kleven Jakt og Fiske",
+    "jaktutstyr",
+    "fiskeutstyr",
+    "friluftsliv",
+    "Norge",
+    "kniver",
+    "fiskestenger",
     "camping",
   ],
-  authors: [{ name: "Lemon & Ardent" }],
+  authors: [{ name: "Kleven Jakt & Fiske AS" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
   openGraph: {
-    title: "Lemon & Ardent — Adventure Awaits",
-    description: "Premium outdoor adventure gear. Equip for exciting journeys.",
-    siteName: "Lemon & Ardent",
+    title: "Kleven Jakt & Fiske — Ut på tur aldri sur!",
+    description:
+      "Norsk utstyr for jakt, fiske og friluftsliv. Fraktfritt over 2500,-",
+    siteName: "Kleven Jakt & Fiske",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lemon & Ardent — Adventure Awaits",
-    description: "Premium outdoor adventure gear. Equip for exciting journeys.",
+    title: "Kleven Jakt & Fiske — Ut på tur aldri sur!",
+    description: "Norsk utstyr for jakt, fiske og friluftsliv.",
   },
 };
 
@@ -50,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="no" suppressHydrationWarning>
       <body
         className={`${montserrat.variable} ${inter.variable} antialiased bg-background text-foreground`}
         style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
