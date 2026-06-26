@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Header:  \n- Logo moved left; navigation simplified (removed \"Contact/Careers/FAQ,\" added \"Our Commitment\"); \"Log In\" replaced with icons.  \n\nHero Typography:  \n- Added \"NEW SEASON - ADVENTURE COLLECTION\" tag; subheading expanded; \"Adventure Awaits\" font weight/size altered.  \n\nButton Styling:  \n- \"Shop Now\" button now has arrow icon; text changed to \"SHOP NOW\".  \n\nImage Proportions:  \n- Model image cropped/reshaped; background (sky vs. water) and model’s jacket color differ.  \n\nColor Matching:  \n- Light blue hero background is lighter; yellow button is brighter; navy header is darker.  \n\nAdditional Elements:  \n- Added stats (120+/30k/4.9★), category sections, \"Featured Gear\" grid, and footer.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782478589,
+  "id": "20260626205616945e24bc0a0749c4",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260626205616945e24bc0a0749c4",
+  "usage": {
+    "completion_tokens": 179,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 9367,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 9546
+  }
+}

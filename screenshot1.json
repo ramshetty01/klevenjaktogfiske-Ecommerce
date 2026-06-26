@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "# UI Design Specification: Lemon & Ardent Adventure Store\n\n## Overview\nA minimalist e-commerce homepage for outdoor/adventure gear with a focus on visual storytelling and clean navigation.\n\n## Layout Structure\n- **Full-viewport height hero section** with fixed navigation bar\n- **Header**: 80px height, dark blue background\n- **Hero**: 100vh height, split layout with text on left, image on right\n- **Content**: Centered text block with call-to-action button\n\n## Color Palette\n- **Header Background**: `#2C3E50` (dark slate blue)\n- **Hero Background**: `#A8C5D6` (light blue-gray)\n- **Primary Text**: `#2C3E50` (dark slate blue)\n- **Secondary Text**: `#34495E` (slate blue)\n- **Button Background**: `#F7DC6F` (yellow)\n- **Button Text**: `#2C3E50` (dark slate blue)\n- **Icon Colors**: `#ECF0F1` (light gray)\n\n## Typography\n- **Logo/Brand**: \"Lemon & Ardent\" - **Montserrat** (sans-serif), 18px, 500 weight\n- **Navigation**: \"Shop All\", \"About\", etc. - **Montserrat**, 16px, 400 weight\n- **Hero Heading**: \"Adventure Awaits\" - **Montserrat**, 80px, 700 weight\n- **Subheading**: \"Equip for Exciting Journeys\" - **Montserrat**, 20px, 400 weight\n- **Button Text**: \"Shop Now\" - **Montserrat**, 18px, 600 weight\n\n## Spacing & Layout\n- **Header Padding**: 0 40px (horizontal)\n- **Header Vertical Spacing**: 24px (logo to nav, nav to login)\n- **Hero Text Padding**: 80px left, 40px top\n- **Hero Text Margin**: 0 0 24px 0 (between heading and subheading)\n- **Button Padding**: 16px 40px (horizontal/vertical)\n- **Button Margin**: 40px top from subheading\n\n## Navigation\n- **Logo**: Left-aligned, 32px width, 24px height\n- **Navigation Links**: Center-aligned, 32px horizontal spacing\n- **Login/Cart**: Right-aligned, 32px horizontal spacing\n- **Login Icon**: 24px diameter circle, 2px border\n- **Cart Icon**: 24px height, 2px stroke\n\n## Interactive Elements\n- **Navigation Links**: Hover state: `#3498DB` (blue), underline\n- **Login Button**: Hover state: `#ECF0F1` (light gray) background\n- **Cart Icon**: Hover state: `#E74C3C` (red) for items count\n- **Shop Now Button**: Hover state: `#F39C12` (orange) background, cursor: pointer\n\n## Visual Hierarchy\n1. **Hero Heading** (80px, 700 weight) - Most prominent\n2. **Navigation** (16px, 400 weight) - Secondary\n3. **Subheading** (20px, 400 weight) - Tertiary\n4. **Button** (18px, 600 weight) - Action-focused\n5. **Login/Cart** (16px, 400 weight) - Least prominent\n\n## Design Tokens\n- **Border Radius**: 30px (button), 50% (login icon)\n- **Box Shadow**: None (flat design)\n- **Transition**: 0.3s ease (all interactive elements)\n- **Line Height**: 1.2 (headings), 1.5 (body text)\n\n## Images\n- **Hero Image**: Right-aligned, 60% width, cover positioning\n- **Model**: Wearing brown puffer jacket with backpack\n- **Background**: Light blue sky gradient\n\n## Responsive Considerations\n- **Mobile**: Hero text stacks vertically, navigation becomes hamburger menu\n- **Tablet**: Hero heading reduces to 60px, button padding decreases\n- **Desktop**: Current layout preserved\n\n## Accessibility\n- **Contrast**: All text meets WCAG 2.1 AA standards\n- **Focus States**: Visible outline on all interactive elements\n- **Alt Text**: \"Model wearing adventure gear against blue sky background\" for hero image\n\nThis design emphasizes clean typography, strategic color contrast, and intuitive navigation to create an engaging shopping experience for outdoor enthusiasts.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782477944,
+  "id": "202606262045259ddc8e6586c445ec",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606262045259ddc8e6586c445ec",
+  "usage": {
+    "completion_tokens": 955,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 5435,
+    "prompt_tokens_details": {
+      "cached_tokens": 6
+    },
+    "total_tokens": 6390
+  }
+}

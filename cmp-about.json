@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "### Colors  \n- **Background**: Original has a yellow gradient; rendered has a solid light beige.  \n- **Button**: Original uses a dark blue button with yellow text; rendered uses a dark blue button with yellow text + arrow icon.  \n- **Text**: Original text is dark gray; rendered text is darker (near-black).  \n\n\n### Typography  \n- **Title**: Original uses a large, light gray \"About\"; rendered uses a larger, bold dark gray \"About\".  \n- **Subhead**: Original uses \"Our Story\" (light gray); rendered uses \"Our Story\" (darker gray).  \n- **Body Text**: Original has shorter, lighter gray paragraphs; rendered has longer, darker gray paragraphs.  \n\n\n### Spacing & Layout  \n- **Image**: Original has a full rock-climbing image; rendered has a cropped/placeholder image with a \"12+ YEARS ON THE TRAIL\" badge.  \n- **Content Flow**: Original has text → image → text → button; rendered has image (left) → text (right) → badge → button.  \n- **Additional Elements**: Rendered adds a navigation bar, stats section (30k+, 120+, etc.), footer (contact info, policies, social icons) — all absent in the original.  \n\n\n### Key Missing/Added Elements  \n- Original lacks navigation, stats, footer; rendered includes them.  \n- Original has a single \"Learn More\" button; rendered has \"LEARN MORE\" with an arrow.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782478532,
+  "id": "20260626205519e6532dbf1fd345ff",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260626205519e6532dbf1fd345ff",
+  "usage": {
+    "completion_tokens": 306,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 8471,
+    "prompt_tokens_details": {
+      "cached_tokens": 7
+    },
+    "total_tokens": 8777
+  }
+}
