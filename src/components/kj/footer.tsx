@@ -35,25 +35,25 @@ export function Footer({ onNavigate }: FooterProps) {
             </div>
 
             <p className="mb-6 max-w-xs text-[13px] font-light leading-relaxed text-[#b8c0c8]">
-              Norsk utstyr for jakt, fiske og friluftsliv siden 1985. Vi leverer
-              kvalitetsutstyr fra de beste merkevarene — med rådgivning du kan
-              stole på.
+              Vi er Kleven Hunting & Fishing. God kundeservice — ordrer
+              over 2 500,- er fraktfritt i Norge til privatkunder (gjelder
+              ikke pulker og våpenskap).
             </p>
 
             <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
               <a
-                href="tel:+47XXXXXXXX"
+                href="tel:+4778407140"
                 className="flex items-center gap-2 hover:text-white"
               >
                 <Phone size={14} strokeWidth={1.6} className="text-[#f0c548]" />
-                +47 38 00 00 00
+                78 40 71 40
               </a>
               <a
-                href="mailto:post@klevenjaktogfiske.no"
+                href="mailto:Camilla@klevenjakt-fiske.no"
                 className="flex items-center gap-2 hover:text-white"
               >
                 <Mail size={14} strokeWidth={1.6} className="text-[#f0c548]" />
-                post@klevenjaktogfiske.no
+                Camilla@klevenjakt-fiske.no
               </a>
               <span className="flex items-start gap-2">
                 <MapPin
@@ -62,9 +62,9 @@ export function Footer({ onNavigate }: FooterProps) {
                   className="mt-0.5 text-[#f0c548]"
                 />
                 <span>
-                  Strandgata 12
+                  Brenneriveien 2
                   <br />
-                  4580 Lyngdal, Norge
+                  9601 Hammerfest, Norge
                 </span>
               </span>
             </div>
@@ -145,8 +145,8 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         <div className="mt-12 flex flex-col gap-1 border-t border-white/10 pt-6 text-[12px] font-light text-[#8a96a1] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Kleven Jakt &amp; Fiske AS. Organisasjonsnr. 987 654 321.</p>
-          <p>Fraktfritt i Norge på ordre over 2500,-</p>
+          <p>© {new Date().getFullYear()} Kleven Hunting &amp; Fishing AS. Organisasjonsnr. 962 398 251.</p>
+          <p>Fraktfritt i Norge på ordre over 2 500,- (gjelder ikke pulker og våpenskap)</p>
         </div>
       </div>
     </footer>
