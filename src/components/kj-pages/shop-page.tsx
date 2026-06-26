@@ -599,6 +599,7 @@ const PRODUCTS: Product[] = [
     stock: "20+ på lager",
     stockCount: 28,
     category: "Fiske",
+    subcategory: "Fishing rods",
     sales90: 188,
     conversionRate: 0.094,
     inventoryHealth: 0.95,
@@ -618,6 +619,7 @@ const PRODUCTS: Product[] = [
     stock: "15 på lager",
     stockCount: 15,
     category: "Fiske",
+    subcategory: "Fishing rods",
     sales90: 112,
     conversionRate: 0.072,
     inventoryHealth: 0.7,
@@ -638,6 +640,7 @@ const PRODUCTS: Product[] = [
     stock: "10 på lager",
     stockCount: 10,
     category: "Fiske",
+    subcategory: "Fly fishing",
     sales90: 42,
     conversionRate: 0.048,
     inventoryHealth: 0.6,
@@ -659,6 +662,7 @@ const PRODUCTS: Product[] = [
     stock: "5 på lager",
     stockCount: 5,
     category: "Fiske",
+    subcategory: "Fishing rods",
     sales90: 24,
     conversionRate: 0.038,
     inventoryHealth: 0.4,
@@ -678,6 +682,7 @@ const PRODUCTS: Product[] = [
     stock: "100+ på lager",
     stockCount: 120,
     category: "Fiske",
+    subcategory: "Bait",
     sales90: 340,
     conversionRate: 0.12,
     inventoryHealth: 1,
@@ -697,6 +702,7 @@ const PRODUCTS: Product[] = [
     stock: "100+ på lager",
     stockCount: 110,
     category: "Fiske",
+    subcategory: "Bait",
     sales90: 280,
     conversionRate: 0.11,
     inventoryHealth: 1,
@@ -1288,9 +1294,11 @@ const CATEGORIES = [
 type CategoryFilter = (typeof CATEGORIES)[number];
 
 /**
- * Camping subcategories — exact list from klevenjaktogfiske.no/camping.
- * Shown as a secondary filter row when the Camping category is active.
+ * Subcategories — exact lists from klevenjaktogfiske.no.
+ * Shown as a secondary filter row when the relevant category is active.
  */
+
+// Camping subcategories (from /camping)
 const CAMPING_SUBCATEGORIES = [
   "Alle",
   "Binoculars",
@@ -1318,7 +1326,35 @@ const CAMPING_SUBCATEGORIES = [
   "Vacuum",
   "Axe",
 ] as const;
-type SubcategoryFilter = (typeof CAMPING_SUBCATEGORIES)[number];
+
+// Fishing subcategories (from /fiske)
+const FISHING_SUBCATEGORIES = [
+  "Alle",
+  "Bait",
+  "Various",
+  "Fishhooks",
+  "Fishing rods",
+  "Reels",
+  "Ice fishing",
+  "Fly fishing",
+  "Yarn",
+  "Sea fishing",
+  "Net",
+  "At the end of the line",
+  "Hooks",
+  "Storage",
+  "Otter, Harp & Winner",
+  "Tendon and lace",
+  "Equipment",
+] as const;
+
+// Map: category → its subcategories
+const SUBCATEGORIES_BY_CATEGORY: Partial<Record<Category, readonly string[]>> = {
+  Camping: CAMPING_SUBCATEGORIES,
+  Fiske: FISHING_SUBCATEGORIES,
+};
+
+type SubcategoryFilter = string;
 
 /**
  * Compute the "Recommended" merchandising score for a product.
@@ -1387,12 +1423,14 @@ export function ShopPage() {
   const [sort, setSort] = useState<SortKey>("recommended");
 
   const isOutlet = active === "Outlet";
-  const isCamping = active === "Camping";
+
+  // Subcategories available for the currently-active category (undefined if none)
+  const activeSubcats = SUBCATEGORIES_BY_CATEGORY[active];
 
   // Auto-switch sort to "discount" when entering Outlet (per merchandising strategy)
   const effectiveSort: SortKey = isOutlet && sort === "recommended" ? "discount" : sort;
 
-  // Reset subcategory filter when leaving Camping
+  // Reset subcategory filter when changing main category
   const handleCategoryClick = (c: CategoryFilter) => {
     setActive(c);
     setSubActive("Alle");
@@ -1404,8 +1442,8 @@ export function ShopPage() {
         ? PRODUCTS
         : PRODUCTS.filter((p) => p.category === active);
 
-    // Apply Camping subcategory filter
-    if (isCamping && subActive !== "Alle") {
+    // Apply subcategory filter (works for any category that has subcategories)
+    if (activeSubcats && subActive !== "Alle") {
       base = base.filter((p) => p.subcategory === subActive);
     }
 
@@ -1456,7 +1494,7 @@ export function ShopPage() {
         break;
     }
     return sorted;
-  }, [active, subActive, isCamping, effectiveSort]);
+  }, [active, subActive, activeSubcats, effectiveSort]);
 
   // Available sort options: hide "discount" unless in Outlet; show all others always
   const visibleSortOptions = SORT_OPTIONS.filter((o) => {
@@ -1506,13 +1544,13 @@ export function ShopPage() {
             })}
           </div>
 
-          {/* Camping subcategory filter row — only shown when Camping is active */}
-          {isCamping && (
+          {/* Subcategory filter row — shown when the active category has subcategories (Camping, Fiske, etc.) */}
+          {activeSubcats && activeSubcats.length > 0 && (
             <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d4cfc1] pb-5">
               <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
                 Underkategori:
               </span>
-              {CAMPING_SUBCATEGORIES.map((sc) => {
+              {activeSubcats.map((sc) => {
                 const isActive = subActive === sc;
                 return (
                   <button
@@ -1541,7 +1579,7 @@ export function ShopPage() {
                   {" "}i <span className="font-semibold text-[#1f2d3a]">{active}</span>
                 </>
               )}
-              {isCamping && subActive !== "Alle" && (
+              {activeSubcats && subActive !== "Alle" && (
                 <>
                   {" "}→ <span className="font-semibold text-[#2d4a3e]">{subActive}</span>
                 </>
