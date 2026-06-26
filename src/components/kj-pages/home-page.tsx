@@ -252,7 +252,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
   return (
     <div className="kj-page-enter">
       {/* HERO — minimal split layout matching reference screenshot */}
-      <section className="relative w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden min-h-[calc(100vh-5rem)]">
         {/* Soft light-blue gradient backdrop */}
         <div
           className="absolute inset-0"
