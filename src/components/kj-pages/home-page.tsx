@@ -262,7 +262,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           }}
         />
 
-        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-10 pt-2 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-14 lg:pt-6">
+        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-10 pt-2 lg:gap-16 lg:px-10 lg:py-14 lg:pt-6">
           {/* Text column */}
           <div className="flex flex-col items-start">
             <h1
@@ -290,18 +290,6 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   className="transition-transform group-hover:translate-x-1"
                 />
               </button>
-            </div>
-          </div>
-
-          {/* Single hero image — clean, no overlays, no chips */}
-          <div className="relative flex justify-center">
-            <div className="relative aspect-[4/5] w-full max-w-[380px] overflow-hidden rounded-[12px] shadow-[0_30px_60px_-15px_rgba(31,45,58,0.35)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/kelven-hero.png"
-                alt="Kleven Jakt & Fiske butikkbygning ved brygge med båt, snødekte fjell og nordlys i stjernehimmelen"
-                className="h-full w-full object-cover"
-              />
             </div>
           </div>
         </div>
