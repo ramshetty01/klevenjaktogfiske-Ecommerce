@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Total product cards visible: 25.  \n\n5 product names:  \n1. Alces BBQ Stick  \n2. Allround Ferret XT  \n3. All-round Taurus  \n4. Aqilla Powerbird BS10  \n5. Barents Arctic 3 Polar  \n\nEach card shows image, name, stock status, and price.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782490157,
+  "id": "2026062700090999b2fa6c0a6c482c",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "2026062700090999b2fa6c0a6c482c",
+  "usage": {
+    "completion_tokens": 72,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 5212,
+    "prompt_tokens_details": {
+      "cached_tokens": 7
+    },
+    "total_tokens": 5284
+  }
+}
