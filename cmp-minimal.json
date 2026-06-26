@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) Yes, the minimal aesthetic is mostly matched (light background, clean layout).  \n2) Yes, the hero is a clean split (text left, single image right) with a light background.  \n3) Remove the extra sections below the hero (KLEVEN, KATEGORIER, KUNDESERVICE, footer) to match the reference’s “no other sections visible” requirement.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1782483837,
+  "id": "2026062622234178a7885918ba44ce",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "2026062622234178a7885918ba44ce",
+  "usage": {
+    "completion_tokens": 84,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 8075,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 8159
+  }
+}
