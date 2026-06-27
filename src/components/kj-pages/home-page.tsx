@@ -113,7 +113,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => onNavigate("shop")}
-                className="group inline-flex items-center gap-3 rounded-full bg-[#d4af37] px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1a1a1a] shadow-[0_8px_24px_rgba(240,197,72,0.4)] transition-all duration-300 hover:bg-[#b8941f] hover:shadow-[0_12px_30px_rgba(217,168,56,0.5)]"
+                className="group inline-flex items-center gap-3 rounded-full bg-[#d4af37] px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1a1a1a] transition-all duration-300 hover:bg-[#b8941f]"
               >
                 {t("home.shopNow")}
                 <ArrowRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-1" />
