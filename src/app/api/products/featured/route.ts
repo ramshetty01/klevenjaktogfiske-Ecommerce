@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 /**
  * GET /api/products/featured
  *
- * Returns the 8 products with the highest precomputed `recScore` that are
+ * Returns the 12 products with the highest precomputed `recScore` that are
  * in stock. Gift cards (Gavekort) are excluded — they're utility products
  * that don't belong in the "Popular Products" showcase on the home page.
  *
@@ -25,7 +25,7 @@ export async function GET() {
       ...(gavekort ? { categoryId: { not: gavekort.id } } : {}),
     },
     orderBy: { recScore: "desc" },
-    take: 8,
+    take: 12,
     include: {
       brand: { select: { name: true, slug: true } },
       category: { select: { name: true, slug: true } },
