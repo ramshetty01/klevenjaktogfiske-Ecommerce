@@ -644,13 +644,13 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
         <div className="mx-auto max-w-[1280px] px-6 pt-12 pb-6 lg:px-10">
           {searchQ && (
             <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
-              <span className="normal-case text-[#1f2d3a]">
+              <span className="normal-case text-[#1a1a1a]">
                 {t("nav.search")}: &laquo;{searchQ}&raquo;
               </span>
             </div>
           )}
           <h1
-            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#1f2d3a]"
+            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#1a1a1a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {parentForHeading
@@ -712,13 +712,13 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="text-[12px] font-light text-[#6b7884]">
               {t("shop.showing")}{" "}
-              <span className="font-semibold text-[#1f2d3a]">{totalCount}</span>{" "}
+              <span className="font-semibold text-[#1a1a1a]">{totalCount}</span>{" "}
               {totalCount !== 1 ? t("shop.articles") : t("shop.article")}
               {parentForHeading && (
                 <>
                   {" "}
                   {t("shop.in")}{" "}
-                  <span className="font-semibold text-[#1f2d3a]">
+                  <span className="font-semibold text-[#1a1a1a]">
                     {parentForHeading.name}
                   </span>
                 </>
@@ -735,12 +735,12 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               <Button
                 variant="outline"
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden h-9 rounded-full border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1f2d3a]"
+                className="lg:hidden h-9 rounded-full border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1a1a1a]"
               >
                 <Filter size={14} className="mr-1.5" />
                 {t("shop.filters")}
                 {activeFilterCount > 0 && (
-                  <span className="ml-1.5 rounded-full bg-[#1f2d3a] px-1.5 text-[10px] font-semibold text-white">
+                  <span className="ml-1.5 rounded-full bg-[#1a1a1a] px-1.5 text-[10px] font-semibold text-white">
                     {activeFilterCount}
                   </span>
                 )}
@@ -755,7 +755,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                   value={effectiveSort}
                   onValueChange={(v) => setSort(v as SortKey)}
                 >
-                  <SelectTrigger className="h-9 w-[180px] sm:w-[230px] rounded-full border border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1f2d3a] hover:bg-[#f5f1e8] focus:ring-0 focus:ring-offset-0">
+                  <SelectTrigger className="h-9 w-[180px] sm:w-[230px] rounded-full border border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1a1a1a] hover:bg-[#f5f1e8] focus:ring-0 focus:ring-offset-0">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-md border border-[#d4cfc1] bg-white">
@@ -763,7 +763,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       <SelectItem
                         key={o.value}
                         value={o.value}
-                        className="text-[13px] text-[#1f2d3a] focus:bg-[#f5f1e8] focus:text-[#1f2d3a]"
+                        className="text-[13px] text-[#1a1a1a] focus:bg-[#f5f1e8] focus:text-[#1a1a1a]"
                       >
                         {t(o.labelKey)}
                       </SelectItem>
@@ -785,7 +785,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               {activeChips.map((chip) => (
                 <span
                   key={chip.key}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#d4cfc1] bg-white px-2.5 py-1 text-[11px] font-medium text-[#1f2d3a]"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#d4cfc1] bg-white px-2.5 py-1 text-[11px] font-medium text-[#1a1a1a]"
                 >
                   {chip.label}
                   <button
@@ -811,7 +811,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             <aside className="hidden w-[260px] shrink-0 lg:block">
               <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[8px] border border-black/5 bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)] kj-scroll">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
+                  <h3 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a]">
                     {t("shop.filters")}
                   </h3>
                   {activeFilterCount > 0 && (
@@ -836,7 +836,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                     ))
                   : products.length === 0
                     ? <div className="col-span-full py-20 text-center">
-                        <p className="text-[16px] font-semibold text-[#1f2d3a]">
+                        <p className="text-[16px] font-semibold text-[#1a1a1a]">
                           {t("shop.noResults")}
                         </p>
                         <p className="mt-2 text-[13px] text-[#6b7884]">
@@ -844,7 +844,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                         </p>
                         <button
                           onClick={clearFilters}
-                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#1f2d3a] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#15202b]"
+                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#1a1a1a] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#121212]"
                         >
                           <X size={12} /> {t("shop.clearFilters")}
                         </button>
@@ -871,7 +871,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       setPage((p) => Math.max(1, p - 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d4cfc1] bg-white text-[#1f2d3a] transition-colors hover:bg-[#1f2d3a] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#1f2d3a]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d4cfc1] bg-white text-[#1a1a1a] transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#1a1a1a]"
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -900,8 +900,8 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                             }}
                             className={`rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
                               n === page
-                                ? "bg-[#1f2d3a] text-white"
-                                : "text-[#6b7884] hover:bg-white hover:text-[#1f2d3a]"
+                                ? "bg-[#1a1a1a] text-white"
+                                : "text-[#6b7884] hover:bg-white hover:text-[#1a1a1a]"
                             }`}
                           >
                             {n}
@@ -917,7 +917,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       setPage((p) => Math.min(totalPages, p + 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d4cfc1] bg-white text-[#1f2d3a] transition-colors hover:bg-[#1f2d3a] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#1f2d3a]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d4cfc1] bg-white text-[#1a1a1a] transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#1a1a1a]"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -935,10 +935,10 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           className="flex h-[85vh] flex-col gap-0 rounded-t-2xl p-0"
         >
           <SheetHeader className="border-b border-[#d4cfc1] px-4 py-3">
-            <SheetTitle className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
+            <SheetTitle className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a]">
               {t("shop.filters")}
               {activeFilterCount > 0 && (
-                <span className="ml-2 rounded-full bg-[#1f2d3a] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                <span className="ml-2 rounded-full bg-[#1a1a1a] px-1.5 py-0.5 text-[10px] font-semibold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -950,7 +950,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           <div className="border-t border-[#d4cfc1] p-4">
             <Button
               onClick={() => setMobileFilterOpen(false)}
-              className="h-11 w-full rounded-full bg-[#1f2d3a] text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#15202b]"
+              className="h-11 w-full rounded-full bg-[#1a1a1a] text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#121212]"
             >
               {t("shop.showResults")} ({totalCount})
             </Button>
@@ -977,8 +977,8 @@ function CategoryPill({
       onClick={onClick}
       className={`rounded-full px-3.5 py-1.5 text-[11px] font-medium transition-all duration-200 ${
         active
-          ? "bg-[#1f2d3a] text-white"
-          : "bg-white text-[#1f2d3a] hover:bg-[#f0c548]"
+          ? "bg-[#1a1a1a] text-white"
+          : "bg-white text-[#1a1a1a] hover:bg-[#d4af37]"
       }`}
     >
       {label}
@@ -1001,7 +1001,7 @@ function SubcategoryPill({
       className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all duration-200 ${
         active
           ? "bg-[#2d4a3e] text-white"
-          : "bg-[#f5f1e8] text-[#3a4856] hover:bg-[#f0c548] hover:text-[#1f2d3a]"
+          : "bg-[#f5f1e8] text-[#3a4856] hover:bg-[#d4af37] hover:text-[#1a1a1a]"
       }`}
     >
       {label}
@@ -1019,12 +1019,12 @@ function FilterRadio({
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-[12px] text-[#3a4856] hover:text-[#1f2d3a]">
+    <label className="flex cursor-pointer items-center gap-2 text-[12px] text-[#3a4856] hover:text-[#1a1a1a]">
       <input
         type="radio"
         checked={checked}
         onChange={onChange}
-        className="h-3.5 w-3.5 accent-[#1f2d3a]"
+        className="h-3.5 w-3.5 accent-[#1a1a1a]"
       />
       {label}
     </label>
@@ -1049,14 +1049,14 @@ function FilterCheckbox({
       className={`flex items-center gap-2 text-[12px] ${
         disabled
           ? "cursor-not-allowed text-[#8a96a1]"
-          : "cursor-pointer text-[#3a4856] hover:text-[#1f2d3a]"
+          : "cursor-pointer text-[#3a4856] hover:text-[#1a1a1a]"
       }`}
     >
       <Checkbox
         checked={checked}
         onCheckedChange={() => !disabled && onChange()}
         disabled={disabled}
-        className="h-3.5 w-3.5 border-[#d4cfc1] data-[state=checked]:border-[#1f2d3a] data-[state=checked]:bg-[#1f2d3a] data-[state=checked]:text-white"
+        className="h-3.5 w-3.5 border-[#d4cfc1] data-[state=checked]:border-[#1a1a1a] data-[state=checked]:bg-[#1a1a1a] data-[state=checked]:text-white"
       />
       <span className="flex-1">{label}</span>
       {count !== undefined && (
@@ -1083,7 +1083,7 @@ function CollapsibleSection({
     <div className="border-b border-black/5 pb-4 last:border-b-0 last:pb-0">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-1 text-left text-[11px] font-semibold uppercase tracking-[0.15em] text-[#1f2d3a] transition-colors hover:text-[#2d4a3e]"
+        className="flex w-full items-center justify-between py-1 text-left text-[11px] font-semibold uppercase tracking-[0.15em] text-[#1a1a1a] transition-colors hover:text-[#2d4a3e]"
         aria-expanded={isOpen}
       >
         {title}

@@ -47,7 +47,7 @@ export function Footer({ onNavigate }: FooterProps) {
   return (
     <footer
       className="relative w-full border-t border-white/10 text-white"
-      style={{ backgroundColor: "#1f2d3a" }}
+      style={{ backgroundColor: "#1a1a1a" }}
     >
       <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
         {/* ===== 4-COLUMN GRID ===== */}
@@ -63,7 +63,7 @@ export function Footer({ onNavigate }: FooterProps) {
               >
                 KLEVEN
               </div>
-              <div className="text-[10px] font-light uppercase tracking-[0.35em] text-[#f0c548]">
+              <div className="text-[10px] font-light uppercase tracking-[0.35em] text-[#d4af37]">
                 {t("nav.brandSubtitle")} AS
               </div>
             </div>
@@ -77,23 +77,23 @@ export function Footer({ onNavigate }: FooterProps) {
             <div className="flex flex-col gap-2.5 text-[12px] font-light text-[#b8c0c8]">
               <a
                 href="tel:+4778407140"
-                className="flex items-center gap-2 transition-colors hover:text-[#f0c548]"
+                className="flex items-center gap-2 transition-colors hover:text-[#d4af37]"
               >
-                <Phone size={13} strokeWidth={1.6} className="text-[#f0c548]" />
+                <Phone size={13} strokeWidth={1.6} className="text-[#d4af37]" />
                 78 40 71 40
               </a>
               <a
                 href="mailto:Camilla@klevenjakt-fiske.no"
-                className="flex items-center gap-2 transition-colors hover:text-[#f0c548]"
+                className="flex items-center gap-2 transition-colors hover:text-[#d4af37]"
               >
-                <Mail size={13} strokeWidth={1.6} className="text-[#f0c548]" />
+                <Mail size={13} strokeWidth={1.6} className="text-[#d4af37]" />
                 <span className="break-all">Camilla@klevenjakt-fiske.no</span>
               </a>
               <span className="flex items-start gap-2">
                 <MapPin
                   size={13}
                   strokeWidth={1.6}
-                  className="mt-0.5 flex-shrink-0 text-[#f0c548]"
+                  className="mt-0.5 flex-shrink-0 text-[#d4af37]"
                 />
                 <span>
                   Brenneriveien 2
@@ -113,7 +113,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#f0c548] hover:text-[#1f2d3a] hover:scale-105"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#d4af37] hover:text-[#1a1a1a] hover:scale-105"
                 >
                   <Icon size={14} strokeWidth={1.6} />
                 </a>
@@ -123,8 +123,8 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Column 2: Categories */}
           <div className="flex flex-col">
-            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
-              <span className="h-px w-6 bg-[#f0c548]" />
+            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#d4af37]">
+              <span className="h-px w-6 bg-[#d4af37]" />
               {t("footer.categories")}
             </h4>
             <ul className="grid grid-cols-1 gap-2.5 text-[13px] font-light text-[#b8c0c8]">
@@ -134,7 +134,7 @@ export function Footer({ onNavigate }: FooterProps) {
                     onClick={() =>
                       go("shop", c.slug ? { shopFilters: { category: c.slug } } : undefined)
                     }
-                    className="text-left transition-colors hover:text-[#f0c548]"
+                    className="text-left transition-colors hover:text-[#d4af37]"
                   >
                     {c.label}
                   </button>
@@ -145,8 +145,8 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Column 3: Customer Service */}
           <div className="flex flex-col">
-            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
-              <span className="h-px w-6 bg-[#f0c548]" />
+            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#d4af37]">
+              <span className="h-px w-6 bg-[#d4af37]" />
               {t("footer.customerService")}
             </h4>
             <ul className="grid grid-cols-1 gap-2.5 text-[13px] font-light text-[#b8c0c8]">
@@ -154,7 +154,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <li key={s.label}>
                   <a
                     href={s.href ?? "#"}
-                    className="transition-colors hover:text-[#f0c548]"
+                    className="transition-colors hover:text-[#d4af37]"
                   >
                     {s.label}
                   </a>
@@ -165,8 +165,8 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Column 4: Opening Hours */}
           <div className="flex flex-col">
-            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
-              <span className="h-px w-6 bg-[#f0c548]" />
+            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#d4af37]">
+              <span className="h-px w-6 bg-[#d4af37]" />
               <Clock size={13} strokeWidth={2} />
               {t("footer.openingHours")}
             </h4>
@@ -183,7 +183,7 @@ export function Footer({ onNavigate }: FooterProps) {
                         h.closed
                           ? "text-[#8a96a1]"
                           : h.highlight
-                          ? "text-[#f0c548]"
+                          ? "text-[#d4af37]"
                           : "text-white"
                       }`}
                     >
@@ -219,7 +219,7 @@ export function CategoriesChip({
       className="group flex items-center gap-2 rounded-md border border-black/10 bg-white px-4 py-3 text-left shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all hover:shadow-[0_6px_16px_rgba(0,0,0,0.12)]"
     >
       <div>
-        <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a]">
           {t("nav.categories")}
         </p>
         <p className="text-[11px] text-[#8a96a1]">
@@ -228,7 +228,7 @@ export function CategoriesChip({
       </div>
       <ArrowRight
         size={14}
-        className="text-[#8a96a1] transition-transform group-hover:translate-x-0.5 group-hover:text-[#1f2d3a]"
+        className="text-[#8a96a1] transition-transform group-hover:translate-x-0.5 group-hover:text-[#1a1a1a]"
       />
     </button>
   );

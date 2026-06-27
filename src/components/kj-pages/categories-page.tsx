@@ -77,7 +77,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
             {t("categories.ourRange")}
           </p>
           <h1
-            className="text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#1f2d3a]"
+            className="text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#1a1a1a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {t("categories.title")}
@@ -115,12 +115,12 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
                 >
                   <div className="mb-3 flex items-center gap-3 text-[#6b7884]">
                     <Icon size={28} strokeWidth={1.4} />
-                    <h2 className="text-[22px] font-semibold text-[#1f2d3a]">
+                    <h2 className="text-[22px] font-semibold text-[#1a1a1a]">
                       {c.name}
                     </h2>
                     <button
                       onClick={() => onNavigate("shop", { shopFilters: { category: c.slug } })}
-                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#1f2d3a] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#15202b]"
+                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#1a1a1a] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#121212]"
                     >
                       {lang === "no" ? "Se alle" : "See all"} ({c.count})
                       <ArrowRight size={12} />
@@ -137,7 +137,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
                         <button
                           key={sub.id}
                           onClick={() => onNavigate("shop", { shopFilters: { subcategory: sub.slug } })}
-                          className="rounded-full bg-[#f0c548]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#f0c548] hover:text-[#1f2d3a]"
+                          className="rounded-full bg-[#d4af37]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a] transition-colors hover:bg-[#d4af37] hover:text-[#1a1a1a]"
                         >
                           {sub.name} ({sub.count})
                         </button>
@@ -152,7 +152,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
         {/* Footer CTA area */}
         <div className="mt-16 flex flex-col items-start justify-between gap-6 rounded-[8px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] md:flex-row md:items-center">
           <div>
-            <h3 className="text-[20px] font-semibold text-[#1f2d3a]">
+            <h3 className="text-[20px] font-semibold text-[#1a1a1a]">
               {t("categories.readyToShop")}
             </h3>
             <p className="mt-1 text-[14px] font-light text-[#6b7884]">
@@ -163,7 +163,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
             <CategoriesChip onClick={() => onNavigate("about")} />
             <button
               onClick={() => onNavigate("shop")}
-              className="inline-flex items-center gap-2 rounded-full bg-[#1f2d3a] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-[#15202b]"
+              className="inline-flex items-center gap-2 rounded-full bg-[#1a1a1a] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-[#121212]"
             >
               {t("categories.toShop")}
               <ArrowRight size={14} />

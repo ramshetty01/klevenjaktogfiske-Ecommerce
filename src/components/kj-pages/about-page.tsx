@@ -28,14 +28,14 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             alt="Kleven Jakt & Fiske butikk under nordlyset i Hammerfest"
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d3a]/80 via-[#1f2d3a]/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/80 via-[#1a1a1a]/20 to-transparent" />
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto w-full max-w-[1280px] px-6 pb-8 lg:px-10">
               <motion.p
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#f0c548]"
+                className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#d4af37]"
               >
                 Hammerfest · 70°N
               </motion.p>
@@ -60,7 +60,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             {t("about.aboutUs")}
           </p>
           <h1
-            className="text-[clamp(3rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#1f2d3a]"
+            className="text-[clamp(3rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#1a1a1a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
           >
             {t("about.title")}
@@ -84,7 +84,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             </div>
             {/* Small badge */}
             <div className="absolute -bottom-5 -right-5 hidden rounded-lg bg-white px-5 py-4 shadow-[0_10px_25px_rgba(31,45,58,0.18)] sm:block">
-              <div className="text-[24px] font-bold text-[#1f2d3a]">40+</div>
+              <div className="text-[24px] font-bold text-[#1a1a1a]">40+</div>
               <div className="text-[11px] font-light uppercase tracking-[0.1em] text-[#8a96a1]">
                 {t("about.yearsBadge")}
               </div>
@@ -124,7 +124,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
 
             {/* Signature */}
             <div className="mt-10 flex items-center gap-4">
-              <div className="h-px flex-1 bg-[#1f2d3a]/15" />
+              <div className="h-px flex-1 bg-[#1a1a1a]/15" />
               <span className="text-[14px] font-light italic text-[#6b7884]">
                 {t("about.signature")}
               </span>
@@ -133,7 +133,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             {/* CTA */}
             <button
               onClick={() => onNavigate("categories")}
-              className="mt-10 inline-flex items-center gap-3 rounded-full bg-[#1f2d3a] px-8 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#f0c548] shadow-[0_8px_24px_rgba(31,45,58,0.25)] transition-all duration-300 hover:bg-[#15202b] hover:shadow-[0_12px_30px_rgba(31,45,58,0.35)]"
+              className="mt-10 inline-flex items-center gap-3 rounded-full bg-[#1a1a1a] px-8 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#d4af37] shadow-[0_8px_24px_rgba(31,45,58,0.25)] transition-all duration-300 hover:bg-[#121212] hover:shadow-[0_12px_30px_rgba(31,45,58,0.35)]"
             >
               {t("about.cta")}
               <ArrowRight
@@ -154,7 +154,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             { v: "30k+", l: lang === "no" ? "Norske kunder" : "Norwegian customers" },
           ].map((s) => (
             <div key={s.l}>
-              <div className="text-[clamp(2rem,3vw,2.75rem)] font-bold text-[#1f2d3a]">
+              <div className="text-[clamp(2rem,3vw,2.75rem)] font-bold text-[#1a1a1a]">
                 {s.v}
               </div>
               <div className="mt-2 text-[12px] font-light uppercase tracking-[0.15em] text-[#6b7884]">

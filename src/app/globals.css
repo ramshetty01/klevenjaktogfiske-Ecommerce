@@ -47,20 +47,20 @@
   /* Kleven Jakt & Fiske brand tokens */
   --radius: 0.625rem;
 
-  /* Brand palette — Norwegian hunting & fishing */
-  --kj-navy: #1f2d3a;          /* header / footer deep navy (forest night) */
-  --kj-navy-deep: #15202b;     /* hover navy */
+  /* Brand palette — Norwegian hunting & fishing (matched to reference design) */
+  --kj-navy: #1a1a1a;          /* header / footer dark charcoal (near-black) */
+  --kj-navy-deep: #121212;     /* hover navy */
   --kj-forest: #2d4a3e;        /* deep Norwegian forest green */
   --kj-forest-light: #3d5e4f;
   --kj-cream: #f5f1e8;         /* warm cream — paper / commitment bg */
   --kj-paper: #efe9dc;         /* slightly darker cream */
-  --kj-yellow: #f0c548;        /* warm Norwegian sunset yellow */
-  --kj-yellow-bright: #f4d35e; /* shipping banner */
-  --kj-yellow-deep: #d9a838;   /* hover yellow */
+  --kj-yellow: #d4af37;        /* gold accent (matched to reference) */
+  --kj-yellow-bright: #e6c254; /* shipping banner — slightly brighter gold */
+  --kj-yellow-deep: #b8941f;   /* hover gold */
   --kj-orange: #c75d2c;        /* burnt orange — accent for hunting */
   --kj-blue-soft: #b9cdd9;     /* hero gradient — soft nordic sky */
   --kj-blue-light: #d2e0e8;
-  --kj-text-dark: #1f2d3a;     /* primary text */
+  --kj-text-dark: #1a1a1a;     /* primary text */
   --kj-text-body: #3a4856;     /* body text */
   --kj-text-muted: #6b7884;    /* secondary text */
   --kj-text-icon: #8a96a1;     /* icons / dividers */

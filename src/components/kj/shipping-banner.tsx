@@ -35,20 +35,20 @@ export function ShippingBanner({
       className={`flex items-center justify-center gap-3 px-4 leading-tight ${itemPad}`}
       aria-hidden={ariaHidden ? "true" : undefined}
     >
-      <Truck size={16} strokeWidth={2} className="text-[#1f2d3a]" />
+      <Truck size={16} strokeWidth={2} className="text-[#1a1a1a]" />
       <span
-        className={`font-semibold uppercase tracking-[0.18em] text-[#1f2d3a] ${fontSize}`}
+        className={`font-semibold uppercase tracking-[0.18em] text-[#1a1a1a] ${fontSize}`}
       >
         {t("banner.freeShipping")}
       </span>
-      <span className="px-1 text-[#1f2d3a]/40">•</span>
-      <Clock size={14} strokeWidth={2} className="text-[#1f2d3a]" />
+      <span className="px-1 text-[#1a1a1a]/40">•</span>
+      <Clock size={14} strokeWidth={2} className="text-[#1a1a1a]" />
       <span
-        className={`font-semibold uppercase tracking-[0.18em] text-[#1f2d3a] ${fontSize}`}
+        className={`font-semibold uppercase tracking-[0.18em] text-[#1a1a1a] ${fontSize}`}
       >
         {t("banner.fastDelivery")}
       </span>
-      <span className="px-1 text-[#1f2d3a]/40">•</span>
+      <span className="px-1 text-[#1a1a1a]/40">•</span>
     </div>
   );
 
@@ -57,7 +57,7 @@ export function ShippingBanner({
     return (
       <div
         className="relative w-full overflow-hidden"
-        style={{ backgroundColor: "#f4d35e" }}
+        style={{ backgroundColor: "#e6c254" }}
         role="marquee"
         aria-label={`${t("banner.freeShipping")}. ${t("banner.fastDelivery")}.`}
       >
@@ -66,14 +66,14 @@ export function ShippingBanner({
           className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12"
           style={{
             background:
-              "linear-gradient(to right, #f4d35e 0%, rgba(244,211,94,0) 100%)",
+              "linear-gradient(to right, #e6c254 0%, rgba(244,211,94,0) 100%)",
           }}
         />
         <div
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12"
           style={{
             background:
-              "linear-gradient(to left, #f4d35e 0%, rgba(244,211,94,0) 100%)",
+              "linear-gradient(to left, #e6c254 0%, rgba(244,211,94,0) 100%)",
           }}
         />
         <div className={`kj-marquee-track ${itemPad}`}>
@@ -89,7 +89,7 @@ export function ShippingBanner({
   return (
     <div
       className="relative w-full overflow-hidden"
-      style={{ backgroundColor: "#f4d35e", height: `${height}px` }}
+      style={{ backgroundColor: "#e6c254", height: `${height}px` }}
       role="marquee"
       aria-label={`${t("banner.freeShipping")}. ${t("banner.fastDelivery")}.`}
     >
@@ -98,14 +98,14 @@ export function ShippingBanner({
         className="pointer-events-none absolute inset-x-0 top-0 z-10 h-4"
         style={{
           background:
-            "linear-gradient(to bottom, #f4d35e 0%, rgba(244,211,94,0) 100%)",
+            "linear-gradient(to bottom, #e6c254 0%, rgba(244,211,94,0) 100%)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-4"
         style={{
           background:
-            "linear-gradient(to top, #f4d35e 0%, rgba(244,211,94,0) 100%)",
+            "linear-gradient(to top, #e6c254 0%, rgba(244,211,94,0) 100%)",
         }}
       />
 

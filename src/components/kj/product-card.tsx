@@ -94,11 +94,11 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
   // Tag color mapping (uses original tag value for color logic)
   const tagClass = (tag: string) => {
     if (tag.startsWith("-") || tag === "Tilbud") return "bg-[#c75d2c] text-white";
-    if (tag === "Nyhet") return "bg-[#1f2d3a] text-white";
+    if (tag === "Nyhet") return "bg-[#1a1a1a] text-white";
     if (tag === "Begrenset") return "bg-[#2d4a3e] text-white";
     if (tag === "Premium") return "bg-[#2d4a3e] text-white";
-    if (tag === "Populært") return "bg-[#f0c548] text-[#1f2d3a]";
-    return "bg-[#f0c548] text-[#1f2d3a]"; // Bestselger
+    if (tag === "Populært") return "bg-[#d4af37] text-[#1a1a1a]";
+    return "bg-[#d4af37] text-[#1a1a1a]"; // Bestselger
   };
 
   return (
@@ -113,7 +113,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       tabIndex={0}
       role="link"
       aria-label={`${lang === "no" ? "Åpne" : "Open"} ${product.name}`}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f0c548]"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#f4f3ef]">
         <img
@@ -149,7 +149,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         <button
           onClick={handleAdd}
           aria-label={`${lang === "no" ? "Legg" : "Add"} ${product.name} ${lang === "no" ? "i handlevognen" : "to cart"}`}
-          className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#1f2d3a] opacity-0 shadow-md transition-all duration-300 hover:bg-[#f0c548] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
+          className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#1a1a1a] opacity-0 shadow-md transition-all duration-300 hover:bg-[#d4af37] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
         >
           <Plus size={14} strokeWidth={2.2} />
         </button>
@@ -163,7 +163,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
         {/* Name */}
         <h3
-          className={`font-semibold leading-tight text-[#1f2d3a] line-clamp-2 ${
+          className={`font-semibold leading-tight text-[#1a1a1a] line-clamp-2 ${
             compact ? "text-[12px]" : "text-[13px]"
           }`}
         >
@@ -191,9 +191,9 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Price row */}
         <div className="mt-1.5 flex items-baseline gap-1.5">
           {priceUnknown ? (
-            <span className="text-[13px] font-bold text-[#1f2d3a]">{t("shop.seePrice")}</span>
+            <span className="text-[13px] font-bold text-[#1a1a1a]">{t("shop.seePrice")}</span>
           ) : (
-            <span className="text-[13px] font-bold text-[#1f2d3a]">
+            <span className="text-[13px] font-bold text-[#1a1a1a]">
               {formatNok(product.price)}
             </span>
           )}
@@ -207,8 +207,8 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Rating */}
         {product.reviewCount > 0 && (
           <div className="mt-1 flex items-center gap-1 text-[9px] text-[#8a96a1]">
-            <Star size={10} className="fill-[#f0c548] text-[#f0c548]" />
-            <span className="font-semibold text-[#1f2d3a]">
+            <Star size={10} className="fill-[#d4af37] text-[#d4af37]" />
+            <span className="font-semibold text-[#1a1a1a]">
               {product.rating.toFixed(1)}
             </span>
             <span>({product.reviewCount})</span>
