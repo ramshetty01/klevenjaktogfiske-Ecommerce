@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Montserrat, Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -61,8 +55,8 @@ export default function RootLayout({
         <meta name="google" content="notranslate" />
       </head>
       <body
-        className={`${montserrat.variable} ${inter.variable} antialiased bg-background text-foreground`}
-        style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+        className={`${manrope.variable} antialiased bg-background text-foreground`}
+        style={{ fontFamily: "var(--font-manrope), sans-serif" }}
       >
         {children}
         <Toaster />

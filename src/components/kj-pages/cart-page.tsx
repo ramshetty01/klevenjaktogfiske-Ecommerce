@@ -54,23 +54,23 @@ export function CartPage({ onNavigate }: CartPageProps) {
   if (initialized && items.length === 0) {
     return (
       <div className="kj-page-enter flex min-h-[60vh] flex-col items-center justify-center bg-white px-6 py-20">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#f5f1e8]">
-          <ShoppingBag size={32} className="text-[#8a96a1]" strokeWidth={1.5} />
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F6F7F2]">
+          <ShoppingBag size={32} className="text-[#687066]" strokeWidth={1.5} />
         </div>
         <h1
-          className="mt-6 text-[clamp(1.75rem,3vw,2.25rem)] font-bold tracking-[-0.01em] text-[#1a1a1a]"
-          style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+          className="mt-6 text-[clamp(1.75rem,3vw,2.25rem)] font-bold tracking-[-0.01em] text-[#20231F]"
+          style={{ fontFamily: "var(--font-manrope), sans-serif" }}
         >
           {t("cart.empty")}
         </h1>
-        <p className="mt-2 max-w-sm text-center text-[14px] font-light text-[#6b7884]">
+        <p className="mt-2 max-w-sm text-center text-[14px] font-light text-[#687066]">
           {lang === "no"
             ? "Du har ikke lagt noe i handlevognen ennå. Utforsk vårt sortiment av norsk kvalitetsutstyr for jakt, fiske og friluftsliv."
             : "You haven't added anything to your cart yet. Explore our range of Norwegian quality gear for hunting, fishing and the outdoors."}
         </p>
         <Button
           onClick={() => onNavigate("shop")}
-          className="mt-8 rounded-full bg-[#d4af37] px-8 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#1a1a1a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#b8941f]"
+          className="mt-8 rounded-full bg-[#287E05] px-8 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#20231F] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#216704]"
         >
           {lang === "no" ? "Til butikken" : "To the shop"}
           <ArrowRight size={14} className="ml-2" />
@@ -83,18 +83,18 @@ export function CartPage({ onNavigate }: CartPageProps) {
     <div className="kj-page-enter">
       <ShippingBanner size="md" />
 
-      <section className="w-full bg-[#e9e5db]">
+      <section className="w-full bg-[#F6F7F2]">
         <div className="mx-auto max-w-[1280px] px-6 py-10 lg:px-10 lg:py-14">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
+          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#687066]">
             Din handlevogn
           </div>
           <h1
-            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#1a1a1a]"
-            style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#20231F]"
+            style={{ fontFamily: "var(--font-manrope), sans-serif" }}
           >
             {t("cart.title")}
           </h1>
-          <p className="mt-2 text-[14px] font-light text-[#6b7884]">
+          <p className="mt-2 text-[14px] font-light text-[#687066]">
             {totalCount > 0
               ? lang === "no"
                 ? `${totalCount} artikkel${totalCount !== 1 ? "er" : ""} i handlevognen.`
@@ -105,10 +105,10 @@ export function CartPage({ onNavigate }: CartPageProps) {
           {/* Free shipping progress bar */}
           <div className="mt-8 rounded-lg border border-black/5 bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
             <div className="flex items-center gap-3">
-              <Truck size={20} className="text-[#2d4a3e]" strokeWidth={1.6} />
-              <p className="flex-1 text-[13px] text-[#1a1a1a]">
+              <Truck size={20} className="text-[#194D04]" strokeWidth={1.6} />
+              <p className="flex-1 text-[13px] text-[#20231F]">
                 {qualifiesForFreeShipping ? (
-                  <span className="font-semibold text-[#3d5e4f]">
+                  <span className="font-semibold text-[#287E05]">
                     {lang === "no" ? "Du har fri frakt! 🎉" : "You've got free shipping! 🎉"}
                   </span>
                 ) : (
@@ -122,9 +122,9 @@ export function CartPage({ onNavigate }: CartPageProps) {
                 )}
               </p>
             </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-[#f5f1e8]">
+            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-[#F6F7F2]">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-[#2d4a3e] to-[#3d5e4f]"
+                className="h-full rounded-full bg-gradient-to-r from-[#194D04] to-[#287E05]"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
@@ -158,7 +158,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                       {/* Image */}
                       <button
                         onClick={() => onNavigate("product", { productSlug: item.product.slug })}
-                        className="aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#f4f3ef]"
+                        className="aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#FFFFFF]"
                       >
                         { }
                         <CartImage src={item.product.imageUrl} alt={item.product.name} />
@@ -167,22 +167,22 @@ export function CartPage({ onNavigate }: CartPageProps) {
                       {/* Details */}
                       <div className="flex flex-1 flex-col gap-1">
                         {item.product.brand && (
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8a96a1]">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#687066]">
                             {item.product.brand.name}
                           </p>
                         )}
                         <button
                           onClick={() => onNavigate("product", { productSlug: item.product.slug })}
-                          className="text-left text-[14px] font-semibold leading-tight text-[#1a1a1a] hover:text-[#2d4a3e]"
+                          className="text-left text-[14px] font-semibold leading-tight text-[#20231F] hover:text-[#194D04]"
                         >
                           {item.product.name}
                         </button>
                         {item.product.stockLabel && (
-                          <p className="text-[10px] font-medium uppercase tracking-[0.04em] text-[#3d5e4f]">
+                          <p className="text-[10px] font-medium uppercase tracking-[0.04em] text-[#287E05]">
                             {item.product.stockLabel}
                           </p>
                         )}
-                        <p className="text-[13px] font-bold text-[#1a1a1a]">
+                        <p className="text-[13px] font-bold text-[#20231F]">
                           {item.product.price > 0 ? (
                             <>
                               {formatNok(item.product.price)}
@@ -193,7 +193,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                               )}
                             </>
                           ) : (
-                            <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#2d4a3e]">
+                            <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#194D04]">
                               Pris: Se produkt
                             </span>
                           )}
@@ -202,27 +202,27 @@ export function CartPage({ onNavigate }: CartPageProps) {
 
                       {/* Quantity + actions */}
                       <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
-                        <div className="flex items-center rounded-full border border-[#d4cfc1] bg-white">
+                        <div className="flex items-center rounded-full border border-[#DDE2DA] bg-white">
                           <button
                             aria-label="Reduser antall"
                             onClick={() => setQuantity(item.id, item.quantity - 1)}
-                            className="flex h-9 w-9 items-center justify-center rounded-full text-[#1a1a1a] hover:bg-[#f5f1e8]"
+                            className="flex h-9 w-9 items-center justify-center rounded-full text-[#20231F] hover:bg-[#F6F7F2]"
                           >
                             <Minus size={12} />
                           </button>
-                          <span className="w-8 text-center text-[14px] font-semibold text-[#1a1a1a]">
+                          <span className="w-8 text-center text-[14px] font-semibold text-[#20231F]">
                             {item.quantity}
                           </span>
                           <button
                             aria-label="Øk antall"
                             onClick={() => setQuantity(item.id, item.quantity + 1)}
-                            className="flex h-9 w-9 items-center justify-center rounded-full text-[#1a1a1a] hover:bg-[#f5f1e8]"
+                            className="flex h-9 w-9 items-center justify-center rounded-full text-[#20231F] hover:bg-[#F6F7F2]"
                           >
                             <Plus size={12} />
                           </button>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-[14px] font-bold text-[#1a1a1a]">
+                          <span className="text-[14px] font-bold text-[#20231F]">
                             {item.product.price > 0
                               ? formatNok(item.product.price * item.quantity)
                               : "—"}
@@ -230,7 +230,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                           <button
                             aria-label={t("cart.remove")}
                             onClick={() => remove(item.id)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full text-[#8a96a1] transition-colors hover:bg-[#c75d2c]/10 hover:text-[#c75d2c]"
+                            className="flex h-8 w-8 items-center justify-center rounded-full text-[#687066] transition-colors hover:bg-[#B54135]/10 hover:text-[#B54135]"
                           >
                             <Trash2 size={14} />
                           </button>
@@ -245,35 +245,35 @@ export function CartPage({ onNavigate }: CartPageProps) {
             {/* Summary */}
             <aside className="lg:sticky lg:top-24 lg:self-start">
               <div className="rounded-lg border border-black/5 bg-white p-6 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-                <h2 className="text-[16px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a]">
+                <h2 className="text-[16px] font-semibold uppercase tracking-[0.1em] text-[#20231F]">
                   Ordresammendrag
                 </h2>
 
                 <dl className="mt-4 flex flex-col gap-2 text-[13px]">
                   <div className="flex items-center justify-between">
-                    <dt className="text-[#6b7884]">{t("cart.subtotal")}</dt>
-                    <dd className="font-semibold text-[#1a1a1a]">{formatNok(subtotal)}</dd>
+                    <dt className="text-[#687066]">{t("cart.subtotal")}</dt>
+                    <dd className="font-semibold text-[#20231F]">{formatNok(subtotal)}</dd>
                   </div>
                   <div className="flex items-center justify-between">
-                    <dt className="text-[#6b7884]">{t("cart.shipping")}</dt>
-                    <dd className="font-semibold text-[#1a1a1a]">
+                    <dt className="text-[#687066]">{t("cart.shipping")}</dt>
+                    <dd className="font-semibold text-[#20231F]">
                       {qualifiesForFreeShipping ? (
-                        <span className="text-[#3d5e4f]">{t("cart.free")}</span>
+                        <span className="text-[#287E05]">{t("cart.free")}</span>
                       ) : (
                         lang === "no" ? "Beregnes ved kassen" : "Calculated at checkout"
                       )}
                     </dd>
                   </div>
-                  <div className="mt-2 flex items-center justify-between border-t border-[#d4cfc1] pt-3">
-                    <dt className="text-[14px] font-semibold text-[#1a1a1a]">{lang === "no" ? "Total" : "Total"}</dt>
-                    <dd className="text-[20px] font-bold text-[#1a1a1a]">
+                  <div className="mt-2 flex items-center justify-between border-t border-[#DDE2DA] pt-3">
+                    <dt className="text-[14px] font-semibold text-[#20231F]">{lang === "no" ? "Total" : "Total"}</dt>
+                    <dd className="text-[20px] font-bold text-[#20231F]">
                       {formatNok(subtotal)}
                     </dd>
                   </div>
                 </dl>
 
                 <Button
-                  className="mt-6 w-full rounded-full bg-[#d4af37] px-6 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1a1a1a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#b8941f] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
+                  className="mt-6 w-full rounded-full bg-[#287E05] px-6 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#20231F] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#216704] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
                 >
                   {t("cart.checkout")}
                   <ArrowRight size={16} className="ml-2" />
@@ -281,21 +281,21 @@ export function CartPage({ onNavigate }: CartPageProps) {
 
                 <button
                   onClick={() => onNavigate("shop")}
-                  className="mt-3 w-full text-center text-[12px] font-medium text-[#6b7884] hover:text-[#1a1a1a] hover:underline"
+                  className="mt-3 w-full text-center text-[12px] font-medium text-[#687066] hover:text-[#20231F] hover:underline"
                 >
                   {t("cart.continueShopping")}
                 </button>
 
                 {/* Trust badges */}
-                <div className="mt-6 flex flex-col gap-2 border-t border-[#d4cfc1] pt-4 text-[11px] text-[#6b7884]">
+                <div className="mt-6 flex flex-col gap-2 border-t border-[#DDE2DA] pt-4 text-[11px] text-[#687066]">
                   <p className="flex items-center gap-2">
-                    <Truck size={14} className="text-[#2d4a3e]" /> {t("banner.fastDelivery")}
+                    <Truck size={14} className="text-[#194D04]" /> {t("banner.fastDelivery")}
                   </p>
                   <p className="flex items-center gap-2">
-                    <span className="text-[#2d4a3e]">✓</span> {lang === "no" ? "30 dager åpent kjøp" : "30-day open return"}
+                    <span className="text-[#194D04]">✓</span> {lang === "no" ? "30 dager åpent kjøp" : "30-day open return"}
                   </p>
                   <p className="flex items-center gap-2">
-                    <span className="text-[#2d4a3e]">✓</span> {lang === "no" ? "Sikker betaling" : "Secure payment"}
+                    <span className="text-[#194D04]">✓</span> {lang === "no" ? "Sikker betaling" : "Secure payment"}
                   </p>
                 </div>
               </div>

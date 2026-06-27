@@ -80,7 +80,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
   return (
     <header
       className="sticky top-0 z-50 w-full"
-      style={{ backgroundColor: "#1a1a1a" }}
+      style={{ backgroundColor: "#20231F" }}
     >
       <div
         className={`transition-shadow duration-300 ${
@@ -92,18 +92,15 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           {/* Left: brand */}
           <button
             onClick={() => handleNav("home")}
-            className="flex flex-shrink-0 flex-col items-start gap-0.5 text-left"
+            className="flex flex-shrink-0 items-center"
             aria-label={t("nav.homeAria")}
           >
-            <span
-              className="text-[18px] font-semibold tracking-[0.04em] text-white"
-              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
-            >
-              KLEVEN
-            </span>
-            <span className="text-[10px] font-light uppercase tracking-[0.35em] text-[#d4af37]">
-              {t("nav.brandSubtitle")}
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/kleven-logo.png"
+              alt="Kleven Jakt & Fiske"
+              className="h-9 w-auto"
+            />
           </button>
 
           {/* Center: Big search bar (right of logo, takes remaining space) */}
@@ -122,7 +119,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             {searchValue.trim().length > 0 && (
               <button
                 type="submit"
-                className="flex-shrink-0 rounded-full bg-[#d4af37] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a] transition-colors hover:bg-[#b8941f]"
+                className="flex-shrink-0 rounded-full bg-[#287E05] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#20231F] transition-colors hover:bg-[#216704]"
               >
                 {t("nav.search")}
               </button>
@@ -142,7 +139,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <div className="relative">
               <button
                 onClick={() => setLangOpen((v) => !v)}
-                className="flex items-center gap-1 rounded-full border border-white/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white/90 transition-colors hover:border-[#d4af37] hover:text-[#d4af37]"
+                className="flex items-center gap-1 rounded-full border border-white/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white/90 transition-colors hover:border-[#287E05] hover:text-[#287E05]"
                 aria-label="Language / Språk"
               >
                 <Globe size={12} strokeWidth={2} />
@@ -157,17 +154,17 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                   <div className="absolute right-0 top-full z-50 mt-1 w-32 overflow-hidden rounded-md border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
                     <button
                       onClick={() => { setLang("no"); setLangOpen(false); }}
-                      className={`flex w-full items-center justify-between px-3 py-2 text-[12px] font-medium transition-colors hover:bg-[#f5f1e8] ${lang === "no" ? "text-[#1a1a1a] bg-[#f5f1e8]" : "text-[#6b7884]"}`}
+                      className={`flex w-full items-center justify-between px-3 py-2 text-[12px] font-medium transition-colors hover:bg-[#F6F7F2] ${lang === "no" ? "text-[#20231F] bg-[#F6F7F2]" : "text-[#687066]"}`}
                     >
                       🇳🇴 Norsk
-                      {lang === "no" && <span className="text-[#2d4a3e]">✓</span>}
+                      {lang === "no" && <span className="text-[#194D04]">✓</span>}
                     </button>
                     <button
                       onClick={() => { setLang("en"); setLangOpen(false); }}
-                      className={`flex w-full items-center justify-between px-3 py-2 text-[12px] font-medium transition-colors hover:bg-[#f5f1e8] ${lang === "en" ? "text-[#1a1a1a] bg-[#f5f1e8]" : "text-[#6b7884]"}`}
+                      className={`flex w-full items-center justify-between px-3 py-2 text-[12px] font-medium transition-colors hover:bg-[#F6F7F2] ${lang === "en" ? "text-[#20231F] bg-[#F6F7F2]" : "text-[#687066]"}`}
                     >
                       🇬🇧 English
-                      {lang === "en" && <span className="text-[#2d4a3e]">✓</span>}
+                      {lang === "en" && <span className="text-[#194D04]">✓</span>}
                     </button>
                   </div>
                 </>
@@ -182,7 +179,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
               <ShoppingBag size={18} strokeWidth={1.6} />
               {totalCount > 0 && (
                 <span
-                  className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#d4af37] px-1 text-[10px] font-semibold text-[#1a1a1a]"
+                  className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#287E05] px-1 text-[10px] font-semibold text-[#20231F]"
                   aria-label={`${totalCount} ${t("cart.title").toLowerCase()}`}
                 >
                   {totalCount > 99 ? "99+" : totalCount}
@@ -224,7 +221,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                     className={`transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`}
                   />
                   <span
-                    className={`absolute -bottom-1.5 left-0 h-px bg-[#d4af37] transition-all duration-300 ${
+                    className={`absolute -bottom-1.5 left-0 h-px bg-[#287E05] transition-all duration-300 ${
                       current === "shop" ? "w-full" : "w-0"
                     }`}
                   />
@@ -239,19 +236,19 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                   >
                     <div className="rounded-lg border border-white/10 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
                       <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#687066]">
                           {t("nav.megaTitle")}
                         </p>
                         <button
                           onClick={() => handleNav("categories")}
-                          className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a] hover:underline"
+                          className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#20231F] hover:underline"
                         >
                           {t("nav.megaSeeAll")} →
                         </button>
                       </div>
                       <div className="grid grid-cols-2 gap-x-6 gap-y-2 max-h-[400px] overflow-y-auto pr-2 kj-mega-scroll">
                         {categories.length === 0 ? (
-                          <p className="py-4 text-[12px] text-[#6b7884]">{t("nav.loadingCats")}</p>
+                          <p className="py-4 text-[12px] text-[#687066]">{t("nav.loadingCats")}</p>
                         ) : (
                           categories
                             .filter((c) => c.count > 0 || c.name === "Gavekort")
@@ -259,10 +256,10 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                               <div key={c.id} className="group/cat">
                                 <button
                                   onClick={() => handleNav("shop", { shopFilters: { category: c.slug } })}
-                                  className="flex w-full items-center justify-between py-1 text-left text-[13px] font-semibold text-[#1a1a1a] hover:text-[#2d4a3e]"
+                                  className="flex w-full items-center justify-between py-1 text-left text-[13px] font-semibold text-[#20231F] hover:text-[#194D04]"
                                 >
                                   {c.name}
-                                  <span className="rounded-full bg-[#d4af37]/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#1a1a1a]">
+                                  <span className="rounded-full bg-[#287E05]/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#20231F]">
                                     {c.count}
                                   </span>
                                 </button>
@@ -270,7 +267,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                                   <button
                                     key={sub.id}
                                     onClick={() => handleNav("shop", { shopFilters: { subcategory: sub.slug } })}
-                                    className="block w-full py-0.5 pl-2 text-left text-[11px] font-light text-[#6b7884] transition-colors hover:text-[#1a1a1a]"
+                                    className="block w-full py-0.5 pl-2 text-left text-[11px] font-light text-[#687066] transition-colors hover:text-[#20231F]"
                                   >
                                     {sub.name}
                                   </button>
@@ -296,7 +293,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                   >
                     {t(link.labelKey)}
                     <span
-                      className={`absolute -bottom-1.5 left-0 h-px bg-[#d4af37] transition-all duration-300 ${
+                      className={`absolute -bottom-1.5 left-0 h-px bg-[#287E05] transition-all duration-300 ${
                         active ? "w-full" : "w-0"
                       }`}
                     />
@@ -352,13 +349,13 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                 </span>
                 <button
                   onClick={() => setLang("no")}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "no" ? "bg-[#d4af37] text-[#1a1a1a]" : "bg-white/10 text-white/70"}`}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "no" ? "bg-[#287E05] text-[#20231F]" : "bg-white/10 text-white/70"}`}
                 >
                   🇳🇴 NO
                 </button>
                 <button
                   onClick={() => setLang("en")}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "en" ? "bg-[#d4af37] text-[#1a1a1a]" : "bg-white/10 text-white/70"}`}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "en" ? "bg-[#287E05] text-[#20231F]" : "bg-white/10 text-white/70"}`}
                 >
                   🇬🇧 EN
                 </button>

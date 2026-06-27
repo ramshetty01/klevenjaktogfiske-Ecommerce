@@ -159,13 +159,13 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
       <div className="kj-page-enter bg-white">
         <div className="mx-auto max-w-[1280px] px-6 py-10 lg:px-10">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-            <div className="aspect-square animate-pulse rounded-lg bg-[#f4f3ef]" />
+            <div className="aspect-square animate-pulse rounded-lg bg-[#FFFFFF]" />
             <div className="flex flex-col gap-4">
-              <div className="h-4 w-32 animate-pulse rounded bg-[#f4f3ef]" />
-              <div className="h-10 w-2/3 animate-pulse rounded bg-[#f4f3ef]" />
-              <div className="h-6 w-1/2 animate-pulse rounded bg-[#f4f3ef]" />
-              <div className="h-20 w-full animate-pulse rounded bg-[#f4f3ef]" />
-              <div className="h-12 w-1/2 animate-pulse rounded bg-[#f4f3ef]" />
+              <div className="h-4 w-32 animate-pulse rounded bg-[#FFFFFF]" />
+              <div className="h-10 w-2/3 animate-pulse rounded bg-[#FFFFFF]" />
+              <div className="h-6 w-1/2 animate-pulse rounded bg-[#FFFFFF]" />
+              <div className="h-20 w-full animate-pulse rounded bg-[#FFFFFF]" />
+              <div className="h-12 w-1/2 animate-pulse rounded bg-[#FFFFFF]" />
             </div>
           </div>
         </div>
@@ -176,12 +176,12 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
   if (error || !product) {
     return (
       <div className="kj-page-enter flex min-h-[60vh] flex-col items-center justify-center bg-white px-6">
-        <p className="text-[20px] font-semibold text-[#1a1a1a]">
+        <p className="text-[20px] font-semibold text-[#20231F]">
           {error ?? "Produktet ble ikke funnet"}
         </p>
         <Button
           onClick={() => onNavigate("shop")}
-          className="mt-6 rounded-full bg-[#1a1a1a] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.1em] hover:bg-[#121212]"
+          className="mt-6 rounded-full bg-[#20231F] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.1em] hover:bg-[#194D04]"
         >
           {t("product.backToShop")}
         </Button>
@@ -223,12 +223,12 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     <div className="kj-page-enter bg-white">
       {/* Breadcrumb */}
       <div className="mx-auto max-w-[1280px] px-6 pt-6 lg:px-10">
-        <nav className="flex items-center gap-2 text-[12px] font-light text-[#6b7884]">
-          <button onClick={() => onNavigate("home")} className="hover:text-[#1a1a1a]">
+        <nav className="flex items-center gap-2 text-[12px] font-light text-[#687066]">
+          <button onClick={() => onNavigate("home")} className="hover:text-[#20231F]">
             Hjem
           </button>
           <ChevronLeft size={12} className="rotate-180" />
-          <button onClick={() => onNavigate("shop")} className="hover:text-[#1a1a1a]">
+          <button onClick={() => onNavigate("shop")} className="hover:text-[#20231F]">
             Butikk
           </button>
           {product.category && (
@@ -236,14 +236,14 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               <ChevronLeft size={12} className="rotate-180" />
               <button
                 onClick={() => onNavigate("shop", { shopFilters: { category: product.category!.slug } })}
-                className="hover:text-[#1a1a1a]"
+                className="hover:text-[#20231F]"
               >
                 {product.category.name}
               </button>
             </>
           )}
           <ChevronLeft size={12} className="rotate-180" />
-          <span className="text-[#1a1a1a]">{product.name}</span>
+          <span className="text-[#20231F]">{product.name}</span>
         </nav>
       </div>
 
@@ -257,7 +257,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             transition={{ duration: 0.4 }}
             className="flex flex-col gap-4"
           >
-            <div className="relative aspect-square overflow-hidden rounded-lg border border-black/5 bg-[#f4f3ef]">
+            <div className="relative aspect-square overflow-hidden rounded-lg border border-black/5 bg-[#FFFFFF]">
               { }
               <img
                 src={srcFor(activeImage)}
@@ -275,10 +275,10 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 <span
                   className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] ${
                     product.tag.startsWith("-") || product.tag === "Tilbud"
-                      ? "bg-[#c75d2c] text-white"
+                      ? "bg-[#B54135] text-white"
                       : product.tag === "Nyhet"
-                      ? "bg-[#1a1a1a] text-white"
-                      : "bg-[#d4af37] text-[#1a1a1a]"
+                      ? "bg-[#20231F] text-white"
+                      : "bg-[#287E05] text-[#20231F]"
                   }`}
                 >
                   {(() => {
@@ -295,7 +295,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 </span>
               )}
               {discount > 0 && (
-                <span className="absolute right-3 top-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#c75d2c] text-[14px] font-bold text-white shadow-md">
+                <span className="absolute right-3 top-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#B54135] text-[14px] font-bold text-white shadow-md">
                   -{discount}%
                 </span>
               )}
@@ -308,7 +308,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                     key={idx}
                     onClick={() => setActiveImage(idx)}
                     className={`aspect-square w-20 overflow-hidden rounded-md border-2 transition-colors ${
-                      activeImage === idx ? "border-[#1a1a1a]" : "border-transparent hover:border-[#d4cfc1]"
+                      activeImage === idx ? "border-[#20231F]" : "border-transparent hover:border-[#DDE2DA]"
                     }`}
                   >
                     { }
@@ -339,23 +339,23 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           >
             <div>
               {product.brand && (
-                <p className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#687066]">
                   {product.brand.name}
                   {product.brand.country && (
-                    <span className="ml-2 font-light normal-case text-[#6b7884]">
+                    <span className="ml-2 font-light normal-case text-[#687066]">
                       · {product.brand.country}
                     </span>
                   )}
                 </p>
               )}
               <h1
-                className="mt-2 text-[clamp(2rem,4vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-[#1a1a1a]"
-                style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+                className="mt-2 text-[clamp(2rem,4vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-[#20231F]"
+                style={{ fontFamily: "var(--font-manrope), sans-serif" }}
               >
                 {product.name}
               </h1>
               {product.subtitle && (
-                <p className="mt-2 text-[16px] font-light text-[#3a4856]">
+                <p className="mt-2 text-[16px] font-light text-[#20231F]">
                   {product.subtitle}
                 </p>
               )}
@@ -371,14 +371,14 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                       size={16}
                       className={
                         n <= Math.round(product.rating)
-                          ? "fill-[#d4af37] text-[#d4af37]"
-                          : "text-[#d4cfc1]"
+                          ? "fill-[#287E05] text-[#287E05]"
+                          : "text-[#DDE2DA]"
                       }
                     />
                   ))}
                 </div>
-                <span className="font-semibold text-[#1a1a1a]">{product.rating.toFixed(1)}</span>
-                <span className="text-[#6b7884]">({product.reviewCount} {lang === "no" ? "anmeldelser" : "reviews"})</span>
+                <span className="font-semibold text-[#20231F]">{product.rating.toFixed(1)}</span>
+                <span className="text-[#687066]">({product.reviewCount} {lang === "no" ? "anmeldelser" : "reviews"})</span>
               </div>
             )}
 
@@ -386,19 +386,19 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <div className="flex flex-wrap items-baseline gap-3">
               {priceUnknown ? (
                 <div className="flex flex-col gap-1">
-                  <span className="text-[22px] font-bold text-[#1a1a1a]">
+                  <span className="text-[22px] font-bold text-[#20231F]">
                     {t("product.contactForPrice")}
                   </span>
                   <a
                     href="tel:+4778407140"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#2d4a3e] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#194D04] hover:underline"
                   >
                     <Phone size={13} strokeWidth={2} />
                     78 40 71 40
                   </a>
                 </div>
               ) : (
-                <span className="text-[28px] font-bold text-[#1a1a1a]">
+                <span className="text-[28px] font-bold text-[#20231F]">
                   {formatNok(product.price)}
                 </span>
               )}
@@ -408,7 +408,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 </span>
               )}
               {discount > 0 && (
-                <span className="rounded-full bg-[#c75d2c] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-white">
+                <span className="rounded-full bg-[#B54135] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-white">
                   Spar {discount}%
                 </span>
               )}
@@ -418,10 +418,10 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <div className="flex items-center gap-2 text-[13px]">
               <span
                 className={`h-2.5 w-2.5 rounded-full ${
-                  inStock ? "bg-[#3d5e4f]" : "bg-[#c75d2c]"
+                  inStock ? "bg-[#287E05]" : "bg-[#B54135]"
                 }`}
               />
-              <span className={`font-semibold ${inStock ? "text-[#3d5e4f]" : "text-[#c75d2c]"}`}>
+              <span className={`font-semibold ${inStock ? "text-[#287E05]" : "text-[#B54135]"}`}>
                 {product.stockLabel
                   ? (lang === "no"
                       ? product.stockLabel
@@ -432,33 +432,33 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                           .replace(/på vei/i, "incoming"))
                   : (inStock ? t("shop.inStock") : t("shop.outOfStock"))}
               </span>
-              <span className="text-[#6b7884]">· {t("product.sku")}: {product.sku}</span>
+              <span className="text-[#687066]">· {t("product.sku")}: {product.sku}</span>
             </div>
 
             {/* Description */}
             {product.description && (
-              <p className="text-[15px] font-light leading-[1.7] text-[#3a4856]">
+              <p className="text-[15px] font-light leading-[1.7] text-[#20231F]">
                 {product.description}
               </p>
             )}
 
             {/* Quantity + add to cart */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
-              <div className="flex items-center rounded-full border border-[#d4cfc1] bg-white">
+              <div className="flex items-center rounded-full border border-[#DDE2DA] bg-white">
                 <button
                   aria-label={lang === "no" ? "Reduser antall" : "Decrease quantity"}
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="flex h-11 w-11 items-center justify-center rounded-full text-[#1a1a1a] hover:bg-[#f5f1e8]"
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-[#20231F] hover:bg-[#F6F7F2]"
                 >
                   <Minus size={14} />
                 </button>
-                <span className="w-10 text-center text-[15px] font-semibold text-[#1a1a1a]">
+                <span className="w-10 text-center text-[15px] font-semibold text-[#20231F]">
                   {qty}
                 </span>
                 <button
                   aria-label={lang === "no" ? "Øk antall" : "Increase quantity"}
                   onClick={() => setQty((q) => Math.min(99, q + 1))}
-                  className="flex h-11 w-11 items-center justify-center rounded-full text-[#1a1a1a] hover:bg-[#f5f1e8]"
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-[#20231F] hover:bg-[#F6F7F2]"
                 >
                   <Plus size={14} />
                 </button>
@@ -467,7 +467,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               <Button
                 onClick={handleAddToCart}
                 disabled={!inStock}
-                className="flex-1 rounded-full bg-[#d4af37] px-8 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1a1a1a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#b8941f] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)] disabled:opacity-50 disabled:shadow-none sm:flex-none sm:px-10"
+                className="flex-1 rounded-full bg-[#287E05] px-8 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#20231F] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#216704] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)] disabled:opacity-50 disabled:shadow-none sm:flex-none sm:px-10"
               >
                 <ShoppingBag size={16} className="mr-2" />
                 {inStock ? t("product.addToCart") : t("shop.outOfStock")}
@@ -478,7 +478,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   href={product.externalUrl!}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#d4cfc1] bg-white px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a] transition-colors hover:bg-[#f5f1e8]"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#DDE2DA] bg-white px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#20231F] transition-colors hover:bg-[#F6F7F2]"
                 >
                   <ExternalLink size={13} />
                   {t("product.seeAtShop")}
@@ -497,12 +497,12 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 return (
                   <div
                     key={badge.title}
-                    className="flex items-center gap-2 rounded-md border border-black/5 bg-[#f5f1e8] px-3 py-2"
+                    className="flex items-center gap-2 rounded-md border border-black/5 bg-[#F6F7F2] px-3 py-2"
                   >
-                    <Icon size={18} className="text-[#2d4a3e]" strokeWidth={1.6} />
+                    <Icon size={18} className="text-[#194D04]" strokeWidth={1.6} />
                     <div>
-                      <p className="text-[11px] font-semibold text-[#1a1a1a]">{badge.title}</p>
-                      <p className="text-[10px] font-light text-[#6b7884]">{badge.body}</p>
+                      <p className="text-[11px] font-semibold text-[#20231F]">{badge.title}</p>
+                      <p className="text-[10px] font-light text-[#687066]">{badge.body}</p>
                     </div>
                   </div>
                 );
@@ -514,23 +514,23 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
 
       {/* Related products */}
       {related.length > 0 && (
-        <section className="bg-[#f5f1e8] py-16">
+        <section className="bg-[#F6F7F2] py-16">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-            <div className="mb-8 flex items-end justify-between border-b border-[#d4cfc1] pb-4">
+            <div className="mb-8 flex items-end justify-between border-b border-[#DDE2DA] pb-4">
               <div>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#687066]">
                   {t("product.related")}
                 </p>
                 <h2
-                  className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#1a1a1a]"
-                  style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+                  className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#20231F]"
+                  style={{ fontFamily: "var(--font-manrope), sans-serif" }}
                 >
                   {t("product.related")}
                 </h2>
               </div>
               <button
                 onClick={() => onNavigate("shop")}
-                className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a] hover:underline"
+                className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#20231F] hover:underline"
               >
                 {t("nav.megaSeeAll")} →
               </button>
@@ -552,14 +552,14 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
       {/* Reviews section */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#d4cfc1] pb-4">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#DDE2DA] pb-4">
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#687066]">
                 {lang === "no" ? "Kundeanmeldelser" : "Customer Reviews"}
               </p>
               <h2
-                className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#1a1a1a]"
-                style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+                className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#20231F]"
+                style={{ fontFamily: "var(--font-manrope), sans-serif" }}
               >
                 {t("product.reviews")} ({product.reviewCount})
               </h2>
@@ -572,13 +572,13 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                         size={14}
                         className={
                           n <= Math.round(product.rating)
-                            ? "fill-[#d4af37] text-[#d4af37]"
-                            : "text-[#d4cfc1]"
+                            ? "fill-[#287E05] text-[#287E05]"
+                            : "text-[#DDE2DA]"
                         }
                       />
                     ))}
                   </div>
-                  <span className="font-semibold text-[#1a1a1a]">
+                  <span className="font-semibold text-[#20231F]">
                     {product.rating.toFixed(1)} {lang === "no" ? "av 5" : "out of 5"}
                   </span>
                 </div>
@@ -587,7 +587,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <Button
               onClick={() => setReviewFormOpen((v) => !v)}
               variant="outline"
-              className="rounded-full border-[#1a1a1a] px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white"
+              className="rounded-full border-[#20231F] px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#20231F] hover:bg-[#20231F] hover:text-white"
             >
               {reviewFormOpen ? t("product.cancelReview") : t("product.writeReview")}
             </Button>
@@ -597,11 +597,11 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           {reviewFormOpen && (
             <form
               onSubmit={handleSubmitReview}
-              className="mb-10 rounded-lg border border-black/5 bg-[#f5f1e8] p-5"
+              className="mb-10 rounded-lg border border-black/5 bg-[#F6F7F2] p-5"
             >
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#687066]">
                     {t("product.nameLabel")}
                   </label>
                   <Input
@@ -612,7 +612,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
+                  <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#687066]">
                     {t("product.ratingLabel")}
                   </label>
                   <div className="flex items-center gap-1">
@@ -627,8 +627,8 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                           size={28}
                           className={
                             n <= reviewForm.rating
-                              ? "fill-[#d4af37] text-[#d4af37]"
-                              : "text-[#d4cfc1]"
+                              ? "fill-[#287E05] text-[#287E05]"
+                              : "text-[#DDE2DA]"
                           }
                         />
                       </button>
@@ -637,7 +637,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 </div>
               </div>
               <div className="mt-4">
-                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
+                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#687066]">
                   {t("product.titleLabel")}
                 </label>
                 <Input
@@ -648,7 +648,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 />
               </div>
               <div className="mt-4">
-                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
+                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#687066]">
                   {t("product.reviewLabel")}
                 </label>
                 <Textarea
@@ -663,7 +663,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 <Button
                   type="submit"
                   disabled={submittingReview}
-                  className="rounded-full bg-[#1a1a1a] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] hover:bg-[#121212] disabled:opacity-50"
+                  className="rounded-full bg-[#20231F] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] hover:bg-[#194D04] disabled:opacity-50"
                 >
                   {submittingReview ? (lang === "no" ? "Sender…" : "Sending…") : (lang === "no" ? "Send anmeldelse" : "Submit review")}
                 </Button>
@@ -671,7 +671,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   type="button"
                   onClick={() => setReviewFormOpen(false)}
                   variant="outline"
-                  className="rounded-full border-[#d4cfc1] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em]"
+                  className="rounded-full border-[#DDE2DA] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em]"
                 >
                   {t("product.cancelReview")}
                 </Button>
@@ -681,7 +681,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
 
           {/* Reviews list */}
           {product.reviews.length === 0 ? (
-            <p className="py-12 text-center text-[14px] font-light text-[#6b7884]">
+            <p className="py-12 text-center text-[14px] font-light text-[#687066]">
               {t("product.noReviews")}
             </p>
           ) : (
@@ -693,7 +693,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[14px] font-semibold text-[#1a1a1a]">{r.authorName}</p>
+                      <p className="text-[14px] font-semibold text-[#20231F]">{r.authorName}</p>
                       <div className="mt-0.5 flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((n) => (
                           <Star
@@ -701,24 +701,24 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                             size={12}
                             className={
                               n <= r.rating
-                                ? "fill-[#d4af37] text-[#d4af37]"
-                                : "text-[#d4cfc1]"
+                                ? "fill-[#287E05] text-[#287E05]"
+                                : "text-[#DDE2DA]"
                             }
                           />
                         ))}
                       </div>
                     </div>
                     {r.verified && (
-                      <span className="rounded-full bg-[#3d5e4f]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#3d5e4f]">
+                      <span className="rounded-full bg-[#287E05]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#287E05]">
                         {t("product.verified")}
                       </span>
                     )}
                   </div>
-                  <p className="mt-2 text-[14px] font-semibold text-[#1a1a1a]">{r.title}</p>
-                  <p className="mt-1 text-[13px] font-light leading-relaxed text-[#3a4856]">
+                  <p className="mt-2 text-[14px] font-semibold text-[#20231F]">{r.title}</p>
+                  <p className="mt-1 text-[13px] font-light leading-relaxed text-[#20231F]">
                     {r.body}
                   </p>
-                  <p className="mt-3 text-[11px] font-light text-[#8a96a1]">
+                  <p className="mt-3 text-[11px] font-light text-[#687066]">
                     {new Date(r.createdAt).toLocaleDateString("no-NO", {
                       year: "numeric",
                       month: "long",
