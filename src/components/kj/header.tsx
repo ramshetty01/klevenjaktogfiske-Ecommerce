@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Search, User, ShoppingBag, ChevronDown } from "lucide-react";
+import { Menu, X, Search, User, ShoppingBag, ChevronDown, Globe } from "lucide-react";
 import { useCart } from "@/lib/kj/cart-store";
+import { useLang } from "@/lib/kj/lang-store";
 import type { CategoryNode } from "@/lib/kj/types";
 
 export type PageId = "home" | "shop" | "about" | "categories" | "product" | "cart";
@@ -26,10 +27,10 @@ interface HeaderProps {
   categories?: CategoryNode[];
 }
 
-const NAV_LINKS: { label: string; page: PageId }[] = [
-  { label: "Butikk", page: "shop" },
-  { label: "Våre Kategorier", page: "categories" },
-  { label: "Om Oss", page: "about" },
+const NAV_LINKS: { labelKey: "nav.shop" | "nav.categories" | "nav.about"; page: PageId }[] = [
+  { labelKey: "nav.shop", page: "shop" },
+  { labelKey: "nav.categories", page: "categories" },
+  { labelKey: "nav.about", page: "about" },
 ];
 
 export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
@@ -38,10 +39,12 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [megaOpen, setMegaOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const megaCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const totalCount = useCart((s) => s.totalCount);
   const hydrate = useCart((s) => s.hydrate);
+  const { lang, setLang, t } = useLang();
 
   // Hydrate the cart on mount so the badge shows the correct count
   useEffect(() => {
@@ -96,7 +99,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           <button
             onClick={() => handleNav("home")}
             className="flex flex-col items-start gap-0.5 text-left"
-            aria-label="Kleven Jakt & Fiske — forsiden"
+            aria-label={t("nav.homeAria")}
           >
             <span
               className="text-[18px] font-semibold tracking-[0.04em] text-white"
@@ -105,7 +108,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
               KLEVEN
             </span>
             <span className="text-[10px] font-light uppercase tracking-[0.35em] text-[#f0c548]">
-              Jakt &amp; Fiske
+              {t("nav.brandSubtitle")}
             </span>
           </button>
 
@@ -125,7 +128,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                 aria-expanded={megaOpen}
                 aria-haspopup="true"
               >
-                Butikk
+                {t("nav.shop")}
                 <ChevronDown
                   size={12}
                   className={`transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`}
@@ -147,18 +150,18 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                   <div className="rounded-lg border border-white/10 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
                     <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
-                        Våre kategorier
+                        {t("nav.megaTitle")}
                       </p>
                       <button
                         onClick={() => handleNav("categories")}
                         className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] hover:underline"
                       >
-                        Se alle →
+                        {t("nav.megaSeeAll")} →
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-2 max-h-[400px] overflow-y-auto pr-2 kj-mega-scroll">
                       {categories.length === 0 ? (
-                        <p className="py-4 text-[12px] text-[#6b7884]">Laster kategorier…</p>
+                        <p className="py-4 text-[12px] text-[#6b7884]">{t("nav.loadingCats")}</p>
                       ) : (
                         categories
                           .filter((c) => c.count > 0 || c.name === "Gavekort")
@@ -202,7 +205,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                     active ? "text-white" : "text-white/75 hover:text-white"
                   }`}
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                   <span
                     className={`absolute -bottom-1.5 left-0 h-px bg-[#f0c548] transition-all duration-300 ${
                       active ? "w-full" : "w-0"
@@ -214,23 +217,61 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           </nav>
 
           {/* Right: actions */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4">
             {/* Search */}
             <button
-              aria-label="Søk"
+              aria-label={t("nav.search")}
               onClick={() => setSearchOpen((v) => !v)}
               className="hidden text-white/85 transition-colors hover:text-white sm:block"
             >
               <Search size={18} strokeWidth={1.6} />
             </button>
             <button
-              aria-label="Min konto"
+              aria-label={t("nav.account")}
               className="hidden text-white/85 transition-colors hover:text-white sm:block"
             >
               <User size={18} strokeWidth={1.6} />
             </button>
+
+            {/* Language toggle — small button right of cart */}
+            <div className="relative">
+              <button
+                onClick={() => setLangOpen((v) => !v)}
+                className="flex items-center gap-1 rounded-full border border-white/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white/90 transition-colors hover:border-[#f0c548] hover:text-[#f0c548]"
+                aria-label="Language / Språk"
+              >
+                <Globe size={12} strokeWidth={2} />
+                {lang === "no" ? "NO" : "EN"}
+              </button>
+              {langOpen && (
+                <>
+                  {/* Click-away overlay */}
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setLangOpen(false)}
+                  />
+                  <div className="absolute right-0 top-full z-50 mt-1 w-32 overflow-hidden rounded-md border border-black/10 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
+                    <button
+                      onClick={() => { setLang("no"); setLangOpen(false); }}
+                      className={`flex w-full items-center justify-between px-3 py-2 text-[12px] font-medium transition-colors hover:bg-[#f5f1e8] ${lang === "no" ? "text-[#1f2d3a] bg-[#f5f1e8]" : "text-[#6b7884]"}`}
+                    >
+                      🇳🇴 Norsk
+                      {lang === "no" && <span className="text-[#2d4a3e]">✓</span>}
+                    </button>
+                    <button
+                      onClick={() => { setLang("en"); setLangOpen(false); }}
+                      className={`flex w-full items-center justify-between px-3 py-2 text-[12px] font-medium transition-colors hover:bg-[#f5f1e8] ${lang === "en" ? "text-[#1f2d3a] bg-[#f5f1e8]" : "text-[#6b7884]"}`}
+                    >
+                      🇬🇧 English
+                      {lang === "en" && <span className="text-[#2d4a3e]">✓</span>}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
             <button
-              aria-label="Handlevogn"
+              aria-label={t("nav.cart")}
               onClick={() => handleNav("cart")}
               className="relative text-white/85 transition-colors hover:text-white"
             >
@@ -238,14 +279,14 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
               {totalCount > 0 && (
                 <span
                   className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#f0c548] px-1 text-[10px] font-semibold text-[#1f2d3a]"
-                  aria-label={`${totalCount} varer i handlevognen`}
+                  aria-label={`${totalCount} ${t("cart.title").toLowerCase()}`}
                 >
                   {totalCount > 99 ? "99+" : totalCount}
                 </span>
               )}
             </button>
             <button
-              aria-label="Meny"
+              aria-label={t("nav.menu")}
               onClick={() => setMobileOpen((v) => !v)}
               className="ml-1 text-white md:hidden"
             >
@@ -267,20 +308,20 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                 type="search"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                placeholder="Søk etter produkt, merke eller artikkelnummer…"
+                placeholder={t("nav.searchPlaceholder")}
                 className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/50 focus:outline-none"
               />
               <button
                 type="submit"
                 className="rounded-full bg-[#f0c548] px-5 py-1.5 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#d9a838]"
               >
-                Søk
+                {t("nav.search")}
               </button>
             </form>
             {/* Popular searches */}
             <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-2 px-6 pb-3 lg:px-10">
               <span className="text-[11px] uppercase tracking-[0.15em] text-white/50">
-                Populært:
+                {t("nav.searchPopular")}
               </span>
               {["Fiskestenger", "Pop-up telt", "Härkila", "Kniver", "Zeiss"].map((q) => (
                 <button
@@ -313,7 +354,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                       active ? "text-white" : "text-white/80"
                     }`}
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </button>
                 );
               })}
@@ -321,8 +362,26 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                 onClick={() => handleNav("cart")}
                 className="flex items-center justify-between border-b border-white/5 py-3 text-[12px] font-medium uppercase tracking-[0.12em] text-white/80"
               >
-                Handlevogn ({totalCount})
+                {t("nav.cart")} ({totalCount})
               </button>
+              {/* Language toggle in mobile drawer */}
+              <div className="flex items-center gap-2 border-b border-white/5 py-3">
+                <span className="text-[12px] font-medium uppercase tracking-[0.12em] text-white/60">
+                  🌐
+                </span>
+                <button
+                  onClick={() => setLang("no")}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "no" ? "bg-[#f0c548] text-[#1f2d3a]" : "bg-white/10 text-white/70"}`}
+                >
+                  🇳🇴 NO
+                </button>
+                <button
+                  onClick={() => setLang("en")}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "en" ? "bg-[#f0c548] text-[#1f2d3a]" : "bg-white/10 text-white/70"}`}
+                >
+                  🇬🇧 EN
+                </button>
+              </div>
             </nav>
           </div>
         )}

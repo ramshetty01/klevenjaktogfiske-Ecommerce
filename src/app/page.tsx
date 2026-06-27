@@ -9,6 +9,7 @@ import { AboutPage } from "@/components/kj-pages/about-page";
 import { CategoriesPage } from "@/components/kj-pages/categories-page";
 import { ProductDetailPage } from "@/components/kj-pages/product-detail-page";
 import { CartPage } from "@/components/kj-pages/cart-page";
+import { useLang } from "@/lib/kj/lang-store";
 import type { CategoryNode } from "@/lib/kj/types";
 
 /**
@@ -49,6 +50,15 @@ export default function Home() {
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const recoverKey = useTranslationErrorGuard();
 
+  // Rehydrate language store from localStorage on mount.
+  // This prevents SSR/Client hydration mismatches: the server always
+  // renders Norwegian, and after mount the client switches to the
+  // user's saved language (if different).
+  const hydrated = useLang((s) => s._hydrated);
+  useEffect(() => {
+    useLang.persist.rehydrate();
+  }, []);
+
   // Fetch categories once for the mega menu
   useEffect(() => {
     let cancelled = false;
@@ -76,9 +86,10 @@ export default function Home() {
 
   return (
     <div
-      key={recoverKey}
+      key={`${recoverKey}-${hydrated ? "h" : "u"}`}
       className="flex min-h-screen flex-col bg-white"
       translate="no"
+      suppressHydrationWarning
     >
       <Header current={page} onNavigate={navigate} categories={categories} />
 

@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { ShippingBanner } from "../kj/shipping-banner";
 import { ProductCard, ProductCardSkeleton } from "../kj/product-card";
+import { useLang } from "@/lib/kj/lang-store";
 import {
   Select,
   SelectContent,
@@ -28,6 +29,7 @@ interface ShopPageProps {
 const PER_PAGE = 24;
 
 export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
+  const { t } = useLang();
   // Filter state
   const [activeCategory, setActiveCategory] = useState<string>(initialFilters?.category ?? "alle");
   const [activeSubcategory, setActiveSubcategory] = useState<string>(initialFilters?.subcategory ?? "alle");
@@ -317,7 +319,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       <section className="w-full" style={{ backgroundColor: "#e9e5db" }}>
         <div className="mx-auto max-w-[1280px] px-6 pt-12 pb-6 lg:px-10">
           <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
-            Vareutvalg
+            {t("shop.assortment")}
             {searchQ && (
               <span className="ml-2 normal-case text-[#1f2d3a]">
                 · Søk: &laquo;{searchQ}&raquo;
@@ -331,8 +333,8 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             {parentForHeading
               ? parentForHeading.name
               : searchQ
-                ? `Søk: "${searchQ}"`
-                : "Hele Butikken"}
+                ? `${t("nav.search")}: "${searchQ}"`
+                : t("shop.title")}
           </h1>
           {activeSubcategoryObj && (
             <p className="mt-2 text-[16px] font-medium uppercase tracking-[0.1em] text-[#2d4a3e]">
@@ -347,7 +349,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           {/* Top filter bar — quick category pills */}
           <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-[#d4cfc1] pb-5">
             <CategoryPill
-              label="Alle"
+              label={t("shop.all")}
               active={activeCategory === "alle"}
               onClick={() => handleCategoryClick("alle")}
             />
@@ -365,10 +367,10 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           {parentForHeading && parentForHeading.subcategories.filter((s) => s.count > 0).length > 0 && (
             <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d4cfc1] pb-5">
               <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-                Underkategori:
+                {t("shop.subcategory")}
               </span>
               <SubcategoryPill
-                label="Alle"
+                label={t("shop.all")}
                 active={activeSubcategory === "alle"}
                 onClick={() => setActiveSubcategory("alle")}
               />
@@ -388,11 +390,11 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           {/* Sort + count row */}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="text-[12px] font-light text-[#6b7884]">
-              Viser <span className="font-semibold text-[#1f2d3a]">{totalCount}</span>{" "}
-              artikkel{totalCount !== 1 ? "er" : ""}
+              {t("shop.showing")} <span className="font-semibold text-[#1f2d3a]">{totalCount}</span>{" "}
+              {totalCount !== 1 ? t("shop.articles") : t("shop.article")}
               {parentForHeading && (
                 <>
-                  {" "}i <span className="font-semibold text-[#1f2d3a]">{parentForHeading.name}</span>
+                  {" "}{t("shop.in")} <span className="font-semibold text-[#1f2d3a]">{parentForHeading.name}</span>
                 </>
               )}
               {activeSubcategoryObj && (
@@ -429,7 +431,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={14} className="text-[#6b7884]" />
-                <span className="hidden text-[12px] font-light text-[#6b7884] sm:inline">Sorter:</span>
+                <span className="hidden text-[12px] font-light text-[#6b7884] sm:inline">{t("shop.sortBy")}</span>
                 <Select
                   value={effectiveSort}
                   onValueChange={(v) => setSort(v as SortKey)}
@@ -444,7 +446,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                         value={o.value}
                         className="text-[13px] text-[#1f2d3a] focus:bg-[#f5f1e8] focus:text-[#1f2d3a]"
                       >
-                        {o.label}
+                        {t(o.labelKey)}
                       </SelectItem>
                     ))}
                   </SelectContent>

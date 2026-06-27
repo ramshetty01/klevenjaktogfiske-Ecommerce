@@ -62,20 +62,20 @@ export function discountPct(p: { price: number; originalPrice?: number | null })
  * API returns it always but the client may hide it when not on Outlet.
  */
 export const SORT_OPTIONS = [
-  { value: "recommended", label: "Anbefalt" },
-  { value: "bestsellers", label: "Bestselgere" },
-  { value: "newest", label: "Nyheter" },
-  { value: "price_asc", label: "Pris stigende" },
-  { value: "price_desc", label: "Pris synkende" },
-  { value: "name_asc", label: "Navn A–Å" },
-  { value: "name_desc", label: "Navn Å–A" },
-  { value: "rating", label: "Høyest vurdert" },
-  { value: "reviews", label: "Flest anmeldelser" },
-  { value: "stock_first", label: "Lagerbeholdning synkende" },
-  { value: "stock_asc", label: "Lagerbeholdning stigende" },
-  { value: "itemno_asc", label: "Varenummer stigende" },
-  { value: "itemno_desc", label: "Varenummer synkende" },
-  { value: "discount", label: "Størst rabatt" },
+  { value: "recommended", label: "Anbefalt", labelKey: "sort.recommended" as const },
+  { value: "bestsellers", label: "Bestselgere", labelKey: "sort.bestsellers" as const },
+  { value: "newest", label: "Nyheter", labelKey: "sort.newest" as const },
+  { value: "price_asc", label: "Pris stigende", labelKey: "sort.price_asc" as const },
+  { value: "price_desc", label: "Pris synkende", labelKey: "sort.price_desc" as const },
+  { value: "name_asc", label: "Navn A–Å", labelKey: "sort.name_asc" as const },
+  { value: "name_desc", label: "Navn Å–A", labelKey: "sort.name_desc" as const },
+  { value: "rating", label: "Høyest vurdert", labelKey: "sort.rating" as const },
+  { value: "reviews", label: "Flest anmeldelser", labelKey: "sort.reviews" as const },
+  { value: "stock_first", label: "Lagerbeholdning synkende", labelKey: "sort.stock_first" as const },
+  { value: "stock_asc", label: "Lagerbeholdning stigende", labelKey: "sort.stock_asc" as const },
+  { value: "itemno_asc", label: "Varenummer stigende", labelKey: "sort.itemno_asc" as const },
+  { value: "itemno_desc", label: "Varenummer synkende", labelKey: "sort.itemno_desc" as const },
+  { value: "discount", label: "Størst rabatt", labelKey: "sort.discount" as const },
 ] as const;
 
 export type SortKey = (typeof SORT_OPTIONS)[number]["value"];

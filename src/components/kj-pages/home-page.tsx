@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
 import { ShippingBanner } from "../kj/shipping-banner";
 import { ProductCard, ProductCardSkeleton } from "../kj/product-card";
+import { useLang } from "@/lib/kj/lang-store";
 import type { Product, CategoryNode, BrandNode } from "@/lib/kj/types";
 
 interface HomePageProps {
@@ -28,6 +29,7 @@ const CATEGORY_TILES = [
 export function HomePage({ onNavigate }: HomePageProps) {
   const [featured, setFeatured] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<CategoryNode[]>([]);
+  const { t, lang } = useLang();
   const [brands, setBrands] = useState<BrandNode[]>([]);
 
   useEffect(() => {
@@ -89,9 +91,9 @@ export function HomePage({ onNavigate }: HomePageProps) {
               className="text-[clamp(3.25rem,7vw,5.5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-[#1f2d3a]"
               style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
-              Ut på tur,
+              {t("home.heroLine1")}
               <br />
-              <span className="text-[#1f2d3a]">aldri sur!</span>
+              <span className="text-[#1f2d3a]">{t("home.heroLine2")}</span>
             </motion.h1>
 
             <motion.p
@@ -100,7 +102,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               transition={{ duration: 0.55, ease: "easeOut", delay: 0.1 }}
               className="mt-6 max-w-md text-[20px] font-light leading-relaxed text-[#3a4856]"
             >
-              Norsk kvalitetsutstyr for jakt, fiske og friluftsliv — siden 1985.
+              {t("home.heroSub")}
             </motion.p>
 
             <motion.div
@@ -113,7 +115,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 onClick={() => onNavigate("shop")}
                 className="group inline-flex items-center gap-3 rounded-full bg-[#f0c548] px-9 py-4 text-[15px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all duration-300 hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
               >
-                Handle Nå
+                {t("home.shopNow")}
                 <ArrowRight
                   size={16}
                   strokeWidth={2.2}
@@ -124,7 +126,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 onClick={() => onNavigate("categories")}
                 className="inline-flex items-center gap-3 rounded-full border-2 border-[#1f2d3a] bg-transparent px-9 py-4 text-[15px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] transition-all duration-300 hover:bg-[#1f2d3a] hover:text-white"
               >
-                Våre Kategorier
+                {t("nav.categories")}
               </button>
             </motion.div>
           </div>
@@ -139,16 +141,16 @@ export function HomePage({ onNavigate }: HomePageProps) {
         <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
           <div className="mb-12 max-w-2xl">
             <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
-              Finn det du trenger
+              {t("home.ourSelection")}
             </p>
             <h2
               className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
               style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
-              Våre Hovedkategorier
+              {t("nav.categories")}
             </h2>
             <p className="mt-4 text-[15px] font-light leading-relaxed text-[#6b7884]">
-              Håndplukkede produkter fra merkevarer norske friluftsfolk stoler på.
+              {t("home.ourSelectionDesc")}
             </p>
           </div>
 
@@ -193,20 +195,20 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[#d4cfc1] pb-5">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
-                Anbefalt for deg
+                {t("sort.recommended")}
               </p>
               <h2
                 className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
                 style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
               >
-                Populære Produkter
+                {t("home.featured")}
               </h2>
             </div>
             <button
               onClick={() => onNavigate("shop")}
               className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] hover:underline"
             >
-              Se alle <ArrowRight size={12} />
+              {t("home.seeAllShop")} <ArrowRight size={12} />
             </button>
           </div>
 
@@ -231,17 +233,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
         <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
           <div className="mb-10 max-w-2xl">
             <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
-              Våre Merkevarer
+              {t("home.ourSelection")}
             </p>
             <h2
               className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
               style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
-              Merker vi stoler på
+              {t("home.brandsTitle")}
             </h2>
             <p className="mt-4 text-[15px] font-light leading-relaxed text-[#6b7884]">
-              Vi er autoriserte forhandlere for over 400 merkevarer — fra
-              Sauer og Zeiss til Helle, Fjällräven og Bergans.
+              {lang === "no"
+                ? "Vi er autoriserte forhandlere for over 400 merkevarer — fra Sauer og Zeiss til Helle, Fjällräven og Bergans."
+                : "We are authorized dealers for over 400 brands — from Sauer and Zeiss to Helle, Fjällräven and Bergans."}
             </p>
           </div>
 
@@ -283,18 +286,22 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {[
               {
-                title: "Kvalitetsutstyr",
-                body: "Håndplukket sortiment fra merkevarer vi selv bruker. Vi selger bare utstyr vi ville delt med våre egne barn.",
+                title: t("home.promiseQuality"),
+                body: lang === "no"
+                  ? "Håndplukket sortiment fra merkevarer vi selv bruker. Vi selger bare utstyr vi ville delt med våre egne barn."
+                  : "Hand-picked assortment from brands we use ourselves. We only sell gear we'd share with our own kids.",
                 icon: "✓",
               },
               {
-                title: "Rask Levering",
-                body: "Fraktfritt i Norge på ordre over 2 500,-. Levering 2–4 dager til hele landet.",
+                title: t("home.promiseDelivery"),
+                body: t("home.promiseDeliveryDesc"),
                 icon: "→",
               },
               {
-                title: "Lokal Forhandler",
-                body: "Ekspertene våre kjenner utstyret innvendig — fordi de bruker det hver sesong. Spør oss gjerne!",
+                title: t("home.promiseLocal"),
+                body: lang === "no"
+                  ? "Ekspertene våre kjenner utstyret innvendig — fordi de bruker det hver sesong. Spør oss gjerne!"
+                  : "Our experts know the gear inside out — because they use it every season. Just ask us!",
                 icon: "★",
               },
             ].map((item) => (

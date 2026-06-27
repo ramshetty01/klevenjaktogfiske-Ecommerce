@@ -1,6 +1,7 @@
 "use client";
 
 import { Truck, Clock } from "lucide-react";
+import { useLang } from "@/lib/kj/lang-store";
 
 interface ShippingBannerProps {
   size?: "sm" | "md";
@@ -24,6 +25,7 @@ export function ShippingBanner({
 }: ShippingBannerProps) {
   const fontSize = size === "sm" ? "text-[13px]" : "text-[15px]";
   const itemPad = "py-0.5";
+  const { t } = useLang();
 
   // Render one marquee item as inline JSX (not a nested component — avoids
   // React remounting children on every render, which can cause removeChild errors).
@@ -37,14 +39,14 @@ export function ShippingBanner({
       <span
         className={`font-semibold uppercase tracking-[0.18em] text-[#1f2d3a] ${fontSize}`}
       >
-        Fraktfritt i Norge over 2500,-
+        {t("banner.freeShipping")}
       </span>
       <span className="px-1 text-[#1f2d3a]/40">•</span>
       <Clock size={14} strokeWidth={2} className="text-[#1f2d3a]" />
       <span
         className={`font-semibold uppercase tracking-[0.18em] text-[#1f2d3a] ${fontSize}`}
       >
-        Rask levering 2–4 dager
+        {t("banner.fastDelivery")}
       </span>
       <span className="px-1 text-[#1f2d3a]/40">•</span>
     </div>
