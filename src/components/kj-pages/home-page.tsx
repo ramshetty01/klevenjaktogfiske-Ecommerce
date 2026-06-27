@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Footprints, Tag, Gift, Bug, Sparkles, Award } from "lucide-react";
+import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Footprints, Tag, Gift, Bug, Sparkles, Award, Truck, MapPin, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
 import { ShippingBanner } from "../kj/shipping-banner";
@@ -72,222 +72,144 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
   return (
     <div className="kj-page-enter">
-      {/* HERO — 2-column: text left, 2×2 category cards right */}
+      {/* ===== HERO — full-bleed fishing photo with dark overlay ===== */}
       <section className="relative w-full overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://sfile.chatglm.cn/images-ppt/561979f5d685.jpg"
+          alt="Mann fisker i innsjø ved solnedgang med fjell i bakgrunnen"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Dark overlay for text readability */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, #b9cdd9 0%, #c5d6e0 55%, #d2e0e8 100%)",
+              "linear-gradient(180deg, rgba(31,45,58,0.5) 0%, rgba(31,45,58,0.6) 50%, rgba(31,45,58,0.8) 100%)",
           }}
         />
 
-        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-12 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-20">
-          {/* Left: text */}
-          <div className="flex flex-col items-start">
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: "easeOut" }}
-              className="text-[clamp(2.75rem,6vw,4.5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-[#1f2d3a]"
+        <div className="relative mx-auto flex min-h-[600px] max-w-[1280px] flex-col justify-center px-6 py-20 lg:px-10 lg:py-28">
+          {/* Hero text */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="max-w-xl"
+          >
+            <h1
+              className="text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-white"
               style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {t("home.heroLine1")}
               <br />
-              <span className="text-[#1f2d3a]">{t("home.heroLine2")}</span>
-            </motion.h1>
+              <span className="text-[#f0c548]">{t("home.heroLine2")}</span>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: "easeOut", delay: 0.1 }}
-              className="mt-6 max-w-md text-[18px] font-light leading-relaxed text-[#3a4856]"
-            >
+            <p className="mt-5 max-w-md text-[18px] font-light leading-relaxed text-white/85">
               {t("home.heroSub")}
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: "easeOut", delay: 0.2 }}
-              className="mt-10 flex flex-wrap gap-3"
-            >
+            <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => onNavigate("shop")}
-                className="group inline-flex items-center gap-3 rounded-full bg-[#f0c548] px-9 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all duration-300 hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
+                className="group inline-flex items-center gap-3 rounded-full bg-[#f0c548] px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.4)] transition-all duration-300 hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.5)]"
               >
                 {t("home.shopNow")}
-                <ArrowRight
-                  size={16}
-                  strokeWidth={2.2}
-                  className="transition-transform group-hover:translate-x-1"
-                />
+                <ArrowRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-1" />
               </button>
               <button
                 onClick={() => onNavigate("categories")}
-                className="inline-flex items-center gap-3 rounded-full border-2 border-[#1f2d3a] bg-transparent px-9 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] transition-all duration-300 hover:bg-[#1f2d3a] hover:text-white"
+                className="inline-flex items-center gap-3 rounded-full border-2 border-white/60 bg-white/5 px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-[#1f2d3a]"
               >
                 {t("nav.categories")}
               </button>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
+        </div>
 
-          {/* Right: 2×2 category cards with background images */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.55, ease: "easeOut", delay: 0.3 }}
-            className="grid grid-cols-2 gap-4"
-          >
+        {/* 3 info cards at bottom of hero */}
+        <div className="relative mx-auto max-w-[1280px] px-6 pb-8 lg:px-10">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
-              { name: lang === "no" ? "Fiskeutstyr" : "Fishing Essentials", icon: Fish, slug: "fiske", color: "#1f6f8b", img: "https://sfile.chatglm.cn/images-ppt/b7bfeddee4b7.jpg" },
-              { name: lang === "no" ? "Jaktutstyr" : "Hunting Gear", icon: Crosshair, slug: "jakt", color: "#2d4a3e", img: "https://sfile.chatglm.cn/images-ppt/fa8d4930c1ab.jpg" },
-              { name: lang === "no" ? "Fottøy & Tilbehør" : "Footwear & Accessories", icon: Footprints, slug: "fottøy1", color: "#5d4037", img: "https://sfile.chatglm.cn/images-ppt/c982296fa8d3.jpg" },
-              { name: lang === "no" ? "Friluftsliv" : "Outdoor Life", icon: Tent, slug: "camping", color: "#c75d2c", img: "https://sfile.chatglm.cn/images-ppt/b4e18daede72.jpg" },
+              { icon: Truck, title: lang === "no" ? "Fraktfritt over 2500,-" : "Free shipping over 2500,-", sub: lang === "no" ? "Rask levering i hele Norge" : "Fast delivery across Norway" },
+              { icon: MapPin, title: lang === "no" ? "Hammerfest butikk" : "Hammerfest store", sub: lang === "no" ? "Se åpningstider og kart" : "See opening hours and map" },
+              { icon: Headphones, title: lang === "no" ? "Kundeservice" : "Customer service", sub: lang === "no" ? "Vi er her for å hjelpe deg" : "We are here to help you" },
             ].map((card, i) => {
               const Icon = card.icon;
-              const cat = categories.find((x) => x.slug === card.slug);
               return (
-                <button
-                  key={card.slug}
-                  onClick={() => onNavigate("shop", { shopFilters: { category: card.slug } })}
-                  className="group relative flex flex-col items-start justify-end gap-2 overflow-hidden rounded-[10px] border border-black/5 shadow-[0_4px_12px_rgba(31,45,58,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(31,45,58,0.2)] aspect-[4/3]"
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+                  className="flex items-center gap-3 rounded-lg border border-white/10 bg-[#1f2d3a]/80 px-5 py-4 backdrop-blur-md"
                 >
-                  {/* Background image */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={card.img}
-                    alt={card.name}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  {/* Dark gradient overlay for text readability */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `linear-gradient(to top, ${card.color}F0 0%, ${card.color}80 40%, transparent 70%)`,
-                    }}
-                  />
-                  {/* Content */}
-                  <div className="relative z-10 flex flex-col gap-1 p-4">
-                    <span
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 transition-transform duration-300 group-hover:scale-110"
-                    >
-                      <Icon size={16} strokeWidth={1.8} style={{ color: card.color }} />
-                    </span>
-                    <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-white leading-tight">
-                      {card.name}
-                    </p>
-                    {cat && (
-                      <p className="text-[10px] font-light text-white/70">
-                        {cat.count} {lang === "no" ? "artikler" : "items"}
-                      </p>
-                    )}
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#f0c548]/15 text-[#f0c548]">
+                    <Icon size={20} strokeWidth={1.6} />
+                  </span>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white">{card.title}</p>
+                    <p className="text-[11px] font-light text-white/60">{card.sub}</p>
                   </div>
-                  {/* Arrow indicator on hover */}
-                  <ArrowRight
-                    size={16}
-                    className="absolute right-3 top-3 z-10 text-white opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0.5"
-                  />
-                </button>
+                </motion.div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Shipping marquee */}
-      <ShippingBanner size="md" />
-
-      {/* 3 PRODUCT SHOWCASE CARDS — New Arrivals / Best Sellers / Season's Highlights */}
+      {/* ===== 6 CATEGORY CARDS WITH PHOTOS ===== */}
       <section className="w-full bg-[#f5f1e8]">
         <div className="mx-auto max-w-[1280px] px-6 py-12 lg:px-10 lg:py-16">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {[
-              {
-                title: lang === "no" ? "Nyheter" : "New Arrivals",
-                filter: "newest" as const,
-                icon: Sparkles,
-                accent: "#1f6f8b",
-              },
-              {
-                title: lang === "no" ? "Bestselgere" : "Best Sellers",
-                filter: "bestsellers" as const,
-                icon: Award,
-                accent: "#f0c548",
-              },
-              {
-                title: lang === "no" ? "Årets Høydepunkter" : "Season's Highlights",
-                filter: "recommended" as const,
-                icon: Tent,
-                accent: "#c75d2c",
-              },
-            ].map((showcase, i) => {
-              const Icon = showcase.icon;
-              // Pick a product from the featured array for this showcase
-              const product = featured && featured.length > 0
-                ? featured[i * 4 + (i === 0 ? 0 : i === 1 ? 2 : 5)]
-                : null;
+              { name: "Jakt", slug: "jakt", img: "https://sfile.chatglm.cn/images-ppt/557ff66ae96f.jpeg" },
+              { name: "Fiske", slug: "fiske", img: "https://sfile.chatglm.cn/images-ppt/0ba48bfd515b.jpg" },
+              { name: "Camping", slug: "camping", img: "https://sfile.chatglm.cn/images-ppt/2d30fbeac6e4.jpg" },
+              { name: lang === "no" ? "Vintersport" : "Winter Sports", slug: "vintersport", img: "https://sfile.chatglm.cn/images-ppt/e104da61ebf1.jpg" },
+              { name: lang === "no" ? "Klær" : "Clothing", slug: "klær", img: "https://sfile.chatglm.cn/images-ppt/ee5bb540d2bb.jpg" },
+              { name: lang === "no" ? "Hund" : "Dog", slug: "kjæledyr", img: "https://sfile.chatglm.cn/images-ppt/d0d2acd08093.jpg" },
+            ].map((cat, i) => {
+              const catData = categories.find((x) => x.slug === cat.slug);
               return (
                 <motion.button
-                  key={showcase.title}
+                  key={cat.slug}
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  onClick={() => onNavigate("shop")}
-                  className="group flex flex-col overflow-hidden rounded-[10px] border border-black/5 bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(31,45,58,0.15)]"
+                  transition={{ duration: 0.3, delay: i * 0.05 }}
+                  onClick={() => onNavigate("shop", { shopFilters: { category: cat.slug } })}
+                  className="group relative flex flex-col items-start overflow-hidden rounded-[10px] border border-black/5 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(31,45,58,0.15)]"
                 >
-                  {/* Image area */}
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#f4f3ef]">
-                    {product ? (
-                      <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d3a]/50 via-transparent to-transparent" />
-                      </>
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <Icon size={40} strokeWidth={1.2} style={{ color: showcase.accent }} />
-                      </div>
-                    )}
-                    {/* Badge */}
-                    <span
-                      className="absolute left-3 top-3 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white"
-                      style={{ backgroundColor: showcase.accent }}
-                    >
-                      {showcase.title}
+                  {/* Image */}
+                  <div className="relative aspect-[4/5] w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={cat.img}
+                      alt={cat.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    {/* Gradient overlay */}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "linear-gradient(to top, rgba(31,45,58,0.85) 0%, rgba(31,45,58,0.2) 50%, transparent 100%)" }}
+                    />
+                  </div>
+                  {/* Label */}
+                  <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-3">
+                    <span className="text-[13px] font-bold uppercase tracking-[0.06em] text-white">
+                      {cat.name}
                     </span>
+                    <ArrowRight size={14} className="text-white/80 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </div>
-                  {/* Content */}
-                  <div className="flex flex-col gap-2 p-5">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em]" style={{ color: showcase.accent }}>
-                      {showcase.title}
-                    </p>
-                    <h3 className="text-[16px] font-bold leading-snug text-[#1f2d3a] line-clamp-2">
-                      {product ? product.name : (lang === "no" ? "Se utvalg" : "Browse selection")}
-                    </h3>
-                    {product && (
-                      <p className="text-[12px] font-light text-[#8a96a1]">
-                        {product.brand?.name ?? "Kleven"}
-                      </p>
-                    )}
-                    <div className="mt-2 flex items-center gap-1 text-[12px] font-semibold text-[#1f2d3a]">
-                      {lang === "no" ? "Se mer" : "See more"}
-                      <ArrowRight
-                        size={13}
-                        strokeWidth={2.2}
-                        className="transition-transform group-hover:translate-x-1"
-                      />
-                    </div>
-                  </div>
+                  {/* Count badge */}
+                  {catData && (
+                    <span className="absolute right-2 top-2 rounded-full bg-[#f0c548] px-2 py-0.5 text-[9px] font-bold text-[#1f2d3a]">
+                      {catData.count}
+                    </span>
+                  )}
                 </motion.button>
               );
             })}
@@ -295,7 +217,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS */}
+      {/* ===== POPULAR PRODUCTS ===== */}
       <section className="w-full bg-white">
         <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[#d4cfc1] pb-5">
