@@ -46,3 +46,53 @@ Stage Summary:
 - Production-quality: skeleton loaders, optimistic cart updates, toast notifications, Framer Motion animations, mobile-responsive, accessible (semantic HTML, ARIA labels, alt text, keyboard nav), sticky footer pattern (min-h-screen flex flex-col)
 - All UI copy in Norwegian Bokmål; <html lang="no" translate="no"> + <meta name="google" content="notranslate"> to prevent React removeChild errors
 - Lint passes with 0 errors/warnings; dev.log shows only successful 200 responses; no fatal errors
+
+---
+Task ID: faceted-filters
+Agent: full-stack-developer
+Task: Build Decathlon-style faceted filter system
+
+Work Log:
+- Inspected catalog state with a one-off tsx script: 4322 products, 472 with prices > 0 (max 62 500 kr), 434 brands, 422 isNew=true, tags = Tilbud(553)/Nyhet(422)/Bestselger(53)/null(3294)
+- Added `ProductFacets`, `BrandFacet`, `TagFacet` interfaces to `src/lib/kj/types.ts` and updated `ProductListResponse` to include an optional `facets` field
+- Rewrote `src/app/api/products/route.ts`:
+  • Added multi-brand support via `brands=slug1,slug2,slug3` (comma-separated). Kept legacy `brand=single` for back-compat.
+  • Added multi-tag support via `tags=Bestselger,Nyhet`
+  • Added `onSale=1` shortcut (filters `tag === "Tilbud"`) and `isNew=1` shortcut (filters `isNew === true`)
+  • Added `includeFacets=1` query param. When set, response includes a `facets` object with `brands`, `tags`, `priceRange`, `availability` computed by `computeFacets()` using Prisma `groupBy`/`aggregate`/`count` (no in-memory filtering).
+  • Each facet is computed AFTER applying every filter EXCEPT its own (so selecting a brand still shows counts for all other brands).
+  • All five facet queries run in parallel via `Promise.all` alongside the main `findMany` + `count` — total response time ~16–34ms on the 4322-product catalog.
+  • Refactored where-clause construction into a `buildWhere(exclude?)` closure so each facet query can derive its own where clause by omitting its own dimension.
+- Updated `src/lib/kj/i18n.ts` with the requested keys: `shop.clearAll`, `shop.showResults`, `shop.availability`, `shop.tags` (no: "Etiketter", en: "Tags"), `shop.onSale`, `shop.newArrivals`. Also tightened `shop.filters` to singular "Filter", and shortened `shop.noResults`/`shop.noResultsHint` to match the spec.
+- Rebuilt `src/components/kj-pages/shop-page.tsx` (645 → ~750 lines):
+  • Replaced single-select radio brand filter with **multi-select checkboxes** (toggle on click, multiple brands combined via OR).
+  • Added **Tags section** with checkboxes for Bestselger, Nyhet, Tilbud, Begrenset. Tags with 0 count are disabled (greyed out, not hidden).
+  • **Enabled the price range slider** (was previously hidden behind `{false && …}` because the catalog had no real prices). Slider bounds [0, 65000], step 100, with Kr X / Kr Y labels and a catalog min/max hint. Price changes are debounced 300ms so dragging the slider doesn't fire a fetch on every tick.
+  • **Availability section** with "In stock only" checkbox and a sub-label showing in-stock / out-of-stock counts.
+  • **Active filter chips** above the product grid — one chip per active filter (category, subcategory, each brand, each tag, price range, in-stock, search query). Each chip has its own X button to remove that specific filter. A "Tøm alle" (Clear all) button sits next to the chips.
+  • **Live facet counts** next to every checkbox (e.g. "Abu Garcia (14)"). When a brand/tag has count=0 in the current filter context, the checkbox is greyed out and disabled — but still visible so the user knows it exists.
+  • **Sticky sidebar** (`sticky top-24`) with `max-h-[calc(100vh-7rem)] overflow-y-auto` so long filter lists scroll independently.
+  • **Mobile filter sheet**: controlled Sheet component (`side="bottom"`, h-85vh) with header, scrollable content, and a "Vis resultater (N)" button at the bottom that closes the sheet.
+  • **Collapsible sections**: each filter section (Kategori, Underkategori, Merke, Pris, Etiketter, Tilgjengelighet) has a clickable header with a chevron icon that rotates. State tracked in a `Record<CollapsibleKey, boolean>` object, all expanded by default.
+  • **URL sync**: on mount, reads `category`, `subcategory`, `brands`/`brand`, `tags`, `q`, `minPrice`, `maxPrice`, `inStock`, `sort`, `page` from `window.location.search` into state. On every filter change, `window.history.replaceState` updates the URL without reloading. Confirmed: opening `/?minPrice=100&maxPrice=5000` then clicking "Se hele butikken" correctly applies the price filter and shows "Viser 355 artikler".
+  • Kept all existing features intact: category pills, subcategory pills, 14-option sort dropdown (now all 14 visible — catalog has real prices), pagination, compact 4-col product grid, shipping banner, Outlet auto-switch to discount sort.
+  • Removed unused imports (`Filter` was duplicated, `recommendedScore`/`discountPct` from API route).
+- Ran `bun run lint` — 0 errors, 0 warnings on changed files (2 pre-existing warnings in `home-page.tsx` about unused eslint-disable directives are unrelated to this task).
+- Verified with agent-browser:
+  • Shop page renders with all 6 filter sections expanded
+  • Brand facet counts match database (e.g. Abu Garcia 14, Aclima 102, Shadowflies 264)
+  • Tag facet counts match: Bestselger(53), Nyhet(422), Tilbud(553), Begrenset(0 — disabled)
+  • Clicking Abu Garcia checkbox → URL becomes `?brands=abu-garcia`, chip "Abu Garcia" appears, product list updates to 14 Abu Garcia products, tag facet counts re-compute within the brand filter (Nyheter 3, Tilbud 4)
+  • Clicking Tilbud checkbox → URL `?brands=abu-garcia&tags=Tilbud`, both chips visible
+  • Clicking X on Abu Garcia chip → URL drops `brands`, chip disappears, only Tilbud remains
+  • Clicking "Tøm alle" (Clear all) → URL resets to `/`, all chips gone
+  • Navigating directly to `/?minPrice=100&maxPrice=5000` then entering shop → price slider shows 100 / 5000, chip "100 – 5 000 kr" appears, "Viser 355 artikler", brand facet counts update (Abu Garcia 3 within price range)
+  • Collapsible sections: clicked MERKE header → section collapses (expanded=false), brand checkboxes hidden. Clicked again → re-expands.
+  • Mobile viewport (375×812): filter button shows "Filter 1" badge. Clicking opens bottom-sheet with all sections. "VIS RESULTATER (355)" button at bottom closes the sheet.
+  • No console errors, no page errors. Dev log shows all API calls returning 200 in 14–34ms with facets included.
+
+Stage Summary:
+- API: 4 new query params (`brands`, `tags`, `onSale`, `isNew`, `includeFacets`) — all backward-compatible with the old `brand` singular param.
+- Facets response includes 4 dimensions (brands, tags, priceRange, availability), each computed independently with its own filter excluded. All queries use efficient Prisma `groupBy`/`aggregate`/`count` (no in-memory filtering), running in parallel.
+- Shop page UX: multi-select checkboxes for brands and tags, price slider with debounce, availability checkbox, removable active-filter chips with "Clear all", live facet counts (0-count checkboxes disabled, not hidden), sticky+scrollable sidebar, bottom-sheet mobile drawer with "Show results (N)" button, collapsible sections (all open by default), full URL sync via `replaceState`.
+- Lint passes with 0 errors on changed files. Browser tests confirm filters, chips, URL sync, mobile sheet, and collapsible sections all work end-to-end.

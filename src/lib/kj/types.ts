@@ -98,6 +98,33 @@ export interface ProductListResponse {
   totalPages: number;
   totalCount?: number;
   sort: string;
+  facets?: ProductFacets;
+}
+
+/** A single brand row in the facets response. */
+export interface BrandFacet {
+  slug: string;
+  name: string;
+  count: number;
+}
+
+/** A single tag row in the facets response. */
+export interface TagFacet {
+  tag: string;
+  count: number;
+}
+
+/**
+ * Facet counts returned by /api/products when `includeFacets=1`.
+ *
+ * Each facet is computed AFTER applying every filter EXCEPT the facet's own
+ * filter — so selecting a brand still shows counts for the other brands.
+ */
+export interface ProductFacets {
+  brands: BrandFacet[];
+  priceRange: { min: number; max: number };
+  availability: { inStock: number; outOfStock: number };
+  tags: TagFacet[];
 }
 
 export interface CategoryNode {

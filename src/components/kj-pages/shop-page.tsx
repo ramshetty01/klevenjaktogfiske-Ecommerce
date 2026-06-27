@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  SlidersHorizontal,
+  X,
+  Filter,
+} from "lucide-react";
 import { ShippingBanner } from "../kj/shipping-banner";
 import { ProductCard, ProductCardSkeleton } from "../kj/product-card";
 import { useLang } from "@/lib/kj/lang-store";
@@ -13,11 +20,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Filter } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { PageId, NavContext } from "../kj/header";
-import type { Product, CategoryNode, BrandNode, ProductListResponse } from "@/lib/kj/types";
+import type {
+  Product,
+  CategoryNode,
+  BrandNode,
+  ProductListResponse,
+  ProductFacets,
+} from "@/lib/kj/types";
 import { SORT_OPTIONS, type SortKey } from "@/lib/merchandising";
 
 interface ShopPageProps {
@@ -27,23 +40,60 @@ interface ShopPageProps {
 }
 
 const PER_PAGE = 24;
+/** Slider upper bound. Sits just above the catalog's real max price (62 500). */
+const MAX_PRICE = 65000;
+/** Tag values we surface as filter checkboxes — even if 0 count. */
+const KNOWN_TAGS = ["Bestselger", "Nyhet", "Tilbud", "Begrenset"] as const;
+
+type CollapsibleKey =
+  | "category"
+  | "subcategory"
+  | "brand"
+  | "price"
+  | "tags"
+  | "availability";
 
 export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
   const { t, lang } = useLang();
-  // Filter state
-  const [activeCategory, setActiveCategory] = useState<string>(initialFilters?.category ?? "alle");
-  const [activeSubcategory, setActiveSubcategory] = useState<string>(initialFilters?.subcategory ?? "alle");
-  const [activeBrand, setActiveBrand] = useState<string>(initialFilters?.brand ?? "alle");
-  const [searchQ, setSearchQ] = useState<string>(initialFilters?.q ?? "");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 25000]);
+
+  // ===== Filter state =====
+  const [activeCategory, setActiveCategory] = useState<string>("alle");
+  const [activeSubcategory, setActiveSubcategory] = useState<string>("alle");
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [searchQ, setSearchQ] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, MAX_PRICE]);
+  const [debouncedPriceRange, setDebouncedPriceRange] = useState<[number, number]>([
+    0, MAX_PRICE,
+  ]);
   const [inStockOnly, setInStockOnly] = useState(false);
 
   // Sort + pagination
   const [sort, setSort] = useState<SortKey>("recommended");
   const [page, setPage] = useState(1);
 
+  // Collapsible filter sections (default all expanded)
+  const [collapsed, setCollapsed] = useState<Record<CollapsibleKey, boolean>>({
+    category: false,
+    subcategory: false,
+    brand: false,
+    price: false,
+    tags: false,
+    availability: false,
+  });
+  const toggleSection = (key: CollapsibleKey) =>
+    setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
+
   // Brand filter — show top 20 by default with a "show more" toggle
   const [showAllBrands, setShowAllBrands] = useState(false);
+
+  // Mobile filter sheet (controlled so we can close it from the
+  // "Show results" button at the bottom)
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Init flag — gates URL sync so the first render doesn't clobber the
+  // existing URL with default state.
+  const [initialized, setInitialized] = useState(false);
 
   // Data
   const [products, setProducts] = useState<Product[] | null>(null);
@@ -51,20 +101,123 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
   const [totalCount, setTotalCount] = useState(0);
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const [brands, setBrands] = useState<BrandNode[]>([]);
+  const [facets, setFacets] = useState<ProductFacets | null>(null);
 
-  // Sync URL-driven initial filters into state when they change
+  // ===== On mount: read URL params (and apply initialFilters as fallback) =====
   useEffect(() => {
-    if (initialFilters) {
-      if (initialFilters.category !== undefined) setActiveCategory(initialFilters.category);
-      if (initialFilters.subcategory !== undefined) setActiveSubcategory(initialFilters.subcategory);
-      if (initialFilters.brand !== undefined) setActiveBrand(initialFilters.brand);
-      if (initialFilters.q !== undefined) setSearchQ(initialFilters.q);
-      setPage(1);
-    }
-     
-  }, [JSON.stringify(initialFilters)]);
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
 
-  // Fetch categories + brands once
+    const cat = params.get("category") ?? initialFilters?.category ?? "alle";
+    const sub =
+      params.get("subcategory") ?? initialFilters?.subcategory ?? "alle";
+    setActiveCategory(cat);
+    setActiveSubcategory(sub);
+
+    // Brand: support both plural (?brands=a,b) and singular (?brand=a) URL params
+    const brandParam = params.get("brands") ?? params.get("brand");
+    if (brandParam) {
+      setSelectedBrands(
+        brandParam
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      );
+    } else if (initialFilters?.brand && initialFilters.brand !== "alle") {
+      setSelectedBrands([initialFilters.brand]);
+    } else {
+      setSelectedBrands([]);
+    }
+
+    // Tags: comma-separated
+    const tagsParam = params.get("tags");
+    if (tagsParam) {
+      setSelectedTags(
+        tagsParam
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      );
+    }
+
+    setSearchQ(params.get("q") ?? initialFilters?.q ?? "");
+
+    const minP = params.has("minPrice") ? Number(params.get("minPrice")) : 0;
+    const maxP = params.has("maxPrice")
+      ? Number(params.get("maxPrice"))
+      : MAX_PRICE;
+    setPriceRange([minP, maxP]);
+    setDebouncedPriceRange([minP, maxP]);
+
+    setInStockOnly(params.get("inStock") === "1");
+    setSort((params.get("sort") ?? "recommended") as SortKey);
+    setPage(Number(params.get("page") ?? "1"));
+
+    setInitialized(true);
+  }, []);
+
+  // ===== Apply initialFilters from navigation (when they change) =====
+  // This handles the case where the user is already on the shop page and
+  // clicks a different category/brand in the header mega menu.
+  useEffect(() => {
+    if (!initialized || !initialFilters) return;
+    if (initialFilters.category !== undefined) {
+      setActiveCategory(initialFilters.category);
+      setActiveSubcategory("alle");
+    }
+    if (initialFilters.subcategory !== undefined) {
+      setActiveSubcategory(initialFilters.subcategory);
+    }
+    if (initialFilters.brand !== undefined) {
+      setSelectedBrands(
+        initialFilters.brand === "alle" ? [] : [initialFilters.brand],
+      );
+    }
+    if (initialFilters.q !== undefined) setSearchQ(initialFilters.q);
+    setPage(1);
+  }, [JSON.stringify(initialFilters), initialized]);
+
+  // ===== Sync state -> URL (replaceState, no reload) =====
+  useEffect(() => {
+    if (!initialized) return;
+    const params = new URLSearchParams();
+    if (activeCategory !== "alle") params.set("category", activeCategory);
+    if (activeSubcategory !== "alle")
+      params.set("subcategory", activeSubcategory);
+    if (selectedBrands.length > 0)
+      params.set("brands", selectedBrands.join(","));
+    if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
+    if (searchQ.trim()) params.set("q", searchQ.trim());
+    if (priceRange[0] > 0) params.set("minPrice", String(priceRange[0]));
+    if (priceRange[1] < MAX_PRICE) params.set("maxPrice", String(priceRange[1]));
+    if (inStockOnly) params.set("inStock", "1");
+    if (sort !== "recommended") params.set("sort", sort);
+    if (page > 1) params.set("page", String(page));
+
+    const newUrl = params.toString()
+      ? `?${params.toString()}`
+      : window.location.pathname;
+    window.history.replaceState(null, "", newUrl);
+  }, [
+    activeCategory,
+    activeSubcategory,
+    selectedBrands,
+    selectedTags,
+    searchQ,
+    priceRange,
+    inStockOnly,
+    sort,
+    page,
+    initialized,
+  ]);
+
+  // ===== Debounce price range so dragging the slider doesn't fire a fetch on every tick =====
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedPriceRange(priceRange), 300);
+    return () => clearTimeout(t);
+  }, [priceRange]);
+
+  // ===== Fetch categories + brands (master list) once =====
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -91,102 +244,224 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
     };
   }, []);
 
-  // Fetch products whenever filters/sort/page change (debounced via useEffect)
+  // ===== Fetch products + facets whenever filters/sort/page change =====
   const fetchProducts = useCallback(async () => {
+    if (!initialized) return;
     setProducts(null); // show skeletons during fetch
     try {
       const params = new URLSearchParams();
       if (activeCategory !== "alle") params.set("category", activeCategory);
-      if (activeSubcategory !== "alle") params.set("subcategory", activeSubcategory);
-      if (activeBrand !== "alle") params.set("brand", activeBrand);
+      if (activeSubcategory !== "alle")
+        params.set("subcategory", activeSubcategory);
+      if (selectedBrands.length > 0)
+        params.set("brands", selectedBrands.join(","));
+      if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
       if (searchQ.trim()) params.set("q", searchQ.trim());
-      params.set("minPrice", String(priceRange[0]));
-      params.set("maxPrice", String(priceRange[1]));
+      params.set("minPrice", String(debouncedPriceRange[0]));
+      params.set("maxPrice", String(debouncedPriceRange[1]));
       if (inStockOnly) params.set("inStock", "1");
       params.set("sort", sort);
       params.set("page", String(page));
       params.set("perPage", String(PER_PAGE));
       params.set("includeCount", "1");
+      params.set("includeFacets", "1");
 
-      const res = await fetch(`/api/products?${params.toString()}`, { cache: "no-store" });
+      const res = await fetch(`/api/products?${params.toString()}`, {
+        cache: "no-store",
+      });
       if (!res.ok) throw new Error("Kunne ikke hente produkter");
       const data: ProductListResponse = await res.json();
       setProducts(data.products);
       setTotalPages(data.totalPages);
       setTotalCount(data.totalCount ?? data.products.length);
+      if (data.facets) setFacets(data.facets);
     } catch {
       setProducts([]);
     }
-  }, [activeCategory, activeSubcategory, activeBrand, searchQ, priceRange, inStockOnly, sort, page]);
+  }, [
+    activeCategory,
+    activeSubcategory,
+    selectedBrands,
+    selectedTags,
+    searchQ,
+    debouncedPriceRange,
+    inStockOnly,
+    sort,
+    page,
+    initialized,
+  ]);
 
   useEffect(() => {
     void fetchProducts();
   }, [fetchProducts]);
 
-  // Reset to page 1 when filters change
+  // ===== Reset to page 1 when filters change (not on page change) =====
   useEffect(() => {
+    if (!initialized) return;
     setPage(1);
-  }, [activeCategory, activeSubcategory, activeBrand, searchQ, priceRange, inStockOnly, sort]);
+  }, [
+    activeCategory,
+    activeSubcategory,
+    selectedBrands,
+    selectedTags,
+    searchQ,
+    debouncedPriceRange,
+    inStockOnly,
+    sort,
+    initialized,
+  ]);
 
+  // ===== Derived state =====
   const activeCategoryObj = categories.find((c) => c.slug === activeCategory);
   // When only a subcategory is selected (e.g. from the mega menu), find its
   // parent category so we can show the right heading + subcategory breadcrumb.
-  const activeSubcategoryObj = !activeCategoryObj && activeSubcategory !== "alle"
-    ? categories
-        .flatMap((c) => c.subcategories.map((s) => ({ ...s, parent: c })))
-        .find((s) => s.slug === activeSubcategory)
-    : activeCategoryObj?.subcategories.find((s) => s.slug === activeSubcategory);
-  const parentForHeading = activeCategoryObj ?? (activeSubcategoryObj as { parent?: CategoryNode } | undefined)?.parent;
+  const activeSubcategoryObj =
+    !activeCategoryObj && activeSubcategory !== "alle"
+      ? categories
+          .flatMap((c) => c.subcategories.map((s) => ({ ...s, parent: c })))
+          .find((s) => s.slug === activeSubcategory)
+      : activeCategoryObj?.subcategories.find(
+          (s) => s.slug === activeSubcategory,
+        );
+  const parentForHeading =
+    activeCategoryObj ??
+    (activeSubcategoryObj as { parent?: CategoryNode } | undefined)?.parent;
   const isOutlet = activeCategory === "outlet";
 
   // Auto-switch sort to "discount" when entering Outlet (per merchandising strategy)
-  const effectiveSort: SortKey = isOutlet && sort === "recommended" ? "discount" : sort;
+  const effectiveSort: SortKey =
+    isOutlet && sort === "recommended" ? "discount" : sort;
 
-  // Available sort options: hide "discount" unless in Outlet; show all others always
-  const visibleSortOptions = SORT_OPTIONS.filter((o) => {
-    // Hide "discount" unless we're in Outlet — no products have
-    // originalPrice set yet (catalog has no prices).
-    if (o.value === "discount") return isOutlet;
-    // Hide price-based sorts while the catalog has no prices imported.
-    // (All products have price=0 so these would be no-ops.)
-    if (o.value === "price_asc" || o.value === "price_desc") return false;
-    return true;
-  });
+  // All 14 sort options are now visible — catalog has real prices.
+  const visibleSortOptions = SORT_OPTIONS;
 
-  // Reset subcategory when changing main category
+  // ===== Filter handlers =====
   const handleCategoryClick = (slug: string) => {
     setActiveCategory(slug);
     setActiveSubcategory("alle");
   };
 
-  // Active filter count for the mobile filter sheet badge
-  const activeFilterCount =
-    (activeCategory !== "alle" ? 1 : 0) +
-    (activeSubcategory !== "alle" ? 1 : 0) +
-    (activeBrand !== "alle" ? 1 : 0) +
-    (inStockOnly ? 1 : 0) +
-    (priceRange[0] > 0 || priceRange[1] < 25000 ? 1 : 0);
+  const toggleBrand = (slug: string) => {
+    setSelectedBrands((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug],
+    );
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((s) => s !== tag) : [...prev, tag],
+    );
+  };
+
+  // ===== Build facet lookup maps (slug -> count, tag -> count) =====
+  const brandFacetMap = useMemo(() => {
+    const m = new Map<string, number>();
+    facets?.brands.forEach((b) => m.set(b.slug, b.count));
+    return m;
+  }, [facets]);
+
+  const tagFacetMap = useMemo(() => {
+    const m = new Map<string, number>();
+    facets?.tags.forEach((tag) => m.set(tag.tag, tag.count));
+    return m;
+  }, [facets]);
+
+  // ===== Tag display label =====
+  const tagLabel = (tag: string): string => {
+    switch (tag) {
+      case "Bestselger":
+        return t("tag.bestseller");
+      case "Nyhet":
+        return t("shop.newArrivals");
+      case "Tilbud":
+        return t("shop.onSale");
+      case "Begrenset":
+        return t("tag.limited");
+      default:
+        return tag;
+    }
+  };
+
+  // ===== Active filter chips (each removable individually) =====
+  type Chip = { key: string; label: string; onRemove: () => void };
+  const activeChips: Chip[] = [];
+  if (activeCategory !== "alle" && activeCategoryObj) {
+    activeChips.push({
+      key: `cat-${activeCategory}`,
+      label: activeCategoryObj.name,
+      onRemove: () => handleCategoryClick("alle"),
+    });
+  }
+  if (activeSubcategory !== "alle" && activeSubcategoryObj) {
+    activeChips.push({
+      key: `sub-${activeSubcategory}`,
+      label: activeSubcategoryObj.name,
+      onRemove: () => setActiveSubcategory("alle"),
+    });
+  }
+  selectedBrands.forEach((slug) => {
+    const brand = brands.find((b) => b.slug === slug);
+    if (brand) {
+      activeChips.push({
+        key: `brand-${slug}`,
+        label: brand.name,
+        onRemove: () => toggleBrand(slug),
+      });
+    }
+  });
+  selectedTags.forEach((tag) => {
+    activeChips.push({
+      key: `tag-${tag}`,
+      label: tagLabel(tag),
+      onRemove: () => toggleTag(tag),
+    });
+  });
+  if (priceRange[0] > 0 || priceRange[1] < MAX_PRICE) {
+    activeChips.push({
+      key: "price",
+      label: `${priceRange[0].toLocaleString("no-NO")} – ${priceRange[1].toLocaleString("no-NO")} kr`,
+      onRemove: () => setPriceRange([0, MAX_PRICE]),
+    });
+  }
+  if (inStockOnly) {
+    activeChips.push({
+      key: "inStock",
+      label: t("shop.inStockOnly"),
+      onRemove: () => setInStockOnly(false),
+    });
+  }
+  if (searchQ.trim()) {
+    activeChips.push({
+      key: "q",
+      label: `“${searchQ.trim()}”`,
+      onRemove: () => setSearchQ(""),
+    });
+  }
 
   const clearFilters = () => {
     setActiveCategory("alle");
     setActiveSubcategory("alle");
-    setActiveBrand("alle");
+    setSelectedBrands([]);
+    setSelectedTags([]);
     setSearchQ("");
-    setPriceRange([0, 25000]);
+    setPriceRange([0, MAX_PRICE]);
     setInStockOnly(false);
   };
 
-  // ===== Filter UI =====
+  const activeFilterCount = activeChips.length;
+
+  // ===== Filter panel (shared between desktop sidebar and mobile sheet) =====
   const FiltersPanel = (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       {/* Category */}
-      <div>
-        <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-          Kategori
-        </h4>
+      <CollapsibleSection
+        title={lang === "no" ? "Kategori" : "Category"}
+        isOpen={!collapsed.category}
+        onToggle={() => toggleSection("category")}
+      >
         <div className="flex flex-col gap-1.5">
           <FilterRadio
-            label="Alle kategorier"
+            label={t("shop.all")}
             checked={activeCategory === "alle"}
             onChange={() => handleCategoryClick("alle")}
           />
@@ -199,114 +474,162 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             />
           ))}
         </div>
-      </div>
+      </CollapsibleSection>
 
-      {/* Subcategory filter — show when a parent category with subs is resolved */}
-      {parentForHeading && parentForHeading.subcategories.filter((s) => s.count > 0).length > 0 && (
-        <div>
-          <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-            {t("shop.subcategory")}
-          </h4>
-          <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto kj-scroll pr-2">
-            <FilterRadio
-              label={t("shop.all")}
-              checked={activeSubcategory === "alle"}
-              onChange={() => setActiveSubcategory("alle")}
-            />
-            {parentForHeading.subcategories
-              .filter((s) => s.count > 0)
-              .map((sub) => (
-                <FilterRadio
-                  key={sub.id}
-                  label={`${sub.name} (${sub.count})`}
-                  checked={activeSubcategory === sub.slug}
-                  onChange={() => setActiveSubcategory(sub.slug)}
-                />
-              ))}
-          </div>
-        </div>
-      )}
+      {/* Subcategory — show when a parent category with subs is resolved */}
+      {parentForHeading &&
+        parentForHeading.subcategories.filter((s) => s.count > 0).length > 0 && (
+          <CollapsibleSection
+            title={t("shop.subcategory")}
+            isOpen={!collapsed.subcategory}
+            onToggle={() => toggleSection("subcategory")}
+          >
+            <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto kj-scroll pr-2">
+              <FilterRadio
+                label={t("shop.all")}
+                checked={activeSubcategory === "alle"}
+                onChange={() => setActiveSubcategory("alle")}
+              />
+              {parentForHeading.subcategories
+                .filter((s) => s.count > 0)
+                .map((sub) => (
+                  <FilterRadio
+                    key={sub.id}
+                    label={`${sub.name} (${sub.count})`}
+                    checked={activeSubcategory === sub.slug}
+                    onChange={() => setActiveSubcategory(sub.slug)}
+                  />
+                ))}
+            </div>
+          </CollapsibleSection>
+        )}
 
-      {/* Brand — top 20 with "show more" for the long tail */}
-      <div>
-        <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-          {t("shop.brand")}
-        </h4>
+      {/* Brand — multi-select checkboxes with live facet counts */}
+      <CollapsibleSection
+        title={t("shop.brand")}
+        isOpen={!collapsed.brand}
+        onToggle={() => toggleSection("brand")}
+      >
         <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto kj-scroll pr-2">
-          <FilterRadio
-            label={t("shop.allBrands")}
-            checked={activeBrand === "alle"}
-            onChange={() => setActiveBrand("alle")}
-          />
-          {(showAllBrands ? brands : brands.slice(0, 20)).map((b) => (
-            <FilterRadio
-              key={b.id}
-              label={`${b.name} (${b.count})`}
-              checked={activeBrand === b.slug}
-              onChange={() => setActiveBrand(b.slug)}
-            />
-          ))}
+          {(showAllBrands ? brands : brands.slice(0, 20)).map((b) => {
+            const count = brandFacetMap.get(b.slug) ?? 0;
+            const checked = selectedBrands.includes(b.slug);
+            const disabled = !checked && count === 0;
+            return (
+              <FilterCheckbox
+                key={b.id}
+                label={b.name}
+                count={count}
+                checked={checked}
+                onChange={() => toggleBrand(b.slug)}
+                disabled={disabled}
+              />
+            );
+          })}
           {brands.length > 20 && (
             <button
               onClick={() => setShowAllBrands((v) => !v)}
               className="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#c75d2c] hover:underline"
             >
-              {showAllBrands ? (lang === "no" ? "Vis mindre" : "Show less") : `${lang === "no" ? "Vis alle" : "Show all"} (${brands.length})`}
+              {showAllBrands
+                ? lang === "no"
+                  ? "Vis mindre"
+                  : "Show less"
+                : `${lang === "no" ? "Vis alle" : "Show all"} (${brands.length})`}
             </button>
           )}
         </div>
-      </div>
+      </CollapsibleSection>
 
-      {/* Price range — hidden for now because the real Kleven catalog
-          doesn't ship prices (priceNok=0 for all products). The slider UI
-          stays in the source so it can be re-enabled once prices are
-          imported from the upstream product pages. */}
-      {false && (
-      <div>
-        <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-          Pris (kr)
-        </h4>
+      {/* Price range — slider with min/max display */}
+      <CollapsibleSection
+        title={t("shop.priceRange")}
+        isOpen={!collapsed.price}
+        onToggle={() => toggleSection("price")}
+      >
         <div className="px-1">
           <Slider
             value={priceRange}
             min={0}
-            max={25000}
+            max={MAX_PRICE}
             step={100}
-            onValueChange={(v) => setPriceRange([v[0], v[1]] as [number, number])}
-            className="my-2"
+            onValueChange={(v) =>
+              setPriceRange([v[0], v[1]] as [number, number])
+            }
+            className="my-3"
           />
-          <div className="flex items-center justify-between text-[12px] text-[#3a4856]">
+          <div className="flex items-center justify-between text-[12px] font-medium text-[#3a4856]">
             <span>Kr {priceRange[0].toLocaleString("no-NO")}</span>
-            <span>Kr {priceRange[1].toLocaleString("no-NO")}+</span>
+            <span>
+              Kr {priceRange[1].toLocaleString("no-NO")}
+              {priceRange[1] >= MAX_PRICE ? "+" : ""}
+            </span>
           </div>
+          {facets && (
+            <p className="mt-2 text-[10px] text-[#8a96a1]">
+              {lang === "no"
+                ? `Katalog: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`
+                : `Catalog: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`}
+            </p>
+          )}
         </div>
-      </div>
-      )}
+      </CollapsibleSection>
 
-      {/* Price notice */}
-      <div className="rounded-md border border-[#f0c548]/40 bg-[#f0c548]/10 px-3 py-2 text-[11px] leading-relaxed text-[#3a4856]">
-        {lang === "no"
-          ? "Priser kommer — Kleven-katalogen oppdateres for øyeblikket. Bruk telefonnummeret på produktsiden for direkte pris forespørsel."
-          : "Prices coming soon — the Kleven catalog is currently being updated. Use the phone number on the product page for direct price inquiries."}
-      </div>
+      {/* Tags — multi-select checkboxes */}
+      <CollapsibleSection
+        title={t("shop.tags")}
+        isOpen={!collapsed.tags}
+        onToggle={() => toggleSection("tags")}
+      >
+        <div className="flex flex-col gap-1.5">
+          {KNOWN_TAGS.map((tag) => {
+            const count = tagFacetMap.get(tag) ?? 0;
+            const checked = selectedTags.includes(tag);
+            const disabled = !checked && count === 0;
+            return (
+              <FilterCheckbox
+                key={tag}
+                label={tagLabel(tag)}
+                count={count}
+                checked={checked}
+                onChange={() => toggleTag(tag)}
+                disabled={disabled}
+              />
+            );
+          })}
+        </div>
+      </CollapsibleSection>
 
-      {/* In stock */}
-      <label className="flex cursor-pointer items-center gap-2 text-[13px] text-[#1f2d3a]">
-        <input
-          type="checkbox"
+      {/* Availability */}
+      <CollapsibleSection
+        title={t("shop.availability")}
+        isOpen={!collapsed.availability}
+        onToggle={() => toggleSection("availability")}
+      >
+        <FilterCheckbox
+          label={t("shop.inStockOnly")}
+          count={facets?.availability.inStock}
           checked={inStockOnly}
-          onChange={(e) => setInStockOnly(e.target.checked)}
-          className="h-4 w-4 accent-[#1f2d3a]"
+          onChange={() => setInStockOnly((v) => !v)}
+          disabled={
+            !inStockOnly && (facets?.availability.inStock ?? 0) === 0
+          }
         />
-        {t("shop.inStockOnly")}
-      </label>
+        {facets && (
+          <p className="mt-1.5 pl-6 text-[10px] text-[#8a96a1]">
+            {facets.availability.inStock} {t("shop.inStock").toLowerCase()} ·{" "}
+            {facets.availability.outOfStock}{" "}
+            {t("shop.outOfStock").toLowerCase()}
+          </p>
+        )}
+      </CollapsibleSection>
 
       {activeFilterCount > 0 && (
         <button
           onClick={clearFilters}
           className="flex items-center gap-1 text-[12px] font-semibold text-[#c75d2c] hover:underline"
         >
-          <X size={12} /> Tøm filtre ({activeFilterCount})
+          <X size={12} /> {t("shop.clearAll")} ({activeFilterCount})
         </button>
       )}
     </div>
@@ -363,37 +686,44 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           </div>
 
           {/* Subcategory pills — show when a category with subs is selected */}
-          {parentForHeading && parentForHeading.subcategories.filter((s) => s.count > 0).length > 0 && (
-            <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d4cfc1] pb-5">
-              <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-                {t("shop.subcategory")}
-              </span>
-              <SubcategoryPill
-                label={t("shop.all")}
-                active={activeSubcategory === "alle"}
-                onClick={() => setActiveSubcategory("alle")}
-              />
-              {parentForHeading.subcategories
-                .filter((s) => s.count > 0)
-                .map((sub) => (
-                  <SubcategoryPill
-                    key={sub.id}
-                    label={sub.name}
-                    active={activeSubcategory === sub.slug}
-                    onClick={() => setActiveSubcategory(sub.slug)}
-                  />
-                ))}
-            </div>
-          )}
+          {parentForHeading &&
+            parentForHeading.subcategories.filter((s) => s.count > 0).length >
+              0 && (
+              <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d4cfc1] pb-5">
+                <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
+                  {t("shop.subcategory")}
+                </span>
+                <SubcategoryPill
+                  label={t("shop.all")}
+                  active={activeSubcategory === "alle"}
+                  onClick={() => setActiveSubcategory("alle")}
+                />
+                {parentForHeading.subcategories
+                  .filter((s) => s.count > 0)
+                  .map((sub) => (
+                    <SubcategoryPill
+                      key={sub.id}
+                      label={sub.name}
+                      active={activeSubcategory === sub.slug}
+                      onClick={() => setActiveSubcategory(sub.slug)}
+                    />
+                  ))}
+              </div>
+            )}
 
           {/* Sort + count row */}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="text-[12px] font-light text-[#6b7884]">
-              {t("shop.showing")} <span className="font-semibold text-[#1f2d3a]">{totalCount}</span>{" "}
+              {t("shop.showing")}{" "}
+              <span className="font-semibold text-[#1f2d3a]">{totalCount}</span>{" "}
               {totalCount !== 1 ? t("shop.articles") : t("shop.article")}
               {parentForHeading && (
                 <>
-                  {" "}{t("shop.in")} <span className="font-semibold text-[#1f2d3a]">{parentForHeading.name}</span>
+                  {" "}
+                  {t("shop.in")}{" "}
+                  <span className="font-semibold text-[#1f2d3a]">
+                    {parentForHeading.name}
+                  </span>
                 </>
               )}
               {activeSubcategoryObj && (
@@ -405,32 +735,25 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
             <div className="flex items-center gap-3">
               {/* Mobile filter button */}
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="lg:hidden h-9 rounded-full border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1f2d3a]"
-                  >
-                    <Filter size={14} className="mr-1.5" />
-                    {t("shop.filters")}
-                    {activeFilterCount > 0 && (
-                      <span className="ml-1.5 rounded-full bg-[#1f2d3a] px-1.5 text-[10px] font-semibold text-white">
-                        {activeFilterCount}
-                      </span>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[320px] overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>{t("shop.filters")}</SheetTitle>
-                  </SheetHeader>
-                  <div className="px-4 pb-8 pt-2">{FiltersPanel}</div>
-                </SheetContent>
-              </Sheet>
+              <Button
+                variant="outline"
+                onClick={() => setMobileFilterOpen(true)}
+                className="lg:hidden h-9 rounded-full border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1f2d3a]"
+              >
+                <Filter size={14} className="mr-1.5" />
+                {t("shop.filters")}
+                {activeFilterCount > 0 && (
+                  <span className="ml-1.5 rounded-full bg-[#1f2d3a] px-1.5 text-[10px] font-semibold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Button>
 
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={14} className="text-[#6b7884]" />
-                <span className="hidden text-[12px] font-light text-[#6b7884] sm:inline">{t("shop.sortBy")}</span>
+                <span className="hidden text-[12px] font-light text-[#6b7884] sm:inline">
+                  {t("shop.sortBy")}
+                </span>
                 <Select
                   value={effectiveSort}
                   onValueChange={(v) => setSort(v as SortKey)}
@@ -456,13 +779,40 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
         </div>
       </section>
 
-      {/* Body: sidebar + grid */}
+      {/* Body: chips + sidebar + grid */}
       <section className="w-full pb-20" style={{ backgroundColor: "#e9e5db" }}>
         <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
+          {/* Active filter chips */}
+          {activeChips.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 py-4">
+              {activeChips.map((chip) => (
+                <span
+                  key={chip.key}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#d4cfc1] bg-white px-2.5 py-1 text-[11px] font-medium text-[#1f2d3a]"
+                >
+                  {chip.label}
+                  <button
+                    onClick={chip.onRemove}
+                    className="text-[#6b7884] transition-colors hover:text-[#c75d2c]"
+                    aria-label={t("shop.clearAll")}
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+              <button
+                onClick={clearFilters}
+                className="ml-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#c75d2c] hover:underline"
+              >
+                {t("shop.clearAll")}
+              </button>
+            </div>
+          )}
+
           <div className="flex gap-8">
-            {/* Sidebar — desktop only */}
-            <aside className="hidden w-[240px] shrink-0 lg:block">
-              <div className="sticky top-24 rounded-[8px] border border-black/5 bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+            {/* Sidebar — desktop only, sticky + scrollable */}
+            <aside className="hidden w-[260px] shrink-0 lg:block">
+              <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[8px] border border-black/5 bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)] kj-scroll">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
                     {t("shop.filters")}
@@ -472,7 +822,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       onClick={clearFilters}
                       className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#c75d2c] hover:underline"
                     >
-                      Tøm
+                      {t("shop.clearAll")}
                     </button>
                   )}
                 </div>
@@ -484,35 +834,41 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             <div className="flex-1">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-4">
                 {products === null
-                  ? Array.from({ length: 12 }).map((_, i) => <ProductCardSkeleton key={i} />)
+                  ? Array.from({ length: 12 }).map((_, i) => (
+                      <ProductCardSkeleton key={i} />
+                    ))
                   : products.length === 0
                     ? <div className="col-span-full py-20 text-center">
-                      <p className="text-[16px] font-semibold text-[#1f2d3a]">{t("shop.noResults")}</p>
-                      <p className="mt-2 text-[13px] text-[#6b7884]">
-                        {t("shop.noResultsHint")}
-                      </p>
-                      <button
-                        onClick={clearFilters}
-                        className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#1f2d3a] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#15202b]"
-                      >
-                        <X size={12} /> {t("shop.clearFilters")}
-                      </button>
-                    </div>
+                        <p className="text-[16px] font-semibold text-[#1f2d3a]">
+                          {t("shop.noResults")}
+                        </p>
+                        <p className="mt-2 text-[13px] text-[#6b7884]">
+                          {t("shop.noResultsHint")}
+                        </p>
+                        <button
+                          onClick={clearFilters}
+                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#1f2d3a] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#15202b]"
+                        >
+                          <X size={12} /> {t("shop.clearFilters")}
+                        </button>
+                      </div>
                     : products.map((p) => (
-                      <ProductCard
-                        key={p.id}
-                        product={p}
-                        compact
-                        onOpen={(slug) => onNavigate?.("product", { productSlug: slug })}
-                      />
-                    ))}
+                        <ProductCard
+                          key={p.id}
+                          product={p}
+                          compact
+                          onOpen={(slug) =>
+                            onNavigate?.("product", { productSlug: slug })
+                          }
+                        />
+                      ))}
               </div>
 
               {/* Pagination */}
               {products !== null && totalPages > 1 && (
                 <div className="mt-10 flex items-center justify-center gap-2">
                   <button
-                    aria-label="Forrige side"
+                    aria-label={t("shop.prevPage")}
                     disabled={page === 1}
                     onClick={() => {
                       setPage((p) => Math.max(1, p - 1));
@@ -526,7 +882,9 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
                     .filter((n) => {
                       // Show first, last, and ±1 around current
-                      return n === 1 || n === totalPages || Math.abs(n - page) <= 1;
+                      return (
+                        n === 1 || n === totalPages || Math.abs(n - page) <= 1
+                      );
                     })
                     .map((n, idx, arr) => {
                       const prev = arr[idx - 1];
@@ -534,7 +892,9 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       return (
                         <span key={n} className="flex items-center gap-2">
                           {showEllipsis && (
-                            <span className="px-1 text-[12px] font-light text-[#6b7884]">…</span>
+                            <span className="px-1 text-[12px] font-light text-[#6b7884]">
+                              …
+                            </span>
                           )}
                           <button
                             onClick={() => {
@@ -554,7 +914,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                     })}
 
                   <button
-                    aria-label="Neste side"
+                    aria-label={t("shop.nextPage")}
                     disabled={page === totalPages}
                     onClick={() => {
                       setPage((p) => Math.min(totalPages, p + 1));
@@ -570,11 +930,42 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           </div>
         </div>
       </section>
+
+      {/* Mobile filter sheet (bottom-sheet style) */}
+      <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
+        <SheetContent
+          side="bottom"
+          className="flex h-[85vh] flex-col gap-0 rounded-t-2xl p-0"
+        >
+          <SheetHeader className="border-b border-[#d4cfc1] px-4 py-3">
+            <SheetTitle className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
+              {t("shop.filters")}
+              {activeFilterCount > 0 && (
+                <span className="ml-2 rounded-full bg-[#1f2d3a] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto px-4 py-3 kj-scroll">
+            {FiltersPanel}
+          </div>
+          <div className="border-t border-[#d4cfc1] p-4">
+            <Button
+              onClick={() => setMobileFilterOpen(false)}
+              className="h-11 w-full rounded-full bg-[#1f2d3a] text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#15202b]"
+            >
+              {t("shop.showResults")} ({totalCount})
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
 
 // ---------- small UI atoms ----------
+
 function CategoryPill({
   label,
   active,
@@ -640,5 +1031,73 @@ function FilterRadio({
       />
       {label}
     </label>
+  );
+}
+
+function FilterCheckbox({
+  label,
+  count,
+  checked,
+  onChange,
+  disabled,
+}: {
+  label: string;
+  count?: number;
+  checked: boolean;
+  onChange: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <label
+      className={`flex items-center gap-2 text-[12px] ${
+        disabled
+          ? "cursor-not-allowed text-[#8a96a1]"
+          : "cursor-pointer text-[#3a4856] hover:text-[#1f2d3a]"
+      }`}
+    >
+      <Checkbox
+        checked={checked}
+        onCheckedChange={() => !disabled && onChange()}
+        disabled={disabled}
+        className="h-3.5 w-3.5 border-[#d4cfc1] data-[state=checked]:border-[#1f2d3a] data-[state=checked]:bg-[#1f2d3a] data-[state=checked]:text-white"
+      />
+      <span className="flex-1">{label}</span>
+      {count !== undefined && (
+        <span className={`text-[10px] ${disabled ? "text-[#aab2bb]" : "text-[#8a96a1]"}`}>
+          ({count})
+        </span>
+      )}
+    </label>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-black/5 pb-4 last:border-b-0 last:pb-0">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between py-1 text-left text-[11px] font-semibold uppercase tracking-[0.15em] text-[#1f2d3a] transition-colors hover:text-[#2d4a3e]"
+        aria-expanded={isOpen}
+      >
+        {title}
+        <ChevronDown
+          size={14}
+          className={`text-[#6b7884] transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      {isOpen && <div className="mt-3">{children}</div>}
+    </div>
   );
 }
