@@ -132,7 +132,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </motion.div>
           </div>
 
-          {/* Right: 2×2 category cards */}
+          {/* Right: 2×2 category cards with background images */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -140,10 +140,10 @@ export function HomePage({ onNavigate }: HomePageProps) {
             className="grid grid-cols-2 gap-4"
           >
             {[
-              { name: lang === "no" ? "Fiskeutstyr" : "Fishing Essentials", icon: Fish, slug: "fiske", color: "#1f6f8b" },
-              { name: lang === "no" ? "Jaktutstyr" : "Hunting Gear", icon: Crosshair, slug: "jakt", color: "#2d4a3e" },
-              { name: lang === "no" ? "Fottøy & Tilbehør" : "Footwear & Accessories", icon: Footprints, slug: "fottøy1", color: "#5d4037" },
-              { name: lang === "no" ? "Friluftsliv" : "Outdoor Life", icon: Tent, slug: "camping", color: "#c75d2c" },
+              { name: lang === "no" ? "Fiskeutstyr" : "Fishing Essentials", icon: Fish, slug: "fiske", color: "#1f6f8b", img: "https://sfile.chatglm.cn/images-ppt/b7bfeddee4b7.jpg" },
+              { name: lang === "no" ? "Jaktutstyr" : "Hunting Gear", icon: Crosshair, slug: "jakt", color: "#2d4a3e", img: "https://sfile.chatglm.cn/images-ppt/fa8d4930c1ab.jpg" },
+              { name: lang === "no" ? "Fottøy & Tilbehør" : "Footwear & Accessories", icon: Footprints, slug: "fottøy1", color: "#5d4037", img: "https://sfile.chatglm.cn/images-ppt/c982296fa8d3.jpg" },
+              { name: lang === "no" ? "Friluftsliv" : "Outdoor Life", icon: Tent, slug: "camping", color: "#c75d2c", img: "https://sfile.chatglm.cn/images-ppt/b4e18daede72.jpg" },
             ].map((card, i) => {
               const Icon = card.icon;
               const cat = categories.find((x) => x.slug === card.slug);
@@ -151,30 +151,44 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <button
                   key={card.slug}
                   onClick={() => onNavigate("shop", { shopFilters: { category: card.slug } })}
-                  className="group flex flex-col items-start gap-3 rounded-[10px] border border-black/5 bg-white p-5 text-left shadow-[0_4px_12px_rgba(31,45,58,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(31,45,58,0.15)]"
+                  className="group relative flex flex-col items-start justify-end gap-2 overflow-hidden rounded-[10px] border border-black/5 shadow-[0_4px_12px_rgba(31,45,58,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(31,45,58,0.2)] aspect-[4/3]"
                 >
-                  <div className="flex items-center justify-between w-full">
+                  {/* Background image */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={card.img}
+                    alt={card.name}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  {/* Dark gradient overlay for text readability */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(to top, ${card.color}F0 0%, ${card.color}80 40%, transparent 70%)`,
+                    }}
+                  />
+                  {/* Content */}
+                  <div className="relative z-10 flex flex-col gap-1 p-4">
                     <span
-                      className="flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110"
-                      style={{ backgroundColor: card.color + "20", color: card.color }}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 transition-transform duration-300 group-hover:scale-110"
                     >
-                      <Icon size={20} strokeWidth={1.6} />
+                      <Icon size={16} strokeWidth={1.8} style={{ color: card.color }} />
                     </span>
-                    <ArrowRight
-                      size={14}
-                      className="text-[#8a96a1] opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0.5"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[#1f2d3a] leading-tight">
+                    <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-white leading-tight">
                       {card.name}
                     </p>
                     {cat && (
-                      <p className="mt-1 text-[11px] font-light text-[#8a96a1]">
+                      <p className="text-[10px] font-light text-white/70">
                         {cat.count} {lang === "no" ? "artikler" : "items"}
                       </p>
                     )}
                   </div>
+                  {/* Arrow indicator on hover */}
+                  <ArrowRight
+                    size={16}
+                    className="absolute right-3 top-3 z-10 text-white opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0.5"
+                  />
                 </button>
               );
             })}
