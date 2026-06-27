@@ -319,14 +319,13 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       {/* Shop header */}
       <section className="w-full" style={{ backgroundColor: "#e9e5db" }}>
         <div className="mx-auto max-w-[1280px] px-6 pt-12 pb-6 lg:px-10">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
-            {t("shop.assortment")}
-            {searchQ && (
-              <span className="ml-2 normal-case text-[#1f2d3a]">
-                · Søk: &laquo;{searchQ}&raquo;
+          {searchQ && (
+            <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
+              <span className="normal-case text-[#1f2d3a]">
+                {t("nav.search")}: &laquo;{searchQ}&raquo;
               </span>
-            )}
-          </div>
+            </div>
+          )}
           <h1
             className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#1f2d3a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
