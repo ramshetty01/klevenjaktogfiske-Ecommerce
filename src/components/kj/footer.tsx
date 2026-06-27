@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, Facebook, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { Instagram, Facebook, MapPin, Phone, Mail, ArrowRight, Clock } from "lucide-react";
 import { useLang } from "@/lib/kj/lang-store";
 import type { PageId, NavContext } from "./header";
 
@@ -26,18 +26,36 @@ export function Footer({ onNavigate }: FooterProps) {
     { label: "Outlet", slug: "outlet" },
   ];
 
+  const serviceLinks: { label: string; href?: string }[] = [
+    { label: t("footer.terms") },
+    { label: t("footer.shipping") },
+    { label: t("footer.returns") },
+    { label: t("footer.privacy") },
+    { label: t("footer.contact") },
+  ];
+
+  const hours: { day: string; time: string; closed?: boolean; highlight?: boolean }[] = [
+    { day: t("footer.mon"), time: "08:30 – 16:30" },
+    { day: t("footer.tue"), time: "08:30 – 16:30" },
+    { day: t("footer.wed"), time: "08:30 – 16:30" },
+    { day: t("footer.thu"), time: "08:30 – 18:00", highlight: true },
+    { day: t("footer.fri"), time: "08:30 – 16:30" },
+    { day: t("footer.sat"), time: "10:00 – 15:00" },
+    { day: t("footer.sun"), time: t("footer.closed"), closed: true },
+  ];
+
   return (
     <footer
       className="relative w-full border-t border-white/10 text-white"
       style={{ backgroundColor: "#1f2d3a" }}
     >
-      <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.2fr_1fr_1fr]">
-          {/* Brand + contact column */}
+      <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
+        {/* ===== Top: Brand + contact strip ===== */}
+        <div className="mb-12 flex flex-col gap-8 border-b border-white/10 pb-10 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col">
-            <div className="mb-6">
+            <div className="mb-3">
               <div
-                className="text-[22px] font-semibold tracking-[0.04em]"
+                className="text-[24px] font-semibold tracking-[0.04em]"
                 style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
               >
                 KLEVEN
@@ -46,12 +64,14 @@ export function Footer({ onNavigate }: FooterProps) {
                 {t("nav.brandSubtitle")} AS
               </div>
             </div>
-
-            <p className="mb-6 max-w-xs text-[13px] font-light leading-relaxed text-[#b8c0c8]">
+            <p className="max-w-sm text-[13px] font-light leading-relaxed text-[#b8c0c8]">
               {t("footer.tagline")}
             </p>
+          </div>
 
-            <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
+          {/* Contact + socials */}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 text-[13px] font-light text-[#b8c0c8] md:items-end">
               <a
                 href="tel:+4778407140"
                 className="flex items-center gap-2 hover:text-white"
@@ -66,22 +86,20 @@ export function Footer({ onNavigate }: FooterProps) {
                 <Mail size={14} strokeWidth={1.6} className="text-[#f0c548]" />
                 Camilla@klevenjakt-fiske.no
               </a>
-              <span className="flex items-start gap-2">
+              <span className="flex items-start gap-2 md:justify-end">
                 <MapPin
                   size={14}
                   strokeWidth={1.6}
                   className="mt-0.5 text-[#f0c548]"
                 />
-                <span>
+                <span className="md:text-right">
                   Brenneriveien 2
                   <br />
                   9601 Hammerfest, {lang === "no" ? "Norge" : "Norway"}
                 </span>
               </span>
             </div>
-
-            {/* Social icons */}
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-2 flex items-center gap-3 md:justify-end">
               {[
                 { Icon: Instagram, label: "Instagram" },
                 { Icon: Facebook, label: "Facebook" },
@@ -90,94 +108,93 @@ export function Footer({ onNavigate }: FooterProps) {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#f0c548] hover:text-[#1f2d3a] hover:scale-105"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#f0c548] hover:text-[#1f2d3a] hover:scale-105"
                 >
-                  <Icon size={16} strokeWidth={1.6} />
+                  <Icon size={15} strokeWidth={1.6} />
                 </a>
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Middle column: categories */}
+        {/* ===== 3-COLUMN GRID: Categories | Customer Service | Opening Hours ===== */}
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Column 1: Categories */}
           <div className="flex flex-col">
-            <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
+            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
+              <span className="h-px w-6 bg-[#f0c548]" />
               {t("footer.categories")}
             </h4>
-            <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
+            <ul className="grid grid-cols-1 gap-2.5 text-[13px] font-light text-[#b8c0c8]">
               {categoryLinks.map((c) => (
-                <button
-                  key={c.label}
-                  onClick={() =>
-                    go("shop", c.slug ? { shopFilters: { category: c.slug } } : undefined)
-                  }
-                  className="text-left transition-colors hover:text-white"
-                >
-                  {c.label}
-                </button>
+                <li key={c.label}>
+                  <button
+                    onClick={() =>
+                      go("shop", c.slug ? { shopFilters: { category: c.slug } } : undefined)
+                    }
+                    className="text-left transition-colors hover:text-[#f0c548]"
+                  >
+                    {c.label}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
-          {/* Right column: customer service */}
+          {/* Column 2: Customer Service */}
           <div className="flex flex-col">
-            <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
+            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
+              <span className="h-px w-6 bg-[#f0c548]" />
               {t("footer.customerService")}
             </h4>
-            <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
-              <a href="#" className="transition-colors hover:text-white">
-                {t("footer.terms")}
-              </a>
-              <a href="#" className="transition-colors hover:text-white">
-                {t("footer.shipping")}
-              </a>
-              <a href="#" className="transition-colors hover:text-white">
-                {t("footer.returns")}
-              </a>
-              <a href="#" className="transition-colors hover:text-white">
-                {t("footer.privacy")}
-              </a>
-              <a href="#" className="transition-colors hover:text-white">
-                {t("footer.contact")}
-              </a>
-            </div>
+            <ul className="grid grid-cols-1 gap-2.5 text-[13px] font-light text-[#b8c0c8]">
+              {serviceLinks.map((s) => (
+                <li key={s.label}>
+                  <a
+                    href={s.href ?? "#"}
+                    className="transition-colors hover:text-[#f0c548]"
+                  >
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* Opening hours */}
-            <div className="mt-6 rounded-md border border-white/10 bg-white/5 px-4 py-3 text-[12px] font-light text-[#b8c0c8]">
-              <p className="font-semibold text-white">{t("footer.openingHours")}</p>
-              <ul className="mt-2 space-y-1">
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.mon")}</span>
-                  <span>08:30 – 16:30</span>
-                </li>
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.tue")}</span>
-                  <span>08:30 – 16:30</span>
-                </li>
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.wed")}</span>
-                  <span>08:30 – 16:30</span>
-                </li>
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.thu")}</span>
-                  <span className="text-[#f0c548]">08:30 – 18:00</span>
-                </li>
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.fri")}</span>
-                  <span>08:30 – 16:30</span>
-                </li>
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.sat")}</span>
-                  <span>10:00 – 15:00</span>
-                </li>
-                <li className="flex items-center justify-between gap-4">
-                  <span>{t("footer.sun")}</span>
-                  <span className="text-[#8a96a1]">{t("footer.closed")}</span>
-                </li>
+          {/* Column 3: Opening Hours */}
+          <div className="flex flex-col">
+            <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
+              <span className="h-px w-6 bg-[#f0c548]" />
+              <Clock size={13} strokeWidth={2} />
+              {t("footer.openingHours")}
+            </h4>
+            <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.03]">
+              <ul className="divide-y divide-white/5">
+                {hours.map((h) => (
+                  <li
+                    key={h.day}
+                    className="flex items-center justify-between gap-4 px-4 py-2 text-[12px]"
+                  >
+                    <span className="font-light text-[#b8c0c8]">{h.day}</span>
+                    <span
+                      className={`font-medium ${
+                        h.closed
+                          ? "text-[#8a96a1]"
+                          : h.highlight
+                          ? "text-[#f0c548]"
+                          : "text-white"
+                      }`}
+                    >
+                      {h.time}
+                    </span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
 
+        {/* ===== Bottom: Copyright ===== */}
         <div className="mt-12 flex flex-col gap-1 border-t border-white/10 pt-6 text-[12px] font-light text-[#8a96a1] sm:flex-row sm:items-center sm:justify-between">
           <p>{t("footer.copyright")}</p>
           <p>{t("footer.freeShippingNote")}</p>
