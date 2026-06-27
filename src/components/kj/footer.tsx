@@ -46,8 +46,8 @@ export function Footer({ onNavigate }: FooterProps) {
 
   return (
     <footer
-      className="relative w-full border-t border-white/10 text-white"
-      style={{ backgroundColor: "#212121" }}
+      className="relative w-full border-t border-[#d0d5d2] text-[#212121]"
+      style={{ backgroundColor: "#FFFFFF" }}
     >
       <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
         {/* ===== 4-COLUMN GRID ===== */}
@@ -110,7 +110,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#428701] hover:text-[#212121] hover:scale-105"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F4F4] text-[#212121] transition-all duration-300 hover:bg-[#428701] hover:text-[#212121] hover:scale-105"
                 >
                   <Icon size={14} strokeWidth={1.6} />
                 </a>
@@ -167,8 +167,8 @@ export function Footer({ onNavigate }: FooterProps) {
               <Clock size={13} strokeWidth={2} />
               {t("footer.openingHours")}
             </h4>
-            <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.03]">
-              <ul className="divide-y divide-white/5">
+            <div className="overflow-hidden rounded-lg border border-[#d0d5d2] bg-[#F4F4F4]">
+              <ul className="divide-y divide-[#d0d5d2]">
                 {hours.map((h) => (
                   <li
                     key={h.day}
@@ -181,7 +181,7 @@ export function Footer({ onNavigate }: FooterProps) {
                           ? "text-[#858585]"
                           : h.highlight
                           ? "text-[#428701]"
-                          : "text-white"
+                          : "text-[#212121]"
                       }`}
                     >
                       {h.time}
@@ -194,7 +194,7 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         {/* ===== Bottom: Copyright ===== */}
-        <div className="mt-12 flex flex-col gap-1 border-t border-white/10 pt-6 text-[12px] font-light text-[#858585] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-1 border-t border-[#d0d5d2] pt-6 text-[12px] font-light text-[#858585] sm:flex-row sm:items-center sm:justify-between">
           <p>{t("footer.copyright")}</p>
           <p>{t("footer.freeShippingNote")}</p>
         </div>

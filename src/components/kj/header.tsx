@@ -80,7 +80,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
   return (
     <header
       className="sticky top-0 z-50 w-full"
-      style={{ backgroundColor: "#212121" }}
+      style={{ backgroundColor: "#FFFFFF" }}
     >
       <div
         className={`transition-shadow duration-300 ${
@@ -106,15 +106,15 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           {/* Center: Search bar (fixed width, right of logo) */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden w-[580px] flex-shrink-0 items-center gap-2.5 rounded-full bg-white/10 px-8 py-1.5 transition-colors hover:bg-white/15 focus-within:bg-white/15 md:flex"
+            className="hidden w-[580px] flex-shrink-0 items-center gap-2.5 rounded-full bg-[#F4F4F4] px-8 py-1.5 transition-colors hover:bg-[#EDEDED] focus-within:bg-[#EDEDED] md:flex"
           >
-            <Search size={18} className="flex-shrink-0 text-white/60" />
+            <Search size={18} className="flex-shrink-0 text-[#212121]/60" />
             <input
               type="search"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder={t("nav.searchPlaceholder")}
-              className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/50 focus:outline-none"
+              className="flex-1 bg-transparent text-[14px] text-[#212121] placeholder:text-[#212121]/50 focus:outline-none"
             />
             {searchValue.trim().length > 0 && (
               <button
@@ -130,7 +130,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           <div className="flex flex-shrink-0 items-center gap-3">
             <button
               aria-label={t("nav.account")}
-              className="hidden text-white/85 transition-colors hover:text-white sm:block"
+              className="hidden text-[#212121]/85 transition-colors hover:text-[#212121] sm:block"
             >
               <User size={18} strokeWidth={1.6} />
             </button>
@@ -139,7 +139,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <div className="relative">
               <button
                 onClick={() => setLangOpen((v) => !v)}
-                className="flex items-center gap-1 rounded-full border border-white/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white/90 transition-colors hover:border-[#428701] hover:text-[#428701]"
+                className="flex items-center gap-1 rounded-full border border-[#d0d5d2] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[#212121]/90 transition-colors hover:border-[#428701] hover:text-[#428701]"
                 aria-label="Language / Språk"
               >
                 <Globe size={12} strokeWidth={2} />
@@ -174,7 +174,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <button
               aria-label={t("nav.cart")}
               onClick={() => handleNav("cart")}
-              className="relative text-white/85 transition-colors hover:text-white"
+              className="relative text-[#212121]/85 transition-colors hover:text-[#212121]"
             >
               <ShoppingBag size={18} strokeWidth={1.6} />
               {totalCount > 0 && (
@@ -189,7 +189,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <button
               aria-label={t("nav.menu")}
               onClick={() => setMobileOpen((v) => !v)}
-              className="ml-1 text-white md:hidden"
+              className="ml-1 text-[#212121] md:hidden"
             >
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -197,7 +197,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
         </div>
 
         {/* ===== ROW 2: Nav Links (centered) ===== */}
-        <div className="hidden border-t border-white/10 md:block">
+        <div className="hidden border-t border-[#d0d5d2] md:block">
           <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-8 px-6 py-2.5 lg:px-10">
             {/* Nav links */}
             <nav className="flex items-center gap-8">
@@ -210,7 +210,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                 <button
                   onClick={() => handleNav("shop")}
                   className={`relative flex items-center gap-1 whitespace-nowrap text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
-                    current === "shop" ? "text-white" : "text-white/75 hover:text-white"
+                    current === "shop" ? "text-[#212121]" : "text-[#212121]/75 hover:text-[#212121]"
                   }`}
                   aria-expanded={megaOpen}
                   aria-haspopup="true"
@@ -234,7 +234,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                     onMouseEnter={openMega}
                     onMouseLeave={closeMegaSoon}
                   >
-                    <div className="rounded-lg border border-white/10 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
+                    <div className="rounded-lg border border-[#d0d5d2] bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
                       <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2">
                         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#858585]">
                           {t("nav.megaTitle")}
@@ -288,7 +288,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                     key={link.page}
                     onClick={() => handleNav(link.page)}
                     className={`relative whitespace-nowrap text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
-                      active ? "text-white" : "text-white/75 hover:text-white"
+                      active ? "text-[#212121]" : "text-[#212121]/75 hover:text-[#212121]"
                     }`}
                   >
                     {t(link.labelKey)}
@@ -306,20 +306,20 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
 
         {/* Mobile drawer */}
         {mobileOpen && (
-          <div className="border-t border-white/10 md:hidden">
+          <div className="border-t border-[#d0d5d2] md:hidden">
             <nav className="mx-auto flex max-w-[1280px] flex-col px-6 py-2">
               {/* Search bar in mobile */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="mb-3 flex items-center gap-2.5 rounded-full bg-white/10 px-4 py-2.5"
+                className="mb-3 flex items-center gap-2.5 rounded-full bg-[#F4F4F4] px-4 py-2.5"
               >
-                <Search size={16} className="flex-shrink-0 text-white/60" />
+                <Search size={16} className="flex-shrink-0 text-[#212121]/60" />
                 <input
                   type="search"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   placeholder={t("nav.searchPlaceholder")}
-                  className="flex-1 bg-transparent text-[13px] text-white placeholder:text-white/50 focus:outline-none"
+                  className="flex-1 bg-transparent text-[13px] text-[#212121] placeholder:text-[#212121]/50 focus:outline-none"
                 />
               </form>
               {NAV_LINKS.map((link) => {
@@ -328,8 +328,8 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
                   <button
                     key={link.page}
                     onClick={() => handleNav(link.page)}
-                    className={`flex items-center justify-between border-b border-white/5 py-3 text-[12px] font-medium uppercase tracking-[0.12em] ${
-                      active ? "text-white" : "text-white/80"
+                    className={`flex items-center justify-between border-b border-[#d0d5d2] py-3 text-[12px] font-medium uppercase tracking-[0.12em] ${
+                      active ? "text-[#212121]" : "text-[#212121]/80"
                     }`}
                   >
                     {t(link.labelKey)}
@@ -338,24 +338,24 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
               })}
               <button
                 onClick={() => handleNav("cart")}
-                className="flex items-center justify-between border-b border-white/5 py-3 text-[12px] font-medium uppercase tracking-[0.12em] text-white/80"
+                className="flex items-center justify-between border-b border-[#d0d5d2] py-3 text-[12px] font-medium uppercase tracking-[0.12em] text-[#212121]/80"
               >
                 {t("nav.cart")} ({totalCount})
               </button>
               {/* Language toggle in mobile drawer */}
-              <div className="flex items-center gap-2 border-b border-white/5 py-3">
-                <span className="text-[12px] font-medium uppercase tracking-[0.12em] text-white/60">
+              <div className="flex items-center gap-2 border-b border-[#d0d5d2] py-3">
+                <span className="text-[12px] font-medium uppercase tracking-[0.12em] text-[#212121]/60">
                   🌐
                 </span>
                 <button
                   onClick={() => setLang("no")}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "no" ? "bg-[#428701] text-[#212121]" : "bg-white/10 text-white/70"}`}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "no" ? "bg-[#428701] text-[#212121]" : "bg-[#F4F4F4] text-[#212121]/70"}`}
                 >
                   🇳🇴 NO
                 </button>
                 <button
                   onClick={() => setLang("en")}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "en" ? "bg-[#428701] text-[#212121]" : "bg-white/10 text-white/70"}`}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${lang === "en" ? "bg-[#428701] text-[#212121]" : "bg-[#F4F4F4] text-[#212121]/70"}`}
                 >
                   🇬🇧 EN
                 </button>
