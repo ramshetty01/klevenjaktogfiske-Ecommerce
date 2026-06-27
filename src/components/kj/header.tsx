@@ -87,12 +87,12 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           scrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.25)]" : ""
         }`}
       >
-        {/* ===== ROW 1: Brand + Actions ===== */}
-        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6 lg:px-10">
+        {/* ===== ROW 1: Brand + Search Bar + Actions ===== */}
+        <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-6 px-6 lg:px-10">
           {/* Left: brand */}
           <button
             onClick={() => handleNav("home")}
-            className="flex flex-col items-start gap-0.5 text-left"
+            className="flex flex-shrink-0 flex-col items-start gap-0.5 text-left"
             aria-label={t("nav.homeAria")}
           >
             <span
@@ -106,8 +106,31 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             </span>
           </button>
 
+          {/* Center: Big search bar (right of logo, takes remaining space) */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className="hidden flex-1 items-center gap-2.5 rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15 focus-within:bg-white/15 md:flex"
+          >
+            <Search size={18} className="flex-shrink-0 text-white/60" />
+            <input
+              type="search"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder={t("nav.searchPlaceholder")}
+              className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/50 focus:outline-none"
+            />
+            {searchValue.trim().length > 0 && (
+              <button
+                type="submit"
+                className="flex-shrink-0 rounded-full bg-[#f0c548] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#d9a838]"
+              >
+                {t("nav.search")}
+              </button>
+            )}
+          </form>
+
           {/* Right: actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-shrink-0 items-center gap-3">
             <button
               aria-label={t("nav.account")}
               className="hidden text-white/85 transition-colors hover:text-white sm:block"
@@ -176,34 +199,11 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           </div>
         </div>
 
-        {/* ===== ROW 2: Big Search Bar + Nav Links ===== */}
+        {/* ===== ROW 2: Nav Links (centered) ===== */}
         <div className="hidden border-t border-white/10 md:block">
-          <div className="mx-auto flex max-w-[1280px] items-center gap-6 px-6 py-2.5 lg:px-10">
-            {/* Big search bar */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="flex flex-1 items-center gap-2.5 rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15 focus-within:bg-white/15"
-            >
-              <Search size={18} className="flex-shrink-0 text-white/60" />
-              <input
-                type="search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                placeholder={t("nav.searchPlaceholder")}
-                className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/50 focus:outline-none"
-              />
-              {searchValue.trim().length > 0 && (
-                <button
-                  type="submit"
-                  className="flex-shrink-0 rounded-full bg-[#f0c548] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#d9a838]"
-                >
-                  {t("nav.search")}
-                </button>
-              )}
-            </form>
-
+          <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-8 px-6 py-2.5 lg:px-10">
             {/* Nav links */}
-            <nav className="flex items-center gap-6">
+            <nav className="flex items-center gap-8">
               {/* Butikk — has mega menu */}
               <div
                 onMouseEnter={openMega}
