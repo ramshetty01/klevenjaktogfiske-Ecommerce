@@ -59,7 +59,7 @@ export function ShippingBanner({
         className="relative w-full overflow-hidden"
         style={{ backgroundColor: "#f4d35e" }}
         role="marquee"
-        aria-label="Fraktfritt i Norge på ordre over 2500 kroner. Rask levering 2 til 4 dager."
+        aria-label={`${t("banner.freeShipping")}. ${t("banner.fastDelivery")}.`}
       >
         {/* Left + right fade masks so items softly appear/disappear */}
         <div
@@ -91,7 +91,7 @@ export function ShippingBanner({
       className="relative w-full overflow-hidden"
       style={{ backgroundColor: "#f4d35e", height: `${height}px` }}
       role="marquee"
-      aria-label="Fraktfritt i Norge på ordre over 2500 kroner. Rask levering 2 til 4 dager."
+      aria-label={`${t("banner.freeShipping")}. ${t("banner.fastDelivery")}.`}
     >
       {/* Top + bottom fade masks */}
       <div

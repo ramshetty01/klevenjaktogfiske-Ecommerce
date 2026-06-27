@@ -29,7 +29,7 @@ interface ShopPageProps {
 const PER_PAGE = 24;
 
 export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   // Filter state
   const [activeCategory, setActiveCategory] = useState<string>(initialFilters?.category ?? "alle");
   const [activeSubcategory, setActiveSubcategory] = useState<string>(initialFilters?.subcategory ?? "alle");
@@ -205,11 +205,11 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       {parentForHeading && parentForHeading.subcategories.filter((s) => s.count > 0).length > 0 && (
         <div>
           <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-            Underkategori
+            {t("shop.subcategory")}
           </h4>
           <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto kj-scroll pr-2">
             <FilterRadio
-              label="Alle underkategorier"
+              label={t("shop.all")}
               checked={activeSubcategory === "alle"}
               onChange={() => setActiveSubcategory("alle")}
             />
@@ -230,11 +230,11 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       {/* Brand — top 20 with "show more" for the long tail */}
       <div>
         <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#8a96a1]">
-          Merke
+          {t("shop.brand")}
         </h4>
         <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto kj-scroll pr-2">
           <FilterRadio
-            label="Alle merker"
+            label={t("shop.allBrands")}
             checked={activeBrand === "alle"}
             onChange={() => setActiveBrand("alle")}
           />
@@ -251,7 +251,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               onClick={() => setShowAllBrands((v) => !v)}
               className="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#c75d2c] hover:underline"
             >
-              {showAllBrands ? "Vis mindre" : `Vis alle (${brands.length})`}
+              {showAllBrands ? (lang === "no" ? "Vis mindre" : "Show less") : `${lang === "no" ? "Vis alle" : "Show all"} (${brands.length})`}
             </button>
           )}
         </div>
@@ -285,8 +285,9 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
       {/* Price notice */}
       <div className="rounded-md border border-[#f0c548]/40 bg-[#f0c548]/10 px-3 py-2 text-[11px] leading-relaxed text-[#3a4856]">
-        Priser kommer — Kleven-katalogen oppdateres for øyeblikket. Bruk
-        telefonnummeret på produktsiden for direkte pris forespørsel.
+        {lang === "no"
+          ? "Priser kommer — Kleven-katalogen oppdateres for øyeblikket. Bruk telefonnummeret på produktsiden for direkte pris forespørsel."
+          : "Prices coming soon — the Kleven catalog is currently being updated. Use the phone number on the product page for direct price inquiries."}
       </div>
 
       {/* In stock */}
@@ -297,7 +298,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           onChange={(e) => setInStockOnly(e.target.checked)}
           className="h-4 w-4 accent-[#1f2d3a]"
         />
-        Kun vis varer på lager
+        {t("shop.inStockOnly")}
       </label>
 
       {activeFilterCount > 0 && (
@@ -342,8 +343,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             </p>
           )}
           <p className="mt-3 max-w-xl text-[14px] font-light leading-relaxed text-[#6b7884]">
-            Håndplukkede artikler for jakt, fiske, friluftsliv og vintersport.
-            Bruk filteret for å finne akkurat det du leter etter.
+            {t("shop.desc")}
           </p>
 
           {/* Top filter bar — quick category pills */}
@@ -413,7 +413,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                     className="lg:hidden h-9 rounded-full border-[#d4cfc1] bg-white px-4 text-[12px] font-medium text-[#1f2d3a]"
                   >
                     <Filter size={14} className="mr-1.5" />
-                    Filtre
+                    {t("shop.filters")}
                     {activeFilterCount > 0 && (
                       <span className="ml-1.5 rounded-full bg-[#1f2d3a] px-1.5 text-[10px] font-semibold text-white">
                         {activeFilterCount}
@@ -423,7 +423,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[320px] overflow-y-auto">
                   <SheetHeader>
-                    <SheetTitle>Filtre</SheetTitle>
+                    <SheetTitle>{t("shop.filters")}</SheetTitle>
                   </SheetHeader>
                   <div className="px-4 pb-8 pt-2">{FiltersPanel}</div>
                 </SheetContent>
@@ -466,7 +466,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               <div className="sticky top-24 rounded-[8px] border border-black/5 bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
-                    Filtre
+                    {t("shop.filters")}
                   </h3>
                   {activeFilterCount > 0 && (
                     <button
@@ -488,15 +488,15 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                   ? Array.from({ length: 12 }).map((_, i) => <ProductCardSkeleton key={i} />)
                   : products.length === 0
                     ? <div className="col-span-full py-20 text-center">
-                      <p className="text-[16px] font-semibold text-[#1f2d3a]">Ingen produkter funnet</p>
+                      <p className="text-[16px] font-semibold text-[#1f2d3a]">{t("shop.noResults")}</p>
                       <p className="mt-2 text-[13px] text-[#6b7884]">
-                        Prøv å justere filtrene eller søket.
+                        {t("shop.noResultsHint")}
                       </p>
                       <button
                         onClick={clearFilters}
                         className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#1f2d3a] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#15202b]"
                       >
-                        <X size={12} /> Tøm filtre
+                        <X size={12} /> {t("shop.clearFilters")}
                       </button>
                     </div>
                     : products.map((p) => (

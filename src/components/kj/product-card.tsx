@@ -6,6 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@/lib/kj/types";
 import { formatNok, discountPercent } from "@/lib/kj/types";
 import { useCart } from "@/lib/kj/cart-store";
+import { useLang } from "@/lib/kj/lang-store";
+import type { TranslationKey } from "@/lib/kj/i18n";
 
 const PLACEHOLDER = "/images/product-placeholder.svg";
 
@@ -16,33 +18,38 @@ interface ProductCardProps {
   compact?: boolean;
 }
 
+/** Map raw Norwegian tag values to translation keys. */
+const TAG_KEY: Record<string, TranslationKey> = {
+  Bestselger: "tag.bestseller",
+  Nyhet: "tag.new",
+  Tilbud: "tag.sale",
+  Begrenset: "tag.limited",
+  Premium: "tag.premium",
+  Populært: "tag.popular",
+};
+
+/** Translate a stock label like "20+ På lager" → "20+ in stock" (EN). */
+function localizeStock(label: string, lang: "no" | "en"): string {
+  if (lang === "no") return label;
+  return label
+    .replace(/på lager/i, "in stock")
+    .replace(/ikke på lager/i, "out of stock")
+    .replace(/se produkt/i, "see product")
+    .replace(/på vei/i, "incoming");
+}
+
 /**
  * Compact product card used in shop grids and the home page.
- *
- * - Image with hover-zoom (falls back to a branded placeholder on error
- *   or empty image URL — Kleven's hotlink protection blocks some images)
- * - Tag badge (top-left): color-coded by tag type
- * - Discount % badge (top-right) when on sale
- * - Stock status line
- * - Price + struck-through original price (or "Se pris" when catalog has
- *   no price — Kleven's catalog only ships stock + image, not prices)
- * - Rating row (stars hidden when no reviews)
- * - "Add to cart" button (appears on hover, bottom-right of image)
- *
- * Clicking the card opens the product detail page via onOpen(slug).
- * Clicking the add-to-cart button stops propagation and adds the product.
  */
 export function ProductCard({ product, onOpen, compact = false }: ProductCardProps) {
   const { toast } = useToast();
   const add = useCart((s) => s.add);
+  const { t, lang } = useLang();
 
   const discount = discountPercent(product);
   const inStock = product.stockCount > 0;
   const priceUnknown = !product.price || product.price === 0;
 
-  // Local image-fallback state. The lazy initializer runs whenever the
-  // component mounts (parents remount via key={p.id} when the product
-  // changes), so we don't need a sync effect here.
   const [imgSrc, setImgSrc] = useState<string>(
     product.imageUrl && product.imageUrl.trim().length > 0
       ? product.imageUrl
@@ -54,8 +61,8 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
     e.preventDefault();
     if (!inStock) {
       toast({
-        title: "Ikke på lager",
-        description: product.stockLabel ?? "Produktet er ikke tilgjengelig akkurat nå.",
+        title: t("shop.outOfStock"),
+        description: product.stockLabel ?? (lang === "no" ? "Produktet er ikke tilgjengelig akkurat nå." : "Product is currently unavailable."),
         variant: "destructive",
       });
       return;
@@ -63,13 +70,13 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
     try {
       await add(product, 1);
       toast({
-        title: "Lagt i handlevognen",
-        description: `${product.name} er nå i handlevognen.`,
+        title: lang === "no" ? "Lagt i handlevognen" : "Added to cart",
+        description: lang === "no" ? `${product.name} er nå i handlevognen.` : `${product.name} is now in your cart.`,
       });
     } catch {
       toast({
-        title: "Kunne ikke legge til",
-        description: "Prøv igjen senere.",
+        title: lang === "no" ? "Kunne ikke legge til" : "Could not add",
+        description: lang === "no" ? "Prøv igjen senere." : "Try again later.",
         variant: "destructive",
       });
     }
@@ -77,7 +84,14 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
   const open = () => onOpen?.(product.slug);
 
-  // Tag color mapping
+  // Localized tag display
+  const localizedTag = product.tag
+    ? TAG_KEY[product.tag]
+      ? t(TAG_KEY[product.tag])
+      : product.tag // tags like "-30%" stay as-is
+    : null;
+
+  // Tag color mapping (uses original tag value for color logic)
   const tagClass = (tag: string) => {
     if (tag.startsWith("-") || tag === "Tilbud") return "bg-[#c75d2c] text-white";
     if (tag === "Nyhet") return "bg-[#1f2d3a] text-white";
@@ -98,7 +112,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       }}
       tabIndex={0}
       role="link"
-      aria-label={`Åpne ${product.name}`}
+      aria-label={`${lang === "no" ? "Åpne" : "Open"} ${product.name}`}
       className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f0c548]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#f4f3ef]">
@@ -113,11 +127,11 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         />
 
         {/* Tag badge */}
-        {product.tag && (
+        {localizedTag && product.tag && (
           <span
             className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] ${tagClass(product.tag)}`}
           >
-            {product.tag}
+            {localizedTag}
           </span>
         )}
 
@@ -125,7 +139,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {discount > 0 && (
           <span
             className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#c75d2c] text-[11px] font-bold text-white shadow-md"
-            aria-label={`${discount}% rabatt`}
+            aria-label={`${discount}% ${lang === "no" ? "rabatt" : "off"}`}
           >
             -{discount}%
           </span>
@@ -134,7 +148,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Add-to-cart button (appears on hover) */}
         <button
           onClick={handleAdd}
-          aria-label={`Legg ${product.name} i handlevognen`}
+          aria-label={`${lang === "no" ? "Legg" : "Add"} ${product.name} ${lang === "no" ? "i handlevognen" : "to cart"}`}
           className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#1f2d3a] opacity-0 shadow-md transition-all duration-300 hover:bg-[#f0c548] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
         >
           <Plus size={14} strokeWidth={2.2} />
@@ -170,14 +184,14 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
               inStock ? "text-[#3d5e4f]" : "text-[#c75d2c]"
             }`}
           >
-            {product.stockLabel}
+            {localizeStock(product.stockLabel, lang)}
           </p>
         )}
 
         {/* Price row */}
         <div className="mt-1.5 flex items-baseline gap-1.5">
           {priceUnknown ? (
-            <span className="text-[13px] font-bold text-[#1f2d3a]">Se pris</span>
+            <span className="text-[13px] font-bold text-[#1f2d3a]">{t("shop.seePrice")}</span>
           ) : (
             <span className="text-[13px] font-bold text-[#1f2d3a]">
               {formatNok(product.price)}

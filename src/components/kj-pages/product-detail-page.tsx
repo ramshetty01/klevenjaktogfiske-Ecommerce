@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useLang } from "@/lib/kj/lang-store";
 import { ProductCard } from "../kj/product-card";
 import type { PageId, NavContext } from "../kj/header";
 import type { Product, Review, ProductDetail } from "@/lib/kj/types";
@@ -23,6 +24,7 @@ interface ProductDetailPageProps {
 }
 
 export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) {
+  const { t, lang } = useLang();
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,9 +59,9 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
         if (cancelled) return;
         if (!res.ok) {
           if (res.status === 404) {
-            setError("Produktet ble ikke funnet.");
+            setError(t("product.notFound"));
           } else {
-            setError("Kunne ikke hente produktet.");
+            setError(t("common.error"));
           }
           setLoading(false);
           return;
@@ -68,7 +70,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
         setProduct(data.product);
         setRelated(data.related ?? []);
       } catch {
-        if (!cancelled) setError("Kunne ikke hente produktet.");
+        if (!cancelled) setError(t("common.error"));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -82,8 +84,8 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     if (!product) return;
     if (product.stockCount === 0) {
       toast({
-        title: "Ikke på lager",
-        description: product.stockLabel ?? "Produktet er ikke tilgjengelig akkurat nå.",
+        title: t("product.errorTitle"),
+        description: product.stockLabel ?? t("shop.outOfStock"),
         variant: "destructive",
       });
       return;
@@ -91,13 +93,13 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     try {
       await add(product, qty);
       toast({
-        title: "Lagt i handlevognen",
-        description: `${qty} × ${product.name} er nå i handlevognen.`,
+        title: lang === "no" ? "Lagt i handlevognen" : "Added to cart",
+        description: `${qty} × ${product.name} ${lang === "no" ? "er nå i handlevognen." : "is now in your cart."}`,
       });
     } catch {
       toast({
-        title: "Kunne ikke legge til",
-        description: "Prøv igjen senere.",
+        title: t("product.errorTitle"),
+        description: t("product.tryAgain"),
         variant: "destructive",
       });
     }
@@ -127,7 +129,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           body: reviewForm.body,
         }),
       });
-      if (!res.ok) throw new Error("Kunne ikke sende anmeldelse");
+      if (!res.ok) throw new Error(t("product.errorTitle"));
       const data = await res.json();
       // Prepend review to the list and update count
       setProduct({
@@ -138,13 +140,13 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
       setReviewForm({ authorName: "", rating: 5, title: "", body: "" });
       setReviewFormOpen(false);
       toast({
-        title: "Takk for anmeldelsen!",
-        description: "Din anmeldelse er registrert.",
+        title: t("product.reviewThanks"),
+        description: t("product.reviewSubmitted"),
       });
     } catch {
       toast({
-        title: "Kunne ikke sende anmeldelse",
-        description: "Prøv igjen senere.",
+        title: t("product.errorTitle"),
+        description: t("product.tryAgain"),
         variant: "destructive",
       });
     } finally {
@@ -181,7 +183,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           onClick={() => onNavigate("shop")}
           className="mt-6 rounded-full bg-[#1f2d3a] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.1em] hover:bg-[#15202b]"
         >
-          Tilbake til butikken
+          {t("product.backToShop")}
         </Button>
       </div>
     );
@@ -279,7 +281,17 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                       : "bg-[#f0c548] text-[#1f2d3a]"
                   }`}
                 >
-                  {product.tag}
+                  {(() => {
+                    const TAG_KEY_PDP: Record<string, string> = {
+                      Bestselger: t("tag.bestseller"),
+                      Nyhet: t("tag.new"),
+                      Tilbud: t("tag.sale"),
+                      Begrenset: t("tag.limited"),
+                      Premium: t("tag.premium"),
+                      Populært: t("tag.popular"),
+                    };
+                    return TAG_KEY_PDP[product.tag] ?? product.tag;
+                  })()}
                 </span>
               )}
               {discount > 0 && (
@@ -366,7 +378,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   ))}
                 </div>
                 <span className="font-semibold text-[#1f2d3a]">{product.rating.toFixed(1)}</span>
-                <span className="text-[#6b7884]">({product.reviewCount} anmeldelser)</span>
+                <span className="text-[#6b7884]">({product.reviewCount} {lang === "no" ? "anmeldelser" : "reviews"})</span>
               </div>
             )}
 
@@ -375,7 +387,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               {priceUnknown ? (
                 <div className="flex flex-col gap-1">
                   <span className="text-[22px] font-bold text-[#1f2d3a]">
-                    Kontakt for pris
+                    {t("product.contactForPrice")}
                   </span>
                   <a
                     href="tel:+4778407140"
@@ -410,9 +422,17 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 }`}
               />
               <span className={`font-semibold ${inStock ? "text-[#3d5e4f]" : "text-[#c75d2c]"}`}>
-                {product.stockLabel ?? (inStock ? "På lager" : "Ikke på lager")}
+                {product.stockLabel
+                  ? (lang === "no"
+                      ? product.stockLabel
+                      : product.stockLabel
+                          .replace(/på lager/i, "in stock")
+                          .replace(/ikke på lager/i, "out of stock")
+                          .replace(/se produkt/i, "see product")
+                          .replace(/på vei/i, "incoming"))
+                  : (inStock ? t("shop.inStock") : t("shop.outOfStock"))}
               </span>
-              <span className="text-[#6b7884]">· Varenummer: {product.sku}</span>
+              <span className="text-[#6b7884]">· {t("product.sku")}: {product.sku}</span>
             </div>
 
             {/* Description */}
@@ -426,7 +446,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <div className="flex items-center rounded-full border border-[#d4cfc1] bg-white">
                 <button
-                  aria-label="Reduser antall"
+                  aria-label={lang === "no" ? "Reduser antall" : "Decrease quantity"}
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                   className="flex h-11 w-11 items-center justify-center rounded-full text-[#1f2d3a] hover:bg-[#f5f1e8]"
                 >
@@ -436,7 +456,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   {qty}
                 </span>
                 <button
-                  aria-label="Øk antall"
+                  aria-label={lang === "no" ? "Øk antall" : "Increase quantity"}
                   onClick={() => setQty((q) => Math.min(99, q + 1))}
                   className="flex h-11 w-11 items-center justify-center rounded-full text-[#1f2d3a] hover:bg-[#f5f1e8]"
                 >
@@ -450,7 +470,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 className="flex-1 rounded-full bg-[#f0c548] px-8 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)] disabled:opacity-50 disabled:shadow-none sm:flex-none sm:px-10"
               >
                 <ShoppingBag size={16} className="mr-2" />
-                {inStock ? "Legg i handlevogn" : "Ikke på lager"}
+                {inStock ? t("product.addToCart") : t("shop.outOfStock")}
               </Button>
 
               {hasExternalUrl && (
@@ -461,7 +481,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   className="inline-flex items-center gap-1.5 rounded-full border border-[#d4cfc1] bg-white px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#f5f1e8]"
                 >
                   <ExternalLink size={13} />
-                  Se hos Kleven
+                  {t("product.seeAtShop")}
                 </a>
               )}
             </div>
@@ -469,20 +489,20 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             {/* Trust badges */}
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
               {[
-                { icon: Truck, title: "Fraktfritt", body: "Over 2 500,-" },
-                { icon: RotateCcw, title: "30 dager", body: "Åpent kjøp" },
-                { icon: Shield, title: "Sikker", body: "Betaling" },
-              ].map((t) => {
-                const Icon = t.icon;
+                { icon: Truck, title: t("home.badgeShipping"), body: t("home.badgeShippingSub") },
+                { icon: RotateCcw, title: t("home.badgeReturns"), body: t("home.badgeReturnsSub") },
+                { icon: Shield, title: t("product.securePayment"), body: t("product.payment") },
+              ].map((badge) => {
+                const Icon = badge.icon;
                 return (
                   <div
-                    key={t.title}
+                    key={badge.title}
                     className="flex items-center gap-2 rounded-md border border-black/5 bg-[#f5f1e8] px-3 py-2"
                   >
                     <Icon size={18} className="text-[#2d4a3e]" strokeWidth={1.6} />
                     <div>
-                      <p className="text-[11px] font-semibold text-[#1f2d3a]">{t.title}</p>
-                      <p className="text-[10px] font-light text-[#6b7884]">{t.body}</p>
+                      <p className="text-[11px] font-semibold text-[#1f2d3a]">{badge.title}</p>
+                      <p className="text-[10px] font-light text-[#6b7884]">{badge.body}</p>
                     </div>
                   </div>
                 );
@@ -499,20 +519,20 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <div className="mb-8 flex items-end justify-between border-b border-[#d4cfc1] pb-4">
               <div>
                 <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
-                  Relaterte produkter
+                  {t("product.related")}
                 </p>
                 <h2
                   className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
                   style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
                 >
-                  Du vil kanskje også like
+                  {t("product.related")}
                 </h2>
               </div>
               <button
                 onClick={() => onNavigate("shop")}
                 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] hover:underline"
               >
-                Se alle →
+                {t("nav.megaSeeAll")} →
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
@@ -535,13 +555,13 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#d4cfc1] pb-4">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
-                Kundeanmeldelser
+                {lang === "no" ? "Kundeanmeldelser" : "Customer Reviews"}
               </p>
               <h2
                 className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
                 style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
               >
-                Anmeldelser ({product.reviewCount})
+                {t("product.reviews")} ({product.reviewCount})
               </h2>
               {product.reviewCount > 0 && (
                 <div className="mt-2 flex items-center gap-2 text-[13px]">
@@ -559,7 +579,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                     ))}
                   </div>
                   <span className="font-semibold text-[#1f2d3a]">
-                    {product.rating.toFixed(1)} av 5
+                    {product.rating.toFixed(1)} {lang === "no" ? "av 5" : "out of 5"}
                   </span>
                 </div>
               )}
@@ -569,7 +589,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               variant="outline"
               className="rounded-full border-[#1f2d3a] px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] hover:bg-[#1f2d3a] hover:text-white"
             >
-              {reviewFormOpen ? "Avbryt" : "Skriv anmeldelse"}
+              {reviewFormOpen ? t("product.cancelReview") : t("product.writeReview")}
             </Button>
           </div>
 
@@ -582,18 +602,18 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
-                    Navn
+                    {t("product.nameLabel")}
                   </label>
                   <Input
                     value={reviewForm.authorName}
                     onChange={(e) => setReviewForm({ ...reviewForm, authorName: e.target.value })}
-                    placeholder="Ditt navn"
+                    placeholder={lang === "no" ? "Ditt navn" : "Your name"}
                     className="bg-white"
                   />
                 </div>
                 <div>
                   <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
-                    Vurdering
+                    {t("product.ratingLabel")}
                   </label>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
@@ -601,7 +621,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                         key={n}
                         type="button"
                         onClick={() => setReviewForm({ ...reviewForm, rating: n })}
-                        aria-label={`${n} stjerner`}
+                        aria-label={`${n} ${lang === "no" ? "stjerner" : "stars"}`}
                       >
                         <Star
                           size={28}
@@ -618,23 +638,23 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               </div>
               <div className="mt-4">
                 <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
-                  Tittel
+                  {t("product.titleLabel")}
                 </label>
                 <Input
                   value={reviewForm.title}
                   onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
-                  placeholder="Kort oppsummering"
+                  placeholder={lang === "no" ? "Kort oppsummering" : "Brief summary"}
                   className="bg-white"
                 />
               </div>
               <div className="mt-4">
                 <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8a96a1]">
-                  Anmeldelse
+                  {t("product.reviewLabel")}
                 </label>
                 <Textarea
                   value={reviewForm.body}
                   onChange={(e) => setReviewForm({ ...reviewForm, body: e.target.value })}
-                  placeholder="Del din erfaring med produktet…"
+                  placeholder={lang === "no" ? "Del din erfaring med produktet…" : "Share your experience with this product…"}
                   rows={4}
                   className="bg-white"
                 />
@@ -645,7 +665,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   disabled={submittingReview}
                   className="rounded-full bg-[#1f2d3a] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] hover:bg-[#15202b] disabled:opacity-50"
                 >
-                  {submittingReview ? "Sender…" : "Send anmeldelse"}
+                  {submittingReview ? (lang === "no" ? "Sender…" : "Sending…") : (lang === "no" ? "Send anmeldelse" : "Submit review")}
                 </Button>
                 <Button
                   type="button"
@@ -653,7 +673,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   variant="outline"
                   className="rounded-full border-[#d4cfc1] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em]"
                 >
-                  Avbryt
+                  {t("product.cancelReview")}
                 </Button>
               </div>
             </form>
@@ -662,7 +682,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           {/* Reviews list */}
           {product.reviews.length === 0 ? (
             <p className="py-12 text-center text-[14px] font-light text-[#6b7884]">
-              Ingen anmeldelser ennå. Bli den første til å vurdere dette produktet!
+              {t("product.noReviews")}
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -690,7 +710,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                     </div>
                     {r.verified && (
                       <span className="rounded-full bg-[#3d5e4f]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#3d5e4f]">
-                        Verifisert kjøp
+                        {t("product.verified")}
                       </span>
                     )}
                   </div>

@@ -6,6 +6,7 @@ import {
   Footprints, Tag, Gift, Bug, ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLang } from "@/lib/kj/lang-store";
 import type { PageId, NavContext } from "../kj/header";
 import { CategoriesChip } from "../kj/footer";
 import type { CategoryNode } from "@/lib/kj/types";
@@ -42,6 +43,7 @@ const DESCRIPTIONS: Record<string, string> = {
 };
 
 export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
+  const { t, lang } = useLang();
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,13 +74,13 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
         {/* Heading */}
         <div className="mb-16 max-w-3xl">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.25em] text-[#8a96a1]">
-            Vårt Sortiment
+            {t("categories.ourRange")}
           </p>
           <h1
             className="text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#1f2d3a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
           >
-            Våre Kategorier
+            {t("categories.title")}
           </h1>
           <p className="mt-6 max-w-2xl text-[20px] font-light leading-relaxed text-[#3a4856]">
             Ti hovedkategorier, over 4 000 artikler. Hver kategori er kuratert
@@ -120,7 +122,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
                       onClick={() => onNavigate("shop", { shopFilters: { category: c.slug } })}
                       className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#1f2d3a] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#15202b]"
                     >
-                      Se alle ({c.count})
+                      {lang === "no" ? "Se alle" : "See all"} ({c.count})
                       <ArrowRight size={12} />
                     </button>
                   </div>
@@ -151,10 +153,10 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
         <div className="mt-16 flex flex-col items-start justify-between gap-6 rounded-[8px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] md:flex-row md:items-center">
           <div>
             <h3 className="text-[20px] font-semibold text-[#1f2d3a]">
-              Klar for å handle?
+              {t("categories.readyToShop")}
             </h3>
             <p className="mt-1 text-[14px] font-light text-[#6b7884]">
-              Utforsk hele sortimentet med over 4 000 artikler på lager.
+              {t("categories.readyToShopDesc")}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -163,7 +165,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
               onClick={() => onNavigate("shop")}
               className="inline-flex items-center gap-2 rounded-full bg-[#1f2d3a] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-[#15202b]"
             >
-              Til Butikken
+              {t("categories.toShop")}
               <ArrowRight size={14} />
             </button>
           </div>

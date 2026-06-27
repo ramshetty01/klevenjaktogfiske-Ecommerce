@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
 import { useCart } from "@/lib/kj/cart-store";
+import { useLang } from "@/lib/kj/lang-store";
 import { formatNok } from "@/lib/kj/types";
 import { ShippingBanner } from "../kj/shipping-banner";
 
@@ -39,6 +40,7 @@ function CartImage({ src, alt }: { src: string; alt: string }) {
 }
 
 export function CartPage({ onNavigate }: CartPageProps) {
+  const { t, lang } = useLang();
   const { items, subtotal, totalCount, loading, initialized, hydrate, setQuantity, remove } = useCart();
 
   useEffect(() => {
@@ -59,17 +61,18 @@ export function CartPage({ onNavigate }: CartPageProps) {
           className="mt-6 text-[clamp(1.75rem,3vw,2.25rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
           style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
         >
-          Handlevognen er tom
+          {t("cart.empty")}
         </h1>
         <p className="mt-2 max-w-sm text-center text-[14px] font-light text-[#6b7884]">
-          Du har ikke lagt noe i handlevognen ennå. Utforsk vårt sortiment av
-          norsk kvalitetsutstyr for jakt, fiske og friluftsliv.
+          {lang === "no"
+            ? "Du har ikke lagt noe i handlevognen ennå. Utforsk vårt sortiment av norsk kvalitetsutstyr for jakt, fiske og friluftsliv."
+            : "You haven't added anything to your cart yet. Explore our range of Norwegian quality gear for hunting, fishing and the outdoors."}
         </p>
         <Button
           onClick={() => onNavigate("shop")}
           className="mt-8 rounded-full bg-[#f0c548] px-8 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#d9a838]"
         >
-          Til butikken
+          {lang === "no" ? "Til butikken" : "To the shop"}
           <ArrowRight size={14} className="ml-2" />
         </Button>
       </div>
@@ -89,12 +92,14 @@ export function CartPage({ onNavigate }: CartPageProps) {
             className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#1f2d3a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
           >
-            Handlevogn
+            {t("cart.title")}
           </h1>
           <p className="mt-2 text-[14px] font-light text-[#6b7884]">
             {totalCount > 0
-              ? `${totalCount} artikkel${totalCount !== 1 ? "er" : ""} i handlevognen.`
-              : "Ingen artikler ennå."}
+              ? lang === "no"
+                ? `${totalCount} artikkel${totalCount !== 1 ? "er" : ""} i handlevognen.`
+                : `${totalCount} item${totalCount !== 1 ? "s" : ""} in your cart.`
+              : lang === "no" ? "Ingen artikler ennå." : "No items yet."}
           </p>
 
           {/* Free shipping progress bar */}
@@ -104,12 +109,15 @@ export function CartPage({ onNavigate }: CartPageProps) {
               <p className="flex-1 text-[13px] text-[#1f2d3a]">
                 {qualifiesForFreeShipping ? (
                   <span className="font-semibold text-[#3d5e4f]">
-                    Du har fri frakt! 🎉
+                    {lang === "no" ? "Du har fri frakt! 🎉" : "You've got free shipping! 🎉"}
                   </span>
                 ) : (
                   <>
-                    Handler du for <span className="font-semibold">{formatNok(remaining)}</span> mer,
-                    får du <span className="font-semibold">fri frakt</span>.
+                    {lang === "no" ? (
+                      <>For kr {remaining},- til får du <span className="font-semibold">fri frakt</span>.</>
+                    ) : (
+                      <>Spend {formatNok(remaining)} more for <span className="font-semibold">free shipping</span>.</>
+                    )}
                   </>
                 )}
               </p>
@@ -220,7 +228,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                               : "—"}
                           </span>
                           <button
-                            aria-label="Fjern artikkelen"
+                            aria-label={t("cart.remove")}
                             onClick={() => remove(item.id)}
                             className="flex h-8 w-8 items-center justify-center rounded-full text-[#8a96a1] transition-colors hover:bg-[#c75d2c]/10 hover:text-[#c75d2c]"
                           >
@@ -243,21 +251,21 @@ export function CartPage({ onNavigate }: CartPageProps) {
 
                 <dl className="mt-4 flex flex-col gap-2 text-[13px]">
                   <div className="flex items-center justify-between">
-                    <dt className="text-[#6b7884]">Delsum</dt>
+                    <dt className="text-[#6b7884]">{t("cart.subtotal")}</dt>
                     <dd className="font-semibold text-[#1f2d3a]">{formatNok(subtotal)}</dd>
                   </div>
                   <div className="flex items-center justify-between">
-                    <dt className="text-[#6b7884]">Frakt</dt>
+                    <dt className="text-[#6b7884]">{t("cart.shipping")}</dt>
                     <dd className="font-semibold text-[#1f2d3a]">
                       {qualifiesForFreeShipping ? (
-                        <span className="text-[#3d5e4f]">Gratis</span>
+                        <span className="text-[#3d5e4f]">{t("cart.free")}</span>
                       ) : (
-                        "Beregnes ved kassen"
+                        lang === "no" ? "Beregnes ved kassen" : "Calculated at checkout"
                       )}
                     </dd>
                   </div>
                   <div className="mt-2 flex items-center justify-between border-t border-[#d4cfc1] pt-3">
-                    <dt className="text-[14px] font-semibold text-[#1f2d3a]">Total</dt>
+                    <dt className="text-[14px] font-semibold text-[#1f2d3a]">{lang === "no" ? "Total" : "Total"}</dt>
                     <dd className="text-[20px] font-bold text-[#1f2d3a]">
                       {formatNok(subtotal)}
                     </dd>
@@ -267,7 +275,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                 <Button
                   className="mt-6 w-full rounded-full bg-[#f0c548] px-6 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
                 >
-                  Til kassen
+                  {t("cart.checkout")}
                   <ArrowRight size={16} className="ml-2" />
                 </Button>
 
@@ -275,19 +283,19 @@ export function CartPage({ onNavigate }: CartPageProps) {
                   onClick={() => onNavigate("shop")}
                   className="mt-3 w-full text-center text-[12px] font-medium text-[#6b7884] hover:text-[#1f2d3a] hover:underline"
                 >
-                  Fortsett å handle
+                  {t("cart.continueShopping")}
                 </button>
 
                 {/* Trust badges */}
                 <div className="mt-6 flex flex-col gap-2 border-t border-[#d4cfc1] pt-4 text-[11px] text-[#6b7884]">
                   <p className="flex items-center gap-2">
-                    <Truck size={14} className="text-[#2d4a3e]" /> Rask levering 2–4 dager
+                    <Truck size={14} className="text-[#2d4a3e]" /> {t("banner.fastDelivery")}
                   </p>
                   <p className="flex items-center gap-2">
-                    <span className="text-[#2d4a3e]">✓</span> 30 dager åpent kjøp
+                    <span className="text-[#2d4a3e]">✓</span> {lang === "no" ? "30 dager åpent kjøp" : "30-day open return"}
                   </p>
                   <p className="flex items-center gap-2">
-                    <span className="text-[#2d4a3e]">✓</span> Sikker betaling
+                    <span className="text-[#2d4a3e]">✓</span> {lang === "no" ? "Sikker betaling" : "Secure payment"}
                   </p>
                 </div>
               </div>

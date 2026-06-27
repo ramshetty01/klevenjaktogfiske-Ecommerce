@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLang } from "@/lib/kj/lang-store";
 import type { PageId, NavContext } from "../kj/header";
 
 interface AboutPageProps {
@@ -9,6 +10,7 @@ interface AboutPageProps {
 }
 
 export function AboutPage({ onNavigate }: AboutPageProps) {
+  const { t, lang } = useLang();
   return (
     <div
       className="kj-page-enter"
@@ -55,16 +57,16 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         {/* Heading */}
         <div className="mb-16 max-w-3xl">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.25em] text-[#8a96a1]">
-            Om Oss
+            {t("about.aboutUs")}
           </p>
           <h1
             className="text-[clamp(3rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#1f2d3a]"
             style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
           >
-            Vi er Kleven
+            {t("about.title")}
           </h1>
           <p className="mt-6 text-[20px] font-medium text-[#3a4856]">
-            Ut på tur, aldri sur — siden 1985.
+            {t("about.since")}
           </p>
         </div>
 
@@ -84,9 +86,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             <div className="absolute -bottom-5 -right-5 hidden rounded-lg bg-white px-5 py-4 shadow-[0_10px_25px_rgba(31,45,58,0.18)] sm:block">
               <div className="text-[24px] font-bold text-[#1f2d3a]">40+</div>
               <div className="text-[11px] font-light uppercase tracking-[0.1em] text-[#8a96a1]">
-                År med felles
-                <br />
-                opplevelser
+                {t("about.yearsBadge")}
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             <div className="mt-10 flex items-center gap-4">
               <div className="h-px flex-1 bg-[#1f2d3a]/15" />
               <span className="text-[14px] font-light italic text-[#6b7884]">
-                — Teamet hos Kleven Jakt &amp; Fiske
+                {t("about.signature")}
               </span>
             </div>
 
@@ -135,7 +135,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               onClick={() => onNavigate("categories")}
               className="mt-10 inline-flex items-center gap-3 rounded-full bg-[#1f2d3a] px-8 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#f0c548] shadow-[0_8px_24px_rgba(31,45,58,0.25)] transition-all duration-300 hover:bg-[#15202b] hover:shadow-[0_12px_30px_rgba(31,45,58,0.35)]"
             >
-              Våre Kategorier
+              {t("about.cta")}
               <ArrowRight
                 size={16}
                 strokeWidth={2.2}
@@ -148,10 +148,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         {/* Stats row */}
         <div className="mt-24 grid grid-cols-2 gap-8 border-t border-black/10 pt-12 md:grid-cols-4">
           {[
-            { v: "40+", l: "År i bransjen" },
-            { v: "1 200+", l: "Artikler på lager" },
-            { v: "60+", l: "Merkevarer" },
-            { v: "30k+", l: "Norske kunder" },
+            { v: "40+", l: lang === "no" ? "År i bransjen" : "Years in business" },
+            { v: "4 300+", l: lang === "no" ? "Artikler på lager" : "Articles in stock" },
+            { v: "400+", l: lang === "no" ? "Merkevarer" : "Brands" },
+            { v: "30k+", l: lang === "no" ? "Norske kunder" : "Norwegian customers" },
           ].map((s) => (
             <div key={s.l}>
               <div className="text-[clamp(2rem,3vw,2.75rem)] font-bold text-[#1f2d3a]">

@@ -1,6 +1,7 @@
 "use client";
 
 import { Instagram, Facebook, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { useLang } from "@/lib/kj/lang-store";
 import type { PageId, NavContext } from "./header";
 
 interface FooterProps {
@@ -8,19 +9,20 @@ interface FooterProps {
 }
 
 export function Footer({ onNavigate }: FooterProps) {
+  const { t, lang } = useLang();
   const go = (page: PageId, ctx?: NavContext) => {
     onNavigate(page, ctx);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const categoryLinks: { label: string; slug?: string }[] = [
-    { label: "Jaktutstyr", slug: "jakt" },
-    { label: "Fiskeutstyr", slug: "fiske" },
-    { label: "Camping & Friluftsliv", slug: "camping" },
-    { label: "Bekledning", slug: "klær" },
-    { label: "Vintersport", slug: "vintersport" },
-    { label: "Husdyr", slug: "kjæledyr" },
-    { label: "Fottøy", slug: "fottøy1" },
+    { label: lang === "no" ? "Jaktutstyr" : "Hunting Gear", slug: "jakt" },
+    { label: lang === "no" ? "Fiskeutstyr" : "Fishing Gear", slug: "fiske" },
+    { label: lang === "no" ? "Camping & Friluftsliv" : "Camping & Outdoors", slug: "camping" },
+    { label: lang === "no" ? "Bekledning" : "Clothing", slug: "klær" },
+    { label: lang === "no" ? "Vintersport" : "Winter Sports", slug: "vintersport" },
+    { label: lang === "no" ? "Husdyr" : "Pets", slug: "kjæledyr" },
+    { label: lang === "no" ? "Fottøy" : "Footwear", slug: "fottøy1" },
     { label: "Outlet", slug: "outlet" },
   ];
 
@@ -41,14 +43,12 @@ export function Footer({ onNavigate }: FooterProps) {
                 KLEVEN
               </div>
               <div className="text-[10px] font-light uppercase tracking-[0.35em] text-[#f0c548]">
-                Jakt &amp; Fiske AS
+                {t("nav.brandSubtitle")} AS
               </div>
             </div>
 
             <p className="mb-6 max-w-xs text-[13px] font-light leading-relaxed text-[#b8c0c8]">
-              Vi er Kleven Hunting & Fishing. God kundeservice — ordrer
-              over 2 500,- er fraktfritt i Norge til privatkunder (gjelder
-              ikke pulker og våpenskap).
+              {t("footer.tagline")}
             </p>
 
             <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
@@ -75,7 +75,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <span>
                   Brenneriveien 2
                   <br />
-                  9601 Hammerfest, Norge
+                  9601 Hammerfest, {lang === "no" ? "Norge" : "Norway"}
                 </span>
               </span>
             </div>
@@ -101,7 +101,7 @@ export function Footer({ onNavigate }: FooterProps) {
           {/* Middle column: categories */}
           <div className="flex flex-col">
             <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
-              Kategorier
+              {t("footer.categories")}
             </h4>
             <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
               {categoryLinks.map((c) => (
@@ -121,57 +121,57 @@ export function Footer({ onNavigate }: FooterProps) {
           {/* Right column: customer service */}
           <div className="flex flex-col">
             <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
-              Kundeservice
+              {t("footer.customerService")}
             </h4>
             <div className="flex flex-col gap-3 text-[13px] font-light text-[#b8c0c8]">
               <a href="#" className="transition-colors hover:text-white">
-                Salgsbetingelser
+                {t("footer.terms")}
               </a>
               <a href="#" className="transition-colors hover:text-white">
-                Frakt &amp; Levering
+                {t("footer.shipping")}
               </a>
               <a href="#" className="transition-colors hover:text-white">
-                Retur &amp; Bytte
+                {t("footer.returns")}
               </a>
               <a href="#" className="transition-colors hover:text-white">
-                Personvern
+                {t("footer.privacy")}
               </a>
               <a href="#" className="transition-colors hover:text-white">
-                Kontakt Oss
+                {t("footer.contact")}
               </a>
             </div>
 
             {/* Opening hours */}
             <div className="mt-6 rounded-md border border-white/10 bg-white/5 px-4 py-3 text-[12px] font-light text-[#b8c0c8]">
-              <p className="font-semibold text-white">Åpningstider</p>
+              <p className="font-semibold text-white">{t("footer.openingHours")}</p>
               <ul className="mt-2 space-y-1">
                 <li className="flex items-center justify-between gap-4">
-                  <span>Mandag</span>
+                  <span>{t("footer.mon")}</span>
                   <span>08:30 – 16:30</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Tirsdag</span>
+                  <span>{t("footer.tue")}</span>
                   <span>08:30 – 16:30</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Onsdag</span>
+                  <span>{t("footer.wed")}</span>
                   <span>08:30 – 16:30</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Torsdag</span>
+                  <span>{t("footer.thu")}</span>
                   <span className="text-[#f0c548]">08:30 – 18:00</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Fredag</span>
+                  <span>{t("footer.fri")}</span>
                   <span>08:30 – 16:30</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Lørdag</span>
+                  <span>{t("footer.sat")}</span>
                   <span>10:00 – 15:00</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Søndag</span>
-                  <span className="text-[#8a96a1]">Stengt</span>
+                  <span>{t("footer.sun")}</span>
+                  <span className="text-[#8a96a1]">{t("footer.closed")}</span>
                 </li>
               </ul>
             </div>
@@ -179,8 +179,8 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         <div className="mt-12 flex flex-col gap-1 border-t border-white/10 pt-6 text-[12px] font-light text-[#8a96a1] sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Kleven Hunting &amp; Fishing AS. Organisasjonsnr. 962 398 251.</p>
-          <p>Fraktfritt i Norge på ordre over 2 500,- (gjelder ikke pulker og våpenskap)</p>
+          <p>{t("footer.copyright")}</p>
+          <p>{t("footer.freeShippingNote")}</p>
         </div>
       </div>
     </footer>
@@ -193,6 +193,7 @@ export function CategoriesChip({
 }: {
   onClick?: () => void;
 }) {
+  const { t, lang } = useLang();
   return (
     <button
       onClick={onClick}
@@ -200,9 +201,11 @@ export function CategoriesChip({
     >
       <div>
         <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a]">
-          Våre Kategorier
+          {t("nav.categories")}
         </p>
-        <p className="text-[11px] text-[#8a96a1]">Jakt · Fiske · Friluftsliv</p>
+        <p className="text-[11px] text-[#8a96a1]">
+          {lang === "no" ? "Jakt · Fiske · Friluftsliv" : "Hunt · Fish · Outdoors"}
+        </p>
       </div>
       <ArrowRight
         size={14}

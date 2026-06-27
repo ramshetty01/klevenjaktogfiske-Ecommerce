@@ -216,7 +216,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             {featured === null
               ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : featured.length === 0
-                ? <p className="col-span-full py-12 text-center text-[14px] text-[#6b7884]">Ingen produkter tilgjengelig.</p>
+                ? <p className="col-span-full py-12 text-center text-[14px] text-[#6b7884]">{lang === "no" ? "Ingen produkter tilgjengelig." : "No products available."}</p>
                 : featured.slice(0, 8).map((p) => (
                   <ProductCard
                     key={p.id}

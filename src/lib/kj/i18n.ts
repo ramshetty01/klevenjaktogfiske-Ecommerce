@@ -116,6 +116,17 @@ export const translations = {
     no: "Ingen produkter funnet. Prøv å justere filtrene.",
     en: "No products found. Try adjusting the filters.",
   },
+  "shop.noResultsHint": {
+    no: "Prøv å justere filtrene eller søket.",
+    en: "Try adjusting the filters or search.",
+  },
+  "shop.clearFilters": { no: "Tøm filtre", en: "Clear filters" },
+  "shop.filters": { no: "Filterer", en: "Filters" },
+  "shop.priceRange": { no: "Pris", en: "Price" },
+  "shop.brand": { no: "Merke", en: "Brand" },
+  "shop.allBrands": { no: "Alle merker", en: "All brands" },
+  "shop.inStockOnly": { no: "Kun på lager", en: "In stock only" },
+  "shop.apply": { no: "Bruk", en: "Apply" },
   "shop.seePrice": { no: "Se pris", en: "See price" },
   "shop.inStock": { no: "På lager", en: "In stock" },
   "shop.outOfStock": { no: "Ikke på lager", en: "Out of stock" },
@@ -149,6 +160,7 @@ export const translations = {
   "product.brand": { no: "Merke", en: "Brand" },
   "product.category": { no: "Kategori", en: "Category" },
   "product.verified": { no: "Bekreftet kjøp", en: "Verified purchase" },
+  "product.cancelReview": { no: "Avbryt", en: "Cancel" },
   "product.noReviews": {
     no: "Ingen anmeldelser ennå. Bli den første til å skrive en!",
     en: "No reviews yet. Be the first to write one!",
@@ -158,6 +170,18 @@ export const translations = {
   "product.titleLabel": { no: "Tittel", en: "Title" },
   "product.reviewLabel": { no: "Anmeldelse", en: "Review" },
   "product.submit": { no: "Send inn", en: "Submit" },
+  "product.backToShop": { no: "Tilbake til butikken", en: "Back to shop" },
+  "product.securePayment": { no: "Sikker", en: "Secure" },
+  "product.payment": { no: "Betaling", en: "Payment" },
+  "product.errorTitle": { no: "Noe gikk galt", en: "Something went wrong" },
+  "product.reviewSubmitted": {
+    no: "Din anmeldelse er registrert.",
+    en: "Your review has been submitted.",
+  },
+  "product.reviewThanks": { no: "Takk for anmeldelsen!", en: "Thanks for your review!" },
+  "product.tryAgain": { no: "Prøv igjen senere.", en: "Try again later." },
+  "product.notFound": { no: "Produktet ble ikke funnet.", en: "Product not found." },
+  "product.loadingProduct": { no: "Laster produkt…", en: "Loading product…" },
 
   /* ---- Cart ---- */
   "cart.title": { no: "Handlevogn", en: "Shopping Cart" },
@@ -246,6 +270,14 @@ export const translations = {
   "common.error": { no: "Noe gikk galt", en: "Something went wrong" },
   "common.retry": { no: "Prøv igjen", en: "Try again" },
   "common.inStock": { no: "på lager", en: "in stock" },
+
+  /* ---- Product tags ---- */
+  "tag.bestseller": { no: "Bestselger", en: "Best Seller" },
+  "tag.new": { no: "Nyhet", en: "New" },
+  "tag.sale": { no: "Tilbud", en: "Sale" },
+  "tag.limited": { no: "Begrenset", en: "Limited" },
+  "tag.premium": { no: "Premium", en: "Premium" },
+  "tag.popular": { no: "Populært", en: "Popular" },
 } as const;
 
 export type TranslationKey = keyof typeof translations;
