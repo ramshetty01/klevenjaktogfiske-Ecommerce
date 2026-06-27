@@ -9,9 +9,7 @@ import type { CategoryNode } from "@/lib/kj/types";
 export type PageId = "home" | "shop" | "about" | "categories" | "product" | "cart";
 
 export interface NavContext {
-  /** When navigating to "product", the slug of the product to open. */
   productSlug?: string;
-  /** When navigating to "shop", pre-applied filters. */
   shopFilters?: {
     category?: string;
     subcategory?: string;
@@ -23,7 +21,6 @@ export interface NavContext {
 interface HeaderProps {
   current: PageId;
   onNavigate: (page: PageId, ctx?: NavContext) => void;
-  /** Categories for the mega menu — fetched by parent and passed down. */
   categories?: CategoryNode[];
 }
 
@@ -36,7 +33,6 @@ const NAV_LINKS: { labelKey: "nav.shop" | "nav.categories" | "nav.about"; page: 
 export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [megaOpen, setMegaOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -46,7 +42,6 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
   const hydrate = useCart((s) => s.hydrate);
   const { lang, setLang, t } = useLang();
 
-  // Hydrate the cart on mount so the badge shows the correct count
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
@@ -61,7 +56,6 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
   const handleNav = (page: PageId, ctx?: NavContext) => {
     onNavigate(page, ctx);
     setMobileOpen(false);
-    setSearchOpen(false);
     setMegaOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -74,7 +68,6 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
     }
   };
 
-  // Mega menu hover handlers with small close delay to prevent flicker
   const openMega = () => {
     if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current);
     setMegaOpen(true);
@@ -94,7 +87,8 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           scrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.25)]" : ""
         }`}
       >
-        <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-6 lg:px-10">
+        {/* ===== ROW 1: Brand + Actions ===== */}
+        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6 lg:px-10">
           {/* Left: brand */}
           <button
             onClick={() => handleNav("home")}
@@ -112,120 +106,8 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             </span>
           </button>
 
-          {/* Center: nav (desktop) */}
-          <nav className="hidden items-center gap-10 md:flex">
-            {/* Butikk — has mega menu */}
-            <div
-              onMouseEnter={openMega}
-              onMouseLeave={closeMegaSoon}
-              className="relative"
-            >
-              <button
-                onClick={() => handleNav("shop")}
-                className={`relative flex items-center gap-1 text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
-                  current === "shop" ? "text-white" : "text-white/75 hover:text-white"
-                }`}
-                aria-expanded={megaOpen}
-                aria-haspopup="true"
-              >
-                {t("nav.shop")}
-                <ChevronDown
-                  size={12}
-                  className={`transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`}
-                />
-                <span
-                  className={`absolute -bottom-1.5 left-0 h-px bg-[#f0c548] transition-all duration-300 ${
-                    current === "shop" ? "w-full" : "w-0"
-                  }`}
-                />
-              </button>
-
-              {/* MEGA MENU */}
-              {megaOpen && (
-                <div
-                  className="absolute left-1/2 top-full z-50 w-[640px] -translate-x-1/2 pt-3"
-                  onMouseEnter={openMega}
-                  onMouseLeave={closeMegaSoon}
-                >
-                  <div className="rounded-lg border border-white/10 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
-                    <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
-                        {t("nav.megaTitle")}
-                      </p>
-                      <button
-                        onClick={() => handleNav("categories")}
-                        className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] hover:underline"
-                      >
-                        {t("nav.megaSeeAll")} →
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 max-h-[400px] overflow-y-auto pr-2 kj-mega-scroll">
-                      {categories.length === 0 ? (
-                        <p className="py-4 text-[12px] text-[#6b7884]">{t("nav.loadingCats")}</p>
-                      ) : (
-                        categories
-                          .filter((c) => c.count > 0 || c.name === "Gavekort")
-                          .map((c) => (
-                            <div key={c.id} className="group/cat">
-                              <button
-                                onClick={() => handleNav("shop", { shopFilters: { category: c.slug } })}
-                                className="flex w-full items-center justify-between py-1 text-left text-[13px] font-semibold text-[#1f2d3a] hover:text-[#2d4a3e]"
-                              >
-                                {c.name}
-                                <span className="rounded-full bg-[#f0c548]/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#1f2d3a]">
-                                  {c.count}
-                                </span>
-                              </button>
-                              {/* Show up to 4 subcategories */}
-                              {c.subcategories.filter((s) => s.count > 0).slice(0, 4).map((sub) => (
-                                <button
-                                  key={sub.id}
-                                  onClick={() => handleNav("shop", { shopFilters: { subcategory: sub.slug } })}
-                                  className="block w-full py-0.5 pl-2 text-left text-[11px] font-light text-[#6b7884] transition-colors hover:text-[#1f2d3a]"
-                                >
-                                  {sub.name}
-                                </button>
-                              ))}
-                            </div>
-                          ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {NAV_LINKS.filter((l) => l.page !== "shop").map((link) => {
-              const active = current === link.page;
-              return (
-                <button
-                  key={link.page}
-                  onClick={() => handleNav(link.page)}
-                  className={`relative text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
-                    active ? "text-white" : "text-white/75 hover:text-white"
-                  }`}
-                >
-                  {t(link.labelKey)}
-                  <span
-                    className={`absolute -bottom-1.5 left-0 h-px bg-[#f0c548] transition-all duration-300 ${
-                      active ? "w-full" : "w-0"
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </nav>
-
           {/* Right: actions */}
-          <div className="flex items-center gap-4">
-            {/* Search */}
-            <button
-              aria-label={t("nav.search")}
-              onClick={() => setSearchOpen((v) => !v)}
-              className="hidden text-white/85 transition-colors hover:text-white sm:block"
-            >
-              <Search size={18} strokeWidth={1.6} />
-            </button>
+          <div className="flex items-center gap-3">
             <button
               aria-label={t("nav.account")}
               className="hidden text-white/85 transition-colors hover:text-white sm:block"
@@ -233,7 +115,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
               <User size={18} strokeWidth={1.6} />
             </button>
 
-            {/* Language toggle — small button right of cart */}
+            {/* Language toggle */}
             <div className="relative">
               <button
                 onClick={() => setLangOpen((v) => !v)}
@@ -245,7 +127,6 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
               </button>
               {langOpen && (
                 <>
-                  {/* Click-away overlay */}
                   <div
                     className="fixed inset-0 z-40"
                     onClick={() => setLangOpen(false)}
@@ -295,55 +176,155 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           </div>
         </div>
 
-        {/* Search dropdown (desktop) */}
-        {searchOpen && (
-          <div className="border-t border-white/10">
+        {/* ===== ROW 2: Big Search Bar + Nav Links ===== */}
+        <div className="hidden border-t border-white/10 md:block">
+          <div className="mx-auto flex max-w-[1280px] items-center gap-6 px-6 py-2.5 lg:px-10">
+            {/* Big search bar */}
             <form
               onSubmit={handleSearchSubmit}
-              className="mx-auto flex max-w-[1280px] items-center gap-3 px-6 py-3 lg:px-10"
+              className="flex flex-1 items-center gap-2.5 rounded-full bg-white/10 px-4 py-2 transition-colors hover:bg-white/15 focus-within:bg-white/15"
             >
-              <Search size={18} className="text-white/60" />
+              <Search size={18} className="flex-shrink-0 text-white/60" />
               <input
-                autoFocus
                 type="search"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder={t("nav.searchPlaceholder")}
                 className="flex-1 bg-transparent text-[14px] text-white placeholder:text-white/50 focus:outline-none"
               />
-              <button
-                type="submit"
-                className="rounded-full bg-[#f0c548] px-5 py-1.5 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#d9a838]"
-              >
-                {t("nav.search")}
-              </button>
-            </form>
-            {/* Popular searches */}
-            <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-2 px-6 pb-3 lg:px-10">
-              <span className="text-[11px] uppercase tracking-[0.15em] text-white/50">
-                {t("nav.searchPopular")}
-              </span>
-              {["Fiskestenger", "Pop-up telt", "Härkila", "Kniver", "Zeiss"].map((q) => (
+              {searchValue.trim().length > 0 && (
                 <button
-                  key={q}
-                  type="button"
-                  onClick={() => {
-                    setSearchValue(q);
-                    handleNav("shop", { shopFilters: { q } });
-                  }}
-                  className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium text-white/80 transition-colors hover:bg-white/20 hover:text-white"
+                  type="submit"
+                  className="flex-shrink-0 rounded-full bg-[#f0c548] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] transition-colors hover:bg-[#d9a838]"
                 >
-                  {q}
+                  {t("nav.search")}
                 </button>
-              ))}
-            </div>
+              )}
+            </form>
+
+            {/* Nav links */}
+            <nav className="flex items-center gap-6">
+              {/* Butikk — has mega menu */}
+              <div
+                onMouseEnter={openMega}
+                onMouseLeave={closeMegaSoon}
+                className="relative"
+              >
+                <button
+                  onClick={() => handleNav("shop")}
+                  className={`relative flex items-center gap-1 whitespace-nowrap text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
+                    current === "shop" ? "text-white" : "text-white/75 hover:text-white"
+                  }`}
+                  aria-expanded={megaOpen}
+                  aria-haspopup="true"
+                >
+                  {t("nav.shop")}
+                  <ChevronDown
+                    size={12}
+                    className={`transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`}
+                  />
+                  <span
+                    className={`absolute -bottom-1.5 left-0 h-px bg-[#f0c548] transition-all duration-300 ${
+                      current === "shop" ? "w-full" : "w-0"
+                    }`}
+                  />
+                </button>
+
+                {/* MEGA MENU */}
+                {megaOpen && (
+                  <div
+                    className="absolute left-1/2 top-full z-50 w-[640px] -translate-x-1/2 pt-3"
+                    onMouseEnter={openMega}
+                    onMouseLeave={closeMegaSoon}
+                  >
+                    <div className="rounded-lg border border-white/10 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
+                      <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a96a1]">
+                          {t("nav.megaTitle")}
+                        </p>
+                        <button
+                          onClick={() => handleNav("categories")}
+                          className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1f2d3a] hover:underline"
+                        >
+                          {t("nav.megaSeeAll")} →
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-2 max-h-[400px] overflow-y-auto pr-2 kj-mega-scroll">
+                        {categories.length === 0 ? (
+                          <p className="py-4 text-[12px] text-[#6b7884]">{t("nav.loadingCats")}</p>
+                        ) : (
+                          categories
+                            .filter((c) => c.count > 0 || c.name === "Gavekort")
+                            .map((c) => (
+                              <div key={c.id} className="group/cat">
+                                <button
+                                  onClick={() => handleNav("shop", { shopFilters: { category: c.slug } })}
+                                  className="flex w-full items-center justify-between py-1 text-left text-[13px] font-semibold text-[#1f2d3a] hover:text-[#2d4a3e]"
+                                >
+                                  {c.name}
+                                  <span className="rounded-full bg-[#f0c548]/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#1f2d3a]">
+                                    {c.count}
+                                  </span>
+                                </button>
+                                {c.subcategories.filter((s) => s.count > 0).slice(0, 4).map((sub) => (
+                                  <button
+                                    key={sub.id}
+                                    onClick={() => handleNav("shop", { shopFilters: { subcategory: sub.slug } })}
+                                    className="block w-full py-0.5 pl-2 text-left text-[11px] font-light text-[#6b7884] transition-colors hover:text-[#1f2d3a]"
+                                  >
+                                    {sub.name}
+                                  </button>
+                                ))}
+                              </div>
+                            ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {NAV_LINKS.filter((l) => l.page !== "shop").map((link) => {
+                const active = current === link.page;
+                return (
+                  <button
+                    key={link.page}
+                    onClick={() => handleNav(link.page)}
+                    className={`relative whitespace-nowrap text-[13px] font-medium tracking-[0.12em] uppercase transition-colors duration-200 ${
+                      active ? "text-white" : "text-white/75 hover:text-white"
+                    }`}
+                  >
+                    {t(link.labelKey)}
+                    <span
+                      className={`absolute -bottom-1.5 left-0 h-px bg-[#f0c548] transition-all duration-300 ${
+                        active ? "w-full" : "w-0"
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+            </nav>
           </div>
-        )}
+        </div>
 
         {/* Mobile drawer */}
         {mobileOpen && (
           <div className="border-t border-white/10 md:hidden">
             <nav className="mx-auto flex max-w-[1280px] flex-col px-6 py-2">
+              {/* Search bar in mobile */}
+              <form
+                onSubmit={handleSearchSubmit}
+                className="mb-3 flex items-center gap-2.5 rounded-full bg-white/10 px-4 py-2.5"
+              >
+                <Search size={16} className="flex-shrink-0 text-white/60" />
+                <input
+                  type="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder={t("nav.searchPlaceholder")}
+                  className="flex-1 bg-transparent text-[13px] text-white placeholder:text-white/50 focus:outline-none"
+                />
+              </form>
               {NAV_LINKS.map((link) => {
                 const active = current === link.page;
                 return (
