@@ -50,7 +50,7 @@ export const translations = {
   },
   "home.shopNow": { no: "Handle Nå", en: "Shop Now" },
   "home.ourStory": { no: "Vår Historie", en: "Our Story" },
-  "home.since1985": { no: "Siden 1985 · Norsk Eiet", en: "Since 1985 · Norwegian Owned" },
+  "home.since1966": { no: "Siden 1966 · Norsk Eiet", en: "Since 1966 · Norwegian Owned" },
   "home.badgeShipping": { no: "Fraktfritt", en: "Free Shipping" },
   "home.badgeShippingSub": { no: "Over 2 500,-", en: "Over 2 500,-" },
   "home.badgeReturns": { no: "30 dager", en: "30 days" },
@@ -65,6 +65,50 @@ export const translations = {
   "home.ourSelectionDesc": {
     no: "Håndplukkede produkter fra de merkevareene norske friluftsfolk stoler på.",
     en: "Hand-picked products from the brands Norwegian outdoorsmen trust.",
+  },
+  "home.heroServiceShippingTitle": {
+    no: "Fri frakt over 999 kr",
+    en: "Free shipping over NOK 999",
+  },
+  "home.heroServiceShippingSub": {
+    no: "Rask levering i hele Norge",
+    en: "Fast delivery across Norway",
+  },
+  "home.heroServiceStoreTitle": {
+    no: "Finn din nærmeste butikk",
+    en: "Find your nearest store",
+  },
+  "home.heroServiceStoreSub": {
+    no: "Se åpningstider og kart",
+    en: "See opening hours and map",
+  },
+  "home.heroServiceSupportTitle": {
+    no: "Kundeservice",
+    en: "Customer service",
+  },
+  "home.heroServiceSupportSub": {
+    no: "Vi er her for å hjelpe deg",
+    en: "We are here to help you",
+  },
+  "home.catHunting": { no: "Jakt", en: "Hunting" },
+  "home.catFishing": { no: "Fiske", en: "Fishing" },
+  "home.catCamping": { no: "Camping", en: "Camping" },
+  "home.catWinter": { no: "Vintersport", en: "Winter sports" },
+  "home.catClothing": { no: "Klær", en: "Clothing" },
+  "home.catDog": { no: "Hund", en: "Dog" },
+  "home.catFootwear": { no: "Fottøy", en: "Footwear" },
+  "home.noProducts": { no: "Ingen produkter tilgjengelig.", en: "No products available." },
+  "home.brandsCopy": {
+    no: "Vi er autoriserte forhandlere for over 400 merkevarer — fra Sauer og Zeiss til Helle, Fjällräven og Bergans.",
+    en: "We are authorized dealers for over 400 brands — from Sauer and Zeiss to Helle, Fjällräven and Bergans.",
+  },
+  "home.promiseQualityBody": {
+    no: "Håndplukket sortiment fra merkevarer vi selv bruker. Vi selger bare utstyr vi ville delt med våre egne barn.",
+    en: "Hand-picked assortment from brands we use ourselves. We only sell gear we'd share with our own kids.",
+  },
+  "home.promiseLocalBody": {
+    no: "Ekspertene våre kjenner utstyret innvendig — fordi de bruker det hver sesong. Spør oss gjerne!",
+    en: "Our experts know the gear inside out — because they use it every season. Just ask us!",
   },
   "home.seeAllShop": { no: "Se hele butikken", en: "See the whole shop" },
   "home.brandsTitle": { no: "Merker vi stoler på", en: "Brands we trust" },
@@ -120,6 +164,10 @@ export const translations = {
     no: "Prøv å justere filtrene.",
     en: "Try adjusting the filters.",
   },
+  "shop.category": { no: "Kategori", en: "Category" },
+  "shop.showLess": { no: "Vis mindre", en: "Show less" },
+  "shop.showAll": { no: "Vis alle", en: "Show all" },
+  "shop.catalog": { no: "Katalog", en: "Catalog" },
   "shop.clearFilters": { no: "Tøm filtre", en: "Clear filters" },
   "shop.clearAll": { no: "Tøm alle", en: "Clear all" },
   "shop.showResults": { no: "Vis resultater", en: "Show results" },
@@ -155,6 +203,11 @@ export const translations = {
 
   /* ---- Product detail ---- */
   "product.addToCart": { no: "Legg i handlevogn", en: "Add to Cart" },
+  "product.addedToCart": { no: "Lagt i handlevognen", en: "Added to cart" },
+  "product.addedToCartDesc": {
+    no: "{qty} × {name} er nå i handlevognen.",
+    en: "{qty} × {name} is now in your cart.",
+  },
   "product.quantity": { no: "Antall", en: "Quantity" },
   "product.related": { no: "Relaterte produkter", en: "Related products" },
   "product.reviews": { no: "Anmeldelser", en: "Reviews" },
@@ -172,9 +225,15 @@ export const translations = {
     en: "No reviews yet. Be the first to write one!",
   },
   "product.nameLabel": { no: "Navn", en: "Name" },
+  "product.placeholderName": { no: "Ditt navn", en: "Your name" },
   "product.ratingLabel": { no: "Vurdering", en: "Rating" },
   "product.titleLabel": { no: "Tittel", en: "Title" },
+  "product.placeholderTitle": { no: "Kort oppsummering", en: "Brief summary" },
   "product.reviewLabel": { no: "Anmeldelse", en: "Review" },
+  "product.placeholderReview": {
+    no: "Del din erfaring med produktet…",
+    en: "Share your experience with this product…",
+  },
   "product.submit": { no: "Send inn", en: "Submit" },
   "product.backToShop": { no: "Tilbake til butikken", en: "Back to shop" },
   "product.securePayment": { no: "Sikker", en: "Secure" },
@@ -184,10 +243,25 @@ export const translations = {
     no: "Din anmeldelse er registrert.",
     en: "Your review has been submitted.",
   },
+  "product.unavailable": {
+    no: "Produktet er ikke tilgjengelig akkurat nå.",
+    en: "Product is currently unavailable.",
+  },
+  "product.missingInfoTitle": { no: "Mangler informasjon", en: "Missing information" },
+  "product.missingInfoDesc": { no: "Vennligst fyll ut alle felt.", en: "Please fill in all fields." },
   "product.reviewThanks": { no: "Takk for anmeldelsen!", en: "Thanks for your review!" },
   "product.tryAgain": { no: "Prøv igjen senere.", en: "Try again later." },
   "product.notFound": { no: "Produktet ble ikke funnet.", en: "Product not found." },
   "product.loadingProduct": { no: "Laster produkt…", en: "Loading product…" },
+  "product.backHome": { no: "Hjem", en: "Home" },
+  "product.backShop": { no: "Butikk", en: "Shop" },
+  "product.reviewCount": { no: "{count} anmeldelser", en: "{count} reviews" },
+  "product.outOf5": { no: "av 5", en: "out of 5" },
+  "product.stars": { no: "stjerner", en: "stars" },
+  "product.savePercent": { no: "Spar {discount}%", en: "Save {discount}%" },
+  "product.submitReview": { no: "Send anmeldelse", en: "Submit review" },
+  "product.sending": { no: "Sender…", en: "Sending…" },
+  "product.noReviewsTitle": { no: "Kundeanmeldelser", en: "Customer Reviews" },
 
   /* ---- Cart ---- */
   "cart.title": { no: "Handlevogn", en: "Shopping Cart" },
@@ -196,6 +270,24 @@ export const translations = {
     no: "Utforsk vårt utvalg av jakt-, fiske- og friluftsutstyr.",
     en: "Explore our selection of hunting, fishing and outdoor gear.",
   },
+  "cart.emptyCta": { no: "Til butikken", en: "To the shop" },
+  "cart.summaryTitle": { no: "Ordresammendrag", en: "Order summary" },
+  "cart.noItems": { no: "Ingen artikler ennå.", en: "No items yet." },
+  "cart.itemsInCart": {
+    no: "{count} artikler i handlevognen.",
+    en: "{count} items in your cart.",
+  },
+  "cart.freeShippingEarned": { no: "Du har fri frakt! 🎉", en: "You've got free shipping! 🎉" },
+  "cart.calculatedAtCheckout": {
+    no: "Beregnes ved kassen",
+    en: "Calculated at checkout",
+  },
+  "cart.total": { no: "Total", en: "Total" },
+  "cart.openReturn": { no: "30 dager åpent kjøp", en: "30-day open return" },
+  "cart.securePayment": { no: "Sikker betaling", en: "Secure payment" },
+  "cart.priceSeeProduct": { no: "Pris: Se produkt", en: "Price: See product" },
+  "cart.decreaseQty": { no: "Reduser antall", en: "Decrease quantity" },
+  "cart.increaseQty": { no: "Øk antall", en: "Increase quantity" },
   "cart.startShopping": { no: "Begynn å handle", en: "Start shopping" },
   "cart.subtotal": { no: "Delsum", en: "Subtotal" },
   "cart.shipping": { no: "Frakt", en: "Shipping" },
@@ -215,7 +307,25 @@ export const translations = {
 
   /* ---- About ---- */
   "about.title": { no: "Vi er Kleven", en: "We are Kleven" },
-  "about.since": { no: "Ut på tur, aldri sur — siden 1985.", en: "Out on a trip, never grumpy — since 1985." },
+  "about.since": { no: "Ut på tur, aldri sur — siden 1966.", en: "Out on a trip, never grumpy — since 1966." },
+  "about.heroLocation": { no: "Hammerfest · 70°N", en: "Hammerfest · 70°N" },
+  "about.address": { no: "Brenneriveien 2 · 9601 Hammerfest", en: "Brenneriveien 2 · 9601 Hammerfest" },
+  "about.p1": {
+    no: "Kleven Jakt & Fiske startet som en liten butikk i Lyngdal i 1985 — et sted hvor lokale jegere og fiskere kunne finne utstyr som faktisk fungerte i norsk natur. Det begynte med enighet om én ting: dersom vi ikke ville bruke det selv, skulle vi ikke selge det.",
+    en: "Kleven Jakt & Fiske started as a small shop in Lyngdal in 1985 — a place where local hunters and anglers could find gear that actually worked in Norwegian nature. It began with one simple rule: if we wouldn't use it ourselves, we wouldn't sell it.",
+  },
+  "about.p2": {
+    no: "Førti år senere er vi fortsatt den samme butikken, men vi har vokst. Vårt utvalg spenner nå fra presisjonsvåpen og optikk til fluefiskeutstyr, kniver, telt og bekledning fra de beste skandinaviske og internasjonale merkevareene. Vi er stolte av å være autoriserte forhandlere for merker som Sauer, Zeiss, Helle, Fjellreven, Bergans og Harkila.",
+    en: "Forty years later we are still the same shop, but we have grown. Our range now spans precision rifles and optics to fly-fishing gear, knives, tents and clothing from the best Scandinavian and international brands. We are proud to be authorized dealers for names like Sauer, Zeiss, Helle, Fjällräven, Bergans and Harkila.",
+  },
+  "about.p3": {
+    no: "Det som ikke har endret seg er folka våre. Teamet består av erfarne jegere, fiskere og friluftsfolk som kjenner utstyret innvendig — fordi de selv bruker det hver eneste sesong. Hos oss får du råd fra mennesker som faktisk har vært ute i skogen, på fjellet eller på havet.",
+    en: "What has not changed is our people. The team is made up of experienced hunters, anglers and outdoor people who know the gear inside out — because they use it themselves every season. With us, you get advice from people who have actually been out in the woods, in the mountains or at sea.",
+  },
+  "about.p4": {
+    no: "For oss handler jakt og fiske om mer enn utstyr. Det handler om tradisjoner som føres videre — fra den som viser en ung gutt sin første fisk, til felles opplevelser rundt leirbålet. Derfor selger vi bare utstyr vi selv ville delt med våre egne barn.",
+    en: "For us, hunting and fishing are about more than gear. They are about traditions being passed on — from the person showing a young child their first fish to shared experiences around the campfire. That is why we only sell gear we would share with our own children.",
+  },
   "about.aboutUs": { no: "Om Oss", en: "About Us" },
   "about.yearsBadge": {
     no: "40+ År på fjellet og i skogen",
@@ -225,6 +335,10 @@ export const translations = {
     no: "— Teamet hos Kleven Jakt & Fiske",
     en: "— The team at Kleven Hunting & Fishing",
   },
+  "about.statsYears": { no: "År i bransjen", en: "Years in business" },
+  "about.statsItems": { no: "Artikler på lager", en: "Articles in stock" },
+  "about.statsBrands": { no: "Merkevarer", en: "Brands" },
+  "about.statsCustomers": { no: "Norske kunder", en: "Norwegian customers" },
   "about.cta": { no: "Våre Kategorier", en: "Our Categories" },
 
   /* ---- Categories ---- */
@@ -266,6 +380,8 @@ export const translations = {
     no: "Fraktfritt i Norge på ordre over 2 500,- (gjelder ikke pulker og våpenskap)",
     en: "Free shipping in Norway on orders over 2,500 (does not apply to sleds and gun cabinets)",
   },
+  "footer.country": { no: "Norge", en: "Norway" },
+  "footer.chipSubtitle": { no: "Jakt · Fiske · Friluftsliv", en: "Hunt · Fish · Outdoors" },
   "footer.copyright": {
     no: "© 2026 Kleven Hunting & Fishing AS. Organisasjonsnr. 962 398 251.",
     en: "© 2026 Kleven Hunting & Fishing AS. Org. no. 962 398 251.",
@@ -275,6 +391,10 @@ export const translations = {
   "common.loading": { no: "Laster…", en: "Loading…" },
   "common.error": { no: "Noe gikk galt", en: "Something went wrong" },
   "common.retry": { no: "Prøv igjen", en: "Try again" },
+  "common.open": { no: "Åpne", en: "Open" },
+  "common.add": { no: "Legg", en: "Add" },
+  "common.toCart": { no: "i handlevognen", en: "to cart" },
+  "common.off": { no: "rabatt", en: "off" },
   "common.inStock": { no: "på lager", en: "in stock" },
 
   /* ---- Product tags ---- */

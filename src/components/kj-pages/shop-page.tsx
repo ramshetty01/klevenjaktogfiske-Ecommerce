@@ -44,6 +44,24 @@ const PER_PAGE = 24;
 const MAX_PRICE = 65000;
 /** Tag values we surface as filter checkboxes — even if 0 count. */
 const KNOWN_TAGS = ["Bestselger", "Nyhet", "Tilbud", "Begrenset"] as const;
+const SUBCATEGORY_LABELS: Record<string, { no: string; en: string }> = {
+  Jerven: { no: "Jerven", en: "Jerven" },
+  "Kart og Kompass": { no: "Kart og Kompass", en: "Map and Compass" },
+  Kikkert: { no: "Kikkert", en: "Optics" },
+  "Kjekt Å Ha": { no: "Kjekt Å Ha", en: "Nice to Have" },
+  Kjøkkenutstyr: { no: "Kjøkkenutstyr", en: "Kitchen Gear" },
+  Kniv: { no: "Kniv", en: "Knife" },
+  Kroppsvarmer: { no: "Kroppsvarmer", en: "Body Warmer" },
+  Lys: { no: "Lys", en: "Light" },
+  "Mot Myggen": { no: "Mot Myggen", en: "Mosquito Repellent" },
+  Ovner: { no: "Ovner", en: "Stoves" },
+  "Pop Up Telt": { no: "Pop Up Telt", en: "Pop-up Tent" },
+  "På Vannet": { no: "På Vannet", en: "On the Water" },
+};
+
+function labelForSubcategory(name: string, lang: "no" | "en"): string {
+  return SUBCATEGORY_LABELS[name]?.[lang] ?? name;
+}
 
 type CollapsibleKey =
   | "category"
@@ -395,7 +413,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
   if (activeSubcategory !== "alle" && activeSubcategoryObj) {
     activeChips.push({
       key: `sub-${activeSubcategory}`,
-      label: activeSubcategoryObj.name,
+      label: labelForSubcategory(activeSubcategoryObj.name, lang),
       onRemove: () => setActiveSubcategory("alle"),
     });
   }
@@ -455,7 +473,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
     <div className="flex flex-col">
       {/* Category */}
       <CollapsibleSection
-        title={lang === "no" ? "Kategori" : "Category"}
+        title={t("shop.category")}
         isOpen={!collapsed.category}
         onToggle={() => toggleSection("category")}
       >
@@ -495,7 +513,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                 .map((sub) => (
                   <FilterRadio
                     key={sub.id}
-                    label={`${sub.name} (${sub.count})`}
+                    label={`${labelForSubcategory(sub.name, lang)} (${sub.count})`}
                     checked={activeSubcategory === sub.slug}
                     onChange={() => setActiveSubcategory(sub.slug)}
                   />
@@ -532,10 +550,8 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               className="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#f8a530] hover:underline"
             >
               {showAllBrands
-                ? lang === "no"
-                  ? "Vis mindre"
-                  : "Show less"
-                : `${lang === "no" ? "Vis alle" : "Show all"} (${brands.length})`}
+                ? t("shop.showLess")
+                : `${t("shop.showAll")} (${brands.length})`}
             </button>
           )}
         </div>
@@ -567,9 +583,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           </div>
           {facets && (
             <p className="mt-2 text-[10px] text-[#858585]">
-              {lang === "no"
-                ? `Katalog: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`
-                : `Catalog: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`}
+              {`${t("shop.catalog")}: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`}
             </p>
           )}
         </div>
@@ -661,7 +675,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           </h1>
           {activeSubcategoryObj && (
             <p className="mt-2 text-[16px] font-medium uppercase tracking-[0.1em] text-[#0056a7]">
-              {activeSubcategoryObj.name}
+              {labelForSubcategory(activeSubcategoryObj.name, lang)}
             </p>
           )}
 
@@ -700,7 +714,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                   .map((sub) => (
                     <SubcategoryPill
                       key={sub.id}
-                      label={sub.name}
+                      label={labelForSubcategory(sub.name, lang)}
                       active={activeSubcategory === sub.slug}
                       onClick={() => setActiveSubcategory(sub.slug)}
                     />
@@ -725,7 +739,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               )}
               {activeSubcategoryObj && (
                 <>
-                  {" "}→ <span className="font-semibold text-[#0056a7]">{activeSubcategoryObj.name}</span>
+                  {" "}→ <span className="font-semibold text-[#0056a7]">{labelForSubcategory(activeSubcategoryObj.name, lang)}</span>
                 </>
               )}
             </div>

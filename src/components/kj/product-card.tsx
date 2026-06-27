@@ -62,7 +62,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
     if (!inStock) {
       toast({
         title: t("shop.outOfStock"),
-        description: product.stockLabel ?? (lang === "no" ? "Produktet er ikke tilgjengelig akkurat nå." : "Product is currently unavailable."),
+        description: product.stockLabel ?? t("product.unavailable"),
         variant: "destructive",
       });
       return;
@@ -70,13 +70,13 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
     try {
       await add(product, 1);
       toast({
-        title: lang === "no" ? "Lagt i handlevognen" : "Added to cart",
-        description: lang === "no" ? `${product.name} er nå i handlevognen.` : `${product.name} is now in your cart.`,
+        title: t("product.addedToCart"),
+        description: t("product.addedToCartDesc", { qty: 1, name: product.name }),
       });
     } catch {
       toast({
-        title: lang === "no" ? "Kunne ikke legge til" : "Could not add",
-        description: lang === "no" ? "Prøv igjen senere." : "Try again later.",
+        title: t("common.error"),
+        description: t("product.tryAgain"),
         variant: "destructive",
       });
     }
@@ -112,7 +112,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       }}
       tabIndex={0}
       role="link"
-      aria-label={`${lang === "no" ? "Åpne" : "Open"} ${product.name}`}
+      aria-label={`${t("common.open")} ${product.name}`}
       className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#428701]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#FFFFFF]">
@@ -139,7 +139,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {discount > 0 && (
           <span
             className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#f8a530] text-[11px] font-bold text-white shadow-md"
-            aria-label={`${discount}% ${lang === "no" ? "rabatt" : "off"}`}
+            aria-label={`${discount}% ${t("common.off")}`}
           >
             -{discount}%
           </span>
@@ -148,7 +148,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Add-to-cart button (appears on hover) */}
         <button
           onClick={handleAdd}
-          aria-label={`${lang === "no" ? "Legg" : "Add"} ${product.name} ${lang === "no" ? "i handlevognen" : "to cart"}`}
+          aria-label={`${t("common.add")} ${product.name} ${t("common.toCart")}`}
           className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#212121] opacity-0 shadow-md transition-all duration-300 hover:bg-[#428701] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
         >
           <Plus size={14} strokeWidth={2.2} />

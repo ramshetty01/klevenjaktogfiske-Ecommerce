@@ -37,7 +37,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 transition={{ duration: 0.5 }}
                 className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#428701]"
               >
-                Hammerfest · 70°N
+                {t("about.heroLocation")}
               </motion.p>
               <motion.h2
                 initial={{ opacity: 0, y: 12 }}
@@ -46,7 +46,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 className="mt-2 text-[clamp(1.5rem,3vw,2rem)] font-bold text-white"
                 style={{ fontFamily: "var(--font-manrope), sans-serif" }}
               >
-                Brenneriveien 2 · 9601 Hammerfest
+                {t("about.address")}
               </motion.h2>
             </div>
           </div>
@@ -94,32 +94,16 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           {/* Text */}
           <div className="max-w-[680px]">
             <p className="text-[18px] font-light leading-[1.85] text-[#212121]">
-              Kleven Jakt &amp; Fiske startet som en liten butikk i Lyngdal i
-              1985 — et sted hvor lokale jegere og fiskere kunne finne utstyr
-              som faktisk fungerte i norsk natur. Det begynte med enighet om én
-              ting: dersom vi ikke ville bruke det selv, skulle vi ikke selge
-              det.
+              {t("about.p1")}
             </p>
             <p className="mt-6 text-[18px] font-light leading-[1.85] text-[#212121]">
-              Førti år senere er vi fortsatt den samme butikken, men vi har
-              vokst. Vårt utvalg spenner nå fra presisjonsvåpen og optikk til
-              fluefiskeutstyr, kniver, telt og bekledning fra de beste
-              skandinaviske og internasjonale merkevareene. Vi er stolte av å
-              være autoriserte forhandlere for merker som Sauer, Zeiss, Helle,
-              Fjellreven, Bergans og Harkila.
+              {t("about.p2")}
             </p>
             <p className="mt-6 text-[18px] font-light leading-[1.85] text-[#212121]">
-              Det som ikke har endret seg er folka våre. Teamet består av
-              erfarne jegere, fiskere og friluftsfolk som kjenner utstyret
-              innvendig — fordi de selv bruker det hver eneste sesong. Hos oss
-              får du råd fra mennesker som faktisk har vært ute i skogen, på
-              fjellet eller på havet.
+              {t("about.p3")}
             </p>
             <p className="mt-6 text-[18px] font-light leading-[1.85] text-[#212121]">
-              For oss handler jakt og fiske om mer enn utstyr. Det handler om
-              tradisjoner som føres videre — fra den som viser en ung gutt sin
-              første fisk, til felles opplevelser rundt leirbålet. Derfor
-              selger vi bare utstyr vi selv ville delt med våre egne barn.
+              {t("about.p4")}
             </p>
 
             {/* Signature */}
@@ -148,10 +132,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         {/* Stats row */}
         <div className="mt-24 grid grid-cols-2 gap-8 border-t border-black/10 pt-12 md:grid-cols-4">
           {[
-            { v: "40+", l: lang === "no" ? "År i bransjen" : "Years in business" },
-            { v: "4 300+", l: lang === "no" ? "Artikler på lager" : "Articles in stock" },
-            { v: "400+", l: lang === "no" ? "Merkevarer" : "Brands" },
-            { v: "30k+", l: lang === "no" ? "Norske kunder" : "Norwegian customers" },
+            { v: "40+", l: t("about.statsYears") },
+            { v: "4 300+", l: t("about.statsItems") },
+            { v: "400+", l: t("about.statsBrands") },
+            { v: "30k+", l: t("about.statsCustomers") },
           ].map((s) => (
             <div key={s.l}>
               <div className="text-[clamp(2rem,3vw,2.75rem)] font-bold text-[#212121]">

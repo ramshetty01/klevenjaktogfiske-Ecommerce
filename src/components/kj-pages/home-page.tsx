@@ -1,44 +1,35 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Footprints, Tag, Gift, Bug, Sparkles, Award, Truck, MapPin, Headphones } from "lucide-react";
+import { Newsreader } from "next/font/google";
+import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Truck, MapPin, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
-import { ShippingBanner } from "../kj/shipping-banner";
 import { ProductCard, ProductCardSkeleton } from "../kj/product-card";
 import { useLang } from "@/lib/kj/lang-store";
-import type { Product, CategoryNode, BrandNode } from "@/lib/kj/types";
+import type { Product, BrandNode } from "@/lib/kj/types";
 
 interface HomePageProps {
   onNavigate: (page: PageId, ctx?: NavContext) => void;
 }
 
-const CATEGORY_TILES = [
-  { name: "Jakt", icon: Crosshair, slug: "jakt", color: "#0056a7" },
-  { name: "Fiske", icon: Fish, slug: "fiske", color: "#1f6f8b" },
-  { name: "Camping", icon: Tent, slug: "camping", color: "#f8a530" },
-  { name: "Bekledning", icon: Shirt, slug: "klær", color: "#428701" },
-  { name: "Vintersport", icon: Snowflake, slug: "vintersport", color: "#5b6e8a" },
-  { name: "Husdyr", icon: PawPrint, slug: "kjæledyr", color: "#a06a3f" },
-  { name: "Fottøy", icon: Footprints, slug: "fottøy1", color: "#5d4037" },
-  { name: "Outlet", icon: Tag, slug: "outlet", color: "#8a5a44" },
-  { name: "Gavekort", icon: Gift, slug: "gift-card", color: "#c79a3f" },
-  { name: "Kleven Fluer", icon: Bug, slug: "kleven-fluer", color: "#0056a7" },
-];
+const heroEditorial = Newsreader({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
 
 export function HomePage({ onNavigate }: HomePageProps) {
   const [featured, setFeatured] = useState<Product[] | null>(null);
-  const [categories, setCategories] = useState<CategoryNode[]>([]);
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const [brands, setBrands] = useState<BrandNode[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [featRes, catRes, brandRes] = await Promise.all([
+        const [featRes, brandRes] = await Promise.all([
           fetch("/api/products/featured", { cache: "no-store" }),
-          fetch("/api/categories", { cache: "no-store" }),
           fetch("/api/brands", { cache: "no-store" }),
         ]);
         if (cancelled) return;
@@ -47,10 +38,6 @@ export function HomePage({ onNavigate }: HomePageProps) {
           setFeatured(data.products ?? []);
         } else {
           setFeatured([]);
-        }
-        if (catRes.ok) {
-          const data = await catRes.json();
-          setCategories(data.categories ?? []);
         }
         if (brandRes.ok) {
           const data = await brandRes.json();
@@ -72,106 +59,101 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
   return (
     <div className="kj-page-enter">
-      {/* ===== HERO — full-bleed fishing photo with dark overlay ===== */}
-      <section className="relative w-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* ===== HERO ===== */}
+      <section className="relative min-h-[500px] w-full overflow-hidden lg:h-[512px]">
         <img
           src="/images/hero-fishing.png"
           alt="Mann fisker i innsjø ved solnedgang med fjell i bakgrunnen"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* Dark overlay for text readability */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(31,45,58,0.5) 0%, rgba(31,45,58,0.6) 50%, rgba(31,45,58,0.8) 100%)",
+              "linear-gradient(90deg, rgba(3,21,23,0.82) 0%, rgba(3,21,23,0.6) 34%, rgba(3,21,23,0.12) 67%, rgba(3,21,23,0.02) 100%), linear-gradient(0deg, rgba(3,21,23,0.35) 0%, transparent 42%)",
           }}
         />
 
-        <div className="relative mx-auto flex min-h-[600px] max-w-[1280px] flex-col justify-center px-6 py-20 lg:px-10 lg:py-28">
-          {/* Hero text */}
+        <div className="relative flex min-h-[500px] items-center px-5 py-16 lg:h-full lg:min-h-0 lg:items-start lg:pb-0 lg:pl-[70px] lg:pt-[78px]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="max-w-xl"
+            className="max-w-[590px]"
           >
             <h1
-              className="text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-white"
-              style={{ fontFamily: "var(--font-manrope), sans-serif" }}
+              className={`${heroEditorial.className} text-[clamp(3.1rem,6.2vw,5.5rem)] font-medium leading-[0.96] tracking-[-0.035em]`}
+              style={{ color: "color-mix(in oklab, var(--color-white) 80%, transparent)" }}
             >
               {t("home.heroLine1")}
               <br />
-              <span className="text-[#428701]">{t("home.heroLine2")}</span>
+              {t("home.heroLine2")}
             </h1>
 
-            <p className="mt-5 max-w-md text-[18px] font-light leading-relaxed text-white/85">
+            <p className="mt-6 max-w-[480px] text-[18px] font-light leading-[1.55] text-white/80">
               {t("home.heroSub")}
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-7 grid w-full max-w-[420px] grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               <button
                 onClick={() => onNavigate("shop")}
-                className="group inline-flex items-center gap-3 rounded-full bg-[#428701] px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-[#369400]"
+                className="group inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#287e06] px-6 text-[16px] font-medium whitespace-nowrap text-white shadow-sm transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#206705] hover:shadow-lg active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 {t("home.shopNow")}
-                <ArrowRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-1" />
+                <ArrowRight size={18} strokeWidth={1.5} className="transition-transform group-hover:translate-x-1" />
               </button>
               <button
                 onClick={() => onNavigate("categories")}
-                className="inline-flex items-center gap-3 rounded-full border-2 border-white/60 bg-white/5 px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-[#212121]"
+                className="inline-flex h-14 w-full items-center justify-center rounded-full border border-white/70 bg-[#071b1b]/20 px-6 text-[16px] font-medium whitespace-nowrap text-white shadow-sm backdrop-blur-[3px] transition-[background-color,border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-[#287e06] hover:bg-[#287e06] hover:shadow-lg active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 {t("nav.categories")}
               </button>
             </div>
           </motion.div>
         </div>
+      </section>
 
-        {/* 3 info cards at bottom of hero */}
-        <div className="relative mx-auto max-w-[1280px] px-6 pb-8 lg:px-10">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              { icon: Truck, title: lang === "no" ? "Fraktfritt over 2500,-" : "Free shipping over 2500,-", sub: lang === "no" ? "Rask levering i hele Norge" : "Fast delivery across Norway" },
-              { icon: MapPin, title: lang === "no" ? "Hammerfest butikk" : "Hammerfest store", sub: lang === "no" ? "Se åpningstider og kart" : "See opening hours and map" },
-              { icon: Headphones, title: lang === "no" ? "Kundeservice" : "Customer service", sub: lang === "no" ? "Vi er her for å hjelpe deg" : "We are here to help you" },
-            ].map((card, i) => {
-              const Icon = card.icon;
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                  className="flex items-center gap-3 rounded-lg border border-white/10 bg-[#212121]/80 px-5 py-4 backdrop-blur-md"
-                >
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#428701]/15 text-[#428701]">
-                    <Icon size={20} strokeWidth={1.6} />
-                  </span>
-                  <div>
-                    <p className="text-[13px] font-semibold text-white">{card.title}</p>
-                    <p className="text-[11px] font-light text-white/60">{card.sub}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+      {/* ===== SERVICE STRIP ===== */}
+      <section className="w-full bg-[#071a1a] text-white">
+          <div className="mx-auto grid max-w-[1280px] grid-cols-1 px-6 sm:grid-cols-3 lg:px-0">
+          {[
+            { icon: Truck, title: t("home.heroServiceShippingTitle"), sub: t("home.heroServiceShippingSub") },
+            { icon: MapPin, title: t("home.heroServiceStoreTitle"), sub: t("home.heroServiceStoreSub") },
+            { icon: Headphones, title: t("home.heroServiceSupportTitle"), sub: t("home.heroServiceSupportSub") },
+          ].map((card, i) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.title}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.2 + i * 0.08 }}
+                className={`flex min-h-[82px] items-center gap-5 py-5 sm:px-8 ${i > 0 ? "border-t border-white/15 sm:border-l sm:border-t-0" : ""}`}
+              >
+                <Icon size={29} strokeWidth={1.35} className="shrink-0 text-white" />
+                <div>
+                  <p className="text-[13px] font-medium leading-tight text-white">{card.title}</p>
+                  <p className="mt-1 text-[12px] font-light leading-tight text-white/65">{card.sub}</p>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ===== 6 CATEGORY CARDS WITH PHOTOS ===== */}
-      <section className="w-full bg-[#F4F4F4]">
-        <div className="mx-auto max-w-[1280px] px-6 py-12 lg:px-10 lg:py-16">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      {/* ===== CATEGORY CARDS ===== */}
+      <section className="w-full bg-[#f7f6f3]">
+        <div className="mx-auto max-w-[1360px] px-4 py-6 sm:px-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6 md:gap-[10px]">
             {[
-              { name: "Jakt", slug: "jakt", img: "https://sfile.chatglm.cn/images-ppt/557ff66ae96f.jpeg" },
-              { name: "Fiske", slug: "fiske", img: "https://sfile.chatglm.cn/images-ppt/0ba48bfd515b.jpg" },
-              { name: "Camping", slug: "camping", img: "https://sfile.chatglm.cn/images-ppt/2d30fbeac6e4.jpg" },
-              { name: lang === "no" ? "Vintersport" : "Winter Sports", slug: "vintersport", img: "https://sfile.chatglm.cn/images-ppt/e104da61ebf1.jpg" },
-              { name: lang === "no" ? "Klær" : "Clothing", slug: "klær", img: "https://sfile.chatglm.cn/images-ppt/ee5bb540d2bb.jpg" },
-              { name: lang === "no" ? "Hund" : "Dog", slug: "kjæledyr", img: "https://sfile.chatglm.cn/images-ppt/d0d2acd08093.jpg" },
+              { name: t("home.catHunting"), slug: "jakt", icon: Crosshair, position: "3.45% 87.53%" },
+              { name: t("home.catFishing"), slug: "fiske", icon: Fish, position: "21.93% 87.53%" },
+              { name: t("home.catCamping"), slug: "camping", icon: Tent, position: "40.64% 87.53%" },
+              { name: t("home.catWinter"), slug: "vintersport", icon: Snowflake, position: "59.28% 87.53%" },
+              { name: t("home.catClothing"), slug: "klær", icon: Shirt, position: "77.84% 87.53%" },
+              { name: t("home.catDog"), slug: "kjæledyr", icon: PawPrint, position: "96.47% 87.53%" },
             ].map((cat, i) => {
-              const catData = categories.find((x) => x.slug === cat.slug);
+              const Icon = cat.icon;
               return (
                 <motion.button
                   key={cat.slug}
@@ -180,36 +162,27 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}
                   onClick={() => onNavigate("shop", { shopFilters: { category: cat.slug } })}
-                  className="group relative flex flex-col items-start overflow-hidden rounded-[10px] border border-black/5 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(31,45,58,0.15)]"
+                  className="group flex min-w-0 flex-col overflow-hidden border border-[#dddcd7] bg-[#f7f6f3] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(7,26,26,0.13)]"
                 >
-                  {/* Image */}
-                  <div className="relative aspect-[4/5] w-full overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={cat.img}
-                      alt={cat.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                    />
-                    {/* Gradient overlay */}
+                  <div className="aspect-[1.08/1] w-full overflow-hidden bg-[#d9d9d6]">
                     <div
-                      className="absolute inset-0"
-                      style={{ background: "linear-gradient(to top, rgba(31,45,58,0.85) 0%, rgba(31,45,58,0.2) 50%, transparent 100%)" }}
+                      role="img"
+                      aria-label={cat.name}
+                      className="h-full w-full bg-no-repeat transition-transform duration-500 group-hover:scale-[1.035]"
+                      style={{
+                        backgroundImage: "url('/images/category-reference.png')",
+                        backgroundSize: "662.1% 478.5%",
+                        backgroundPosition: cat.position,
+                      }}
                     />
                   </div>
-                  {/* Label */}
-                  <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-3">
-                    <span className="text-[13px] font-bold uppercase tracking-[0.06em] text-white">
+                  <div className="flex min-h-[72px] w-full items-center gap-3 px-3 text-[#151c1b]">
+                    <Icon size={25} strokeWidth={1.2} className="shrink-0" />
+                    <span className="min-w-0 flex-1 text-[11px] font-medium uppercase tracking-[0.07em]">
                       {cat.name}
                     </span>
-                    <ArrowRight size={14} className="text-white/80 transition-transform duration-300 group-hover:translate-x-0.5" />
+                    <ArrowRight size={13} strokeWidth={1.4} className="shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
-                  {/* Count badge */}
-                  {catData && (
-                    <span className="absolute right-2 top-2 rounded-full bg-[#428701] px-2 py-0.5 text-[9px] font-bold text-[#212121]">
-                      {catData.count}
-                    </span>
-                  )}
                 </motion.button>
               );
             })}
@@ -244,7 +217,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             {featured === null
               ? Array.from({ length: 20 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : featured.length === 0
-                ? <p className="col-span-full py-12 text-center text-[14px] text-[#858585]">{lang === "no" ? "Ingen produkter tilgjengelig." : "No products available."}</p>
+                ? <p className="col-span-full py-12 text-center text-[14px] text-[#858585]">{t("home.noProducts")}</p>
                 : featured.slice(0, 20).map((p) => (
                   <ProductCard
                     key={p.id}
@@ -270,9 +243,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {t("home.brandsTitle")}
             </h2>
             <p className="mt-4 text-[15px] font-light leading-relaxed text-[#858585]">
-              {lang === "no"
-                ? "Vi er autoriserte forhandlere for over 400 merkevarer — fra Sauer og Zeiss til Helle, Fjällräven og Bergans."
-                : "We are authorized dealers for over 400 brands — from Sauer and Zeiss to Helle, Fjällräven and Bergans."}
+              {t("home.brandsCopy")}
             </p>
           </div>
 
@@ -315,9 +286,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             {[
               {
                 title: t("home.promiseQuality"),
-                body: lang === "no"
-                  ? "Håndplukket sortiment fra merkevarer vi selv bruker. Vi selger bare utstyr vi ville delt med våre egne barn."
-                  : "Hand-picked assortment from brands we use ourselves. We only sell gear we'd share with our own kids.",
+                body: t("home.promiseQualityBody"),
                 icon: "✓",
               },
               {
@@ -327,9 +296,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               },
               {
                 title: t("home.promiseLocal"),
-                body: lang === "no"
-                  ? "Ekspertene våre kjenner utstyret innvendig — fordi de bruker det hver sesong. Spør oss gjerne!"
-                  : "Our experts know the gear inside out — because they use it every season. Just ask us!",
+                body: t("home.promiseLocalBody"),
                 icon: "★",
               },
             ].map((item) => (

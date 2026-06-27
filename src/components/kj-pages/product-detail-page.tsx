@@ -93,8 +93,8 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     try {
       await add(product, qty);
       toast({
-        title: lang === "no" ? "Lagt i handlevognen" : "Added to cart",
-        description: `${qty} × ${product.name} ${lang === "no" ? "er nå i handlevognen." : "is now in your cart."}`,
+        title: t("product.addedToCart"),
+        description: t("product.addedToCartDesc", { qty, name: product.name }),
       });
     } catch {
       toast({
@@ -110,8 +110,8 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     if (!product) return;
     if (!reviewForm.authorName.trim() || !reviewForm.title.trim() || !reviewForm.body.trim()) {
       toast({
-        title: "Mangler informasjon",
-        description: "Vennligst fyll ut alle felt.",
+        title: t("product.missingInfoTitle"),
+        description: t("product.missingInfoDesc"),
         variant: "destructive",
       });
       return;
@@ -177,7 +177,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
     return (
       <div className="kj-page-enter flex min-h-[60vh] flex-col items-center justify-center bg-white px-6">
         <p className="text-[20px] font-semibold text-[#212121]">
-          {error ?? "Produktet ble ikke funnet"}
+          {error ?? t("product.notFound")}
         </p>
         <Button
           onClick={() => onNavigate("shop")}
@@ -225,11 +225,11 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
       <div className="mx-auto max-w-[1280px] px-6 pt-6 lg:px-10">
         <nav className="flex items-center gap-2 text-[12px] font-light text-[#858585]">
           <button onClick={() => onNavigate("home")} className="hover:text-[#212121]">
-            Hjem
+            {t("product.backHome")}
           </button>
           <ChevronLeft size={12} className="rotate-180" />
           <button onClick={() => onNavigate("shop")} className="hover:text-[#212121]">
-            Butikk
+            {t("product.backShop")}
           </button>
           {product.category && (
             <>
@@ -378,7 +378,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   ))}
                 </div>
                 <span className="font-semibold text-[#212121]">{product.rating.toFixed(1)}</span>
-                <span className="text-[#858585]">({product.reviewCount} {lang === "no" ? "anmeldelser" : "reviews"})</span>
+                <span className="text-[#858585]">({t("product.reviewCount", { count: product.reviewCount })})</span>
               </div>
             )}
 
@@ -409,7 +409,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               )}
               {discount > 0 && (
                 <span className="rounded-full bg-[#f8a530] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-white">
-                  Spar {discount}%
+                  {t("product.savePercent", { discount })}
                 </span>
               )}
             </div>
@@ -446,7 +446,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <div className="flex items-center rounded-full border border-[#d0d5d2] bg-white">
                 <button
-                  aria-label={lang === "no" ? "Reduser antall" : "Decrease quantity"}
+                  aria-label={t("product.decreaseQty")}
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                   className="flex h-11 w-11 items-center justify-center rounded-full text-[#212121] hover:bg-[#F4F4F4]"
                 >
@@ -456,7 +456,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   {qty}
                 </span>
                 <button
-                  aria-label={lang === "no" ? "Øk antall" : "Increase quantity"}
+                  aria-label={t("product.increaseQty")}
                   onClick={() => setQty((q) => Math.min(99, q + 1))}
                   className="flex h-11 w-11 items-center justify-center rounded-full text-[#212121] hover:bg-[#F4F4F4]"
                 >
@@ -552,11 +552,11 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
       {/* Reviews section */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#d0d5d2] pb-4">
-            <div>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
-                {lang === "no" ? "Kundeanmeldelser" : "Customer Reviews"}
-              </p>
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#d0d5d2] pb-4">
+              <div>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
+                {t("product.noReviewsTitle")}
+                </p>
               <h2
                 className="mt-1 text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.01em] text-[#212121]"
                 style={{ fontFamily: "var(--font-manrope), sans-serif" }}
@@ -579,7 +579,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                     ))}
                   </div>
                   <span className="font-semibold text-[#212121]">
-                    {product.rating.toFixed(1)} {lang === "no" ? "av 5" : "out of 5"}
+                    {product.rating.toFixed(1)} {t("product.outOf5")}
                   </span>
                 </div>
               )}
@@ -607,7 +607,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   <Input
                     value={reviewForm.authorName}
                     onChange={(e) => setReviewForm({ ...reviewForm, authorName: e.target.value })}
-                    placeholder={lang === "no" ? "Ditt navn" : "Your name"}
+                    placeholder={t("product.placeholderName")}
                     className="bg-white"
                   />
                 </div>
@@ -621,7 +621,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                         key={n}
                         type="button"
                         onClick={() => setReviewForm({ ...reviewForm, rating: n })}
-                        aria-label={`${n} ${lang === "no" ? "stjerner" : "stars"}`}
+                        aria-label={`${n} ${t("product.stars")}`}
                       >
                         <Star
                           size={28}
@@ -643,7 +643,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 <Input
                   value={reviewForm.title}
                   onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
-                  placeholder={lang === "no" ? "Kort oppsummering" : "Brief summary"}
+                  placeholder={t("product.placeholderTitle")}
                   className="bg-white"
                 />
               </div>
@@ -654,7 +654,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                 <Textarea
                   value={reviewForm.body}
                   onChange={(e) => setReviewForm({ ...reviewForm, body: e.target.value })}
-                  placeholder={lang === "no" ? "Del din erfaring med produktet…" : "Share your experience with this product…"}
+                  placeholder={t("product.placeholderReview")}
                   rows={4}
                   className="bg-white"
                 />
@@ -665,7 +665,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                   disabled={submittingReview}
                   className="rounded-full bg-[#212121] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.1em] hover:bg-[#0056a7] disabled:opacity-50"
                 >
-                  {submittingReview ? (lang === "no" ? "Sender…" : "Sending…") : (lang === "no" ? "Send anmeldelse" : "Submit review")}
+                  {submittingReview ? t("product.sending") : t("product.submitReview")}
                 </Button>
                 <Button
                   type="button"

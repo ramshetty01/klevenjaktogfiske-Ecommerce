@@ -9,20 +9,20 @@ interface FooterProps {
 }
 
 export function Footer({ onNavigate }: FooterProps) {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const go = (page: PageId, ctx?: NavContext) => {
     onNavigate(page, ctx);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const categoryLinks: { label: string; slug?: string }[] = [
-    { label: lang === "no" ? "Jaktutstyr" : "Hunting Gear", slug: "jakt" },
-    { label: lang === "no" ? "Fiskeutstyr" : "Fishing Gear", slug: "fiske" },
-    { label: lang === "no" ? "Camping & Friluftsliv" : "Camping & Outdoors", slug: "camping" },
-    { label: lang === "no" ? "Bekledning" : "Clothing", slug: "klær" },
-    { label: lang === "no" ? "Vintersport" : "Winter Sports", slug: "vintersport" },
-    { label: lang === "no" ? "Husdyr" : "Pets", slug: "kjæledyr" },
-    { label: lang === "no" ? "Fottøy" : "Footwear", slug: "fottøy1" },
+    { label: t("home.catHunting"), slug: "jakt" },
+    { label: t("home.catFishing"), slug: "fiske" },
+    { label: t("home.catCamping"), slug: "camping" },
+    { label: t("home.catClothing"), slug: "klær" },
+    { label: t("home.catWinter"), slug: "vintersport" },
+    { label: t("home.catDog"), slug: "kjæledyr" },
+    { label: t("home.catFootwear"), slug: "fottøy1" },
     { label: "Outlet", slug: "outlet" },
   ];
 
@@ -57,7 +57,6 @@ export function Footer({ onNavigate }: FooterProps) {
           <div className="flex flex-col">
             {/* Brand */}
             <div className="mb-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/kleven-logo.png"
                 alt="Kleven Jakt & Fiske"
@@ -95,7 +94,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <span>
                   Brenneriveien 2
                   <br />
-                  9601 Hammerfest, {lang === "no" ? "Norge" : "Norway"}
+                  9601 Hammerfest, {t("footer.country")}
                 </span>
               </span>
             </div>
@@ -209,7 +208,7 @@ export function CategoriesChip({
 }: {
   onClick?: () => void;
 }) {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   return (
     <button
       onClick={onClick}
@@ -220,7 +219,7 @@ export function CategoriesChip({
           {t("nav.categories")}
         </p>
         <p className="text-[11px] text-[#858585]">
-          {lang === "no" ? "Jakt · Fiske · Friluftsliv" : "Hunt · Fish · Outdoors"}
+          {t("footer.chipSubtitle")}
         </p>
       </div>
       <ArrowRight
