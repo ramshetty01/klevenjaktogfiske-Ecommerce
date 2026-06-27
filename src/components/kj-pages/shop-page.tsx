@@ -452,7 +452,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
   // ===== Filter panel (shared between desktop sidebar and mobile sheet) =====
   const FiltersPanel = (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col">
       {/* Category */}
       <CollapsibleSection
         title={lang === "no" ? "Kategori" : "Category"}
@@ -808,22 +808,31 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
           <div className="flex gap-8">
             {/* Sidebar — desktop only, sticky + scrollable */}
-            <aside className="hidden w-[260px] shrink-0 lg:block">
-              <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[8px] border border-black/5 bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)] kj-scroll">
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#1a1a1a]">
+            <aside className="hidden w-[280px] shrink-0 lg:block">
+              <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-lg border border-black/10 bg-white kj-scroll">
+                {/* Filter header — Decathlon style */}
+                <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
+                  <h3 className="text-[16px] font-bold text-[#1a1a1a]">
                     {t("shop.filters")}
+                    {activeFilterCount > 0 && (
+                      <span className="ml-1.5 text-[14px] font-normal text-[#8a96a1]">
+                        ({activeFilterCount})
+                      </span>
+                    )}
                   </h3>
                   {activeFilterCount > 0 && (
                     <button
                       onClick={clearFilters}
-                      className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#c75d2c] hover:underline"
+                      className="text-[13px] font-medium text-[#2d4a3e] hover:underline"
                     >
                       {t("shop.clearAll")}
                     </button>
                   )}
                 </div>
-                {FiltersPanel}
+                {/* Filter sections */}
+                <div className="px-5 py-2">
+                  {FiltersPanel}
+                </div>
               </div>
             </aside>
 
@@ -1019,12 +1028,12 @@ function FilterRadio({
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-[12px] text-[#3a4856] hover:text-[#1a1a1a]">
+    <label className="flex cursor-pointer items-center gap-2.5 py-0.5 text-[13px] text-[#3a4856] hover:text-[#1a1a1a]">
       <input
         type="radio"
         checked={checked}
         onChange={onChange}
-        className="h-3.5 w-3.5 accent-[#1a1a1a]"
+        className="h-4 w-4 accent-[#1a1a1a]"
       />
       {label}
     </label>
@@ -1046,7 +1055,7 @@ function FilterCheckbox({
 }) {
   return (
     <label
-      className={`flex items-center gap-2 text-[12px] ${
+      className={`flex items-center gap-2.5 py-0.5 text-[13px] ${
         disabled
           ? "cursor-not-allowed text-[#8a96a1]"
           : "cursor-pointer text-[#3a4856] hover:text-[#1a1a1a]"
@@ -1056,7 +1065,7 @@ function FilterCheckbox({
         checked={checked}
         onCheckedChange={() => !disabled && onChange()}
         disabled={disabled}
-        className="h-3.5 w-3.5 border-[#d4cfc1] data-[state=checked]:border-[#1a1a1a] data-[state=checked]:bg-[#1a1a1a] data-[state=checked]:text-white"
+        className="h-4 w-4 border-[#d4cfc1] data-[state=checked]:border-[#1a1a1a] data-[state=checked]:bg-[#1a1a1a] data-[state=checked]:text-white"
       />
       <span className="flex-1">{label}</span>
       {count !== undefined && (
@@ -1080,21 +1089,22 @@ function CollapsibleSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-b border-black/5 pb-4 last:border-b-0 last:pb-0">
+    <div className="border-b border-black/10 last:border-b-0">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-1 text-left text-[11px] font-semibold uppercase tracking-[0.15em] text-[#1a1a1a] transition-colors hover:text-[#2d4a3e]"
+        className="flex w-full items-center justify-between py-3 text-left text-[14px] font-medium text-[#1a1a1a] transition-colors hover:text-[#2d4a3e]"
         aria-expanded={isOpen}
       >
         {title}
-        <ChevronDown
-          size={14}
-          className={`text-[#6b7884] transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
+        <span className="flex h-5 w-5 items-center justify-center text-[#1a1a1a]">
+          {isOpen ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          )}
+        </span>
       </button>
-      {isOpen && <div className="mt-3">{children}</div>}
+      {isOpen && <div className="pb-4">{children}</div>}
     </div>
   );
 }
