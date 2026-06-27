@@ -99,7 +99,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <img
               src="/images/kleven-logo.png"
               alt="Kleven Jakt & Fiske"
-              className="h-9 w-auto"
+              className="h-12 w-auto"
             />
           </button>
 
