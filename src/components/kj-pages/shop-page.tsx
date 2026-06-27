@@ -664,9 +664,6 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               {activeSubcategoryObj.name}
             </p>
           )}
-          <p className="mt-3 max-w-xl text-[14px] font-light leading-relaxed text-[#6b7884]">
-            {t("shop.desc")}
-          </p>
 
           {/* Top filter bar — quick category pills */}
           <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-[#d4cfc1] pb-5">
