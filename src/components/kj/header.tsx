@@ -88,7 +88,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
         }`}
       >
         {/* ===== ROW 1: Brand + Search Bar + Actions ===== */}
-        <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-6 px-6 lg:px-10">
+        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6 lg:px-10">
           {/* Left: brand */}
           <button
             onClick={() => handleNav("home")}
