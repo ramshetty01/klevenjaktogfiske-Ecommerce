@@ -73,6 +73,12 @@ model Product {
   popularity     Float    @default(0)
   seasonBoost    Float    @default(0)
   margin         Float    @default(0)
+  /// Precomputed recommended score (0-100) — updated by seed script.
+  /// Lets /api/products sort "recommended" at the DB level (fast path A)
+  /// instead of fetching the entire catalog into memory (slow path B).
+  recScore       Float    @default(0)
+  /// Precomputed discount percentage (0-1). 0 when not on sale.
+  discountScore  Float    @default(0)
   /// True when product is flagged as new
   isNew          Boolean  @default(false)
   createdAt      DateTime @default(now())

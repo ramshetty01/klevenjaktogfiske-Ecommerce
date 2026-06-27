@@ -253,6 +253,28 @@ async function main() {
       else if (sales90 > 150) tag = "Bestselger";
       else if (r5 > 0.85) tag = "Tilbud"; // ~15% on sale (high margin products)
 
+      // Precompute merchandising scores so /api/products can sort at the DB
+      // level (fast path A) instead of loading the entire catalog into memory.
+      // Matches the recommendedScore() formula in src/lib/merchandising.ts.
+      const revenueProxy = sales90 * 0; // price is 0 in the catalog → revenue is 0
+      const maxRevenue = 4_000_000;
+      const revenueNorm = Math.min(revenueProxy / maxRevenue, 1);
+      let recScore =
+        revenueNorm * 30 +
+        conversionRate * 10 * 25 +
+        (stockCount > 20 ? 0.9 : Math.min(stockCount / 25, 0.9)) * 15 +
+        (popularity / 100) * 15 +
+        seasonBoost * 10 +
+        margin * 5;
+      // Inventory penalty: stock = 0 → -20, stock = 1 → -10, stock > 20 → +5
+      if (stockCount === 0) recScore -= 20;
+      else if (stockCount === 1) recScore -= 10;
+      else if (stockCount > 20) recScore += 5;
+      recScore = Math.max(0, Math.min(100, recScore));
+
+      // Discount score (0 when no originalPrice)
+      const discountScore = 0; // catalog has no prices → no discounts
+
       data.push({
         name: p.name,
         slug,
@@ -273,6 +295,8 @@ async function main() {
         popularity,
         seasonBoost,
         margin,
+        recScore,
+        discountScore,
         isNew,
         createdAt: new Date(Date.now() - Math.floor(r1 * 365) * 86400000),
         externalId: p.id,

@@ -92,7 +92,11 @@ export async function GET(req: NextRequest) {
   } as const;
 
   // ---- Path A: DB-level pagination for sort keys that map to columns ----
+  // Includes "recommended" (recScore) and "discount" (discountScore) which
+  // are precomputed at seed time for fast DB-level sorting.
   const columnSorts: Partial<Record<SortKey, Record<string, "asc" | "desc">>> = {
+    recommended: { recScore: "desc" },
+    discount: { discountScore: "desc" },
     newest: { createdAt: "desc" },
     price_asc: { price: "asc" },
     price_desc: { price: "desc" },
@@ -132,59 +136,13 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // ---- Path B: in-memory sort for "recommended" and "discount" ----
-  // Two-phase fetch: first load only the scoring columns for all matches,
-  // sort in JS, then fetch the full records (with brand/category includes)
-  // for just the slice we need. This keeps the in-memory sort fast even on
-  // the full 4k catalog.
-  const light = await db.product.findMany({
-    where,
-    select: {
-      id: true,
-      sales90: true,
-      price: true,
-      conversionRate: true,
-      stockCount: true,
-      popularity: true,
-      seasonBoost: true,
-      margin: true,
-      originalPrice: true,
-    },
-  });
-
-  const scored = light.map((p) => ({
-    id: p.id,
-    score:
-      sort === "recommended"
-        ? recommendedScore(p)
-        : discountPct(p),
-  }));
-  scored.sort((a, b) => b.score - a.score);
-
-  const totalCount = scored.length;
-  const totalPages = Math.max(1, Math.ceil(totalCount / perPage));
-  const start = (page - 1) * perPage;
-  const pageIds = scored.slice(start, start + perPage).map((s) => s.id);
-
-  // Fetch full records for just this page's IDs.
-  const pageRows = pageIds.length === 0
-    ? []
-    : await db.product.findMany({
-        where: { id: { in: pageIds } },
-        include,
-      });
-
-  // Re-order to match the score-sorted order (findMany doesn't preserve
-  // the IN-clause order).
-  const byId = new Map(pageRows.map((p) => [p.id, p]));
-  const paged = pageIds.map((id) => byId.get(id)).filter(Boolean) as typeof pageRows;
-
+  // Fallback (should never reach here — all sort keys are in columnSorts)
   return NextResponse.json({
-    products: paged,
+    products: [],
     page,
     perPage,
-    totalPages,
-    totalCount: includeCount ? totalCount : undefined,
+    totalPages: 1,
+    totalCount: 0,
     sort,
   });
 }
