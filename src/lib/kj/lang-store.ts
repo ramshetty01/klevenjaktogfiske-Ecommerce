@@ -38,6 +38,13 @@ export const useLang = create<LangState>()(
     {
       name: "kj-lang",
       storage: createJSONStorage(() => localStorage),
+      // CRITICAL: skip auto-rehydration so the first client render matches
+      // the server render (both use lang="no"). The page.tsx useEffect
+      // calls useLang.persist.rehydrate() AFTER mount, which then switches
+      // to the saved language. Without this, the client reads localStorage
+      // synchronously during store creation and renders English on first
+      // paint while the server sent Norwegian — causing hydration mismatch.
+      skipHydration: true,
       partialize: (s) => ({ lang: s.lang }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated();
