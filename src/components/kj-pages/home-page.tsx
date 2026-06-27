@@ -212,12 +212,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
             {featured === null
-              ? Array.from({ length: 12 }).map((_, i) => <ProductCardSkeleton key={i} />)
+              ? Array.from({ length: 20 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : featured.length === 0
                 ? <p className="col-span-full py-12 text-center text-[14px] text-[#6b7884]">{lang === "no" ? "Ingen produkter tilgjengelig." : "No products available."}</p>
-                : featured.slice(0, 12).map((p) => (
+                : featured.slice(0, 20).map((p) => (
                   <ProductCard
                     key={p.id}
                     product={p}
