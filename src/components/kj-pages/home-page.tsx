@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Footprints, Tag, Gift, Bug } from "lucide-react";
+import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Footprints, Tag, Gift, Bug, Sparkles, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
 import { ShippingBanner } from "../kj/shipping-banner";
@@ -72,8 +72,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
   return (
     <div className="kj-page-enter">
-      {/* HERO — light blue gradient backdrop */}
-      <section className="relative w-full overflow-hidden min-h-[calc(100vh-5rem)]">
+      {/* HERO — 2-column: text left, 2×2 category cards right */}
+      <section className="relative w-full overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -82,13 +82,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
           }}
         />
 
-        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-10 pt-2 lg:gap-16 lg:px-10 lg:py-14 lg:pt-6">
+        <div className="relative mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-12 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-20">
+          {/* Left: text */}
           <div className="flex flex-col items-start">
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: "easeOut" }}
-              className="text-[clamp(3.25rem,7vw,5.5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-[#1f2d3a]"
+              className="text-[clamp(2.75rem,6vw,4.5rem)] font-bold leading-[0.95] tracking-[-0.02em] text-[#1f2d3a]"
               style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
             >
               {t("home.heroLine1")}
@@ -100,7 +101,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: "easeOut", delay: 0.1 }}
-              className="mt-6 max-w-md text-[20px] font-light leading-relaxed text-[#3a4856]"
+              className="mt-6 max-w-md text-[18px] font-light leading-relaxed text-[#3a4856]"
             >
               {t("home.heroSub")}
             </motion.p>
@@ -113,7 +114,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             >
               <button
                 onClick={() => onNavigate("shop")}
-                className="group inline-flex items-center gap-3 rounded-full bg-[#f0c548] px-9 py-4 text-[15px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all duration-300 hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
+                className="group inline-flex items-center gap-3 rounded-full bg-[#f0c548] px-9 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] shadow-[0_8px_24px_rgba(240,197,72,0.30)] transition-all duration-300 hover:bg-[#d9a838] hover:shadow-[0_12px_30px_rgba(217,168,56,0.40)]"
               >
                 {t("home.shopNow")}
                 <ArrowRight
@@ -124,64 +125,155 @@ export function HomePage({ onNavigate }: HomePageProps) {
               </button>
               <button
                 onClick={() => onNavigate("categories")}
-                className="inline-flex items-center gap-3 rounded-full border-2 border-[#1f2d3a] bg-transparent px-9 py-4 text-[15px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] transition-all duration-300 hover:bg-[#1f2d3a] hover:text-white"
+                className="inline-flex items-center gap-3 rounded-full border-2 border-[#1f2d3a] bg-transparent px-9 py-4 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#1f2d3a] transition-all duration-300 hover:bg-[#1f2d3a] hover:text-white"
               >
                 {t("nav.categories")}
               </button>
             </motion.div>
           </div>
+
+          {/* Right: 2×2 category cards */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.55, ease: "easeOut", delay: 0.3 }}
+            className="grid grid-cols-2 gap-4"
+          >
+            {[
+              { name: lang === "no" ? "Fiskeutstyr" : "Fishing Essentials", icon: Fish, slug: "fiske", color: "#1f6f8b" },
+              { name: lang === "no" ? "Jaktutstyr" : "Hunting Gear", icon: Crosshair, slug: "jakt", color: "#2d4a3e" },
+              { name: lang === "no" ? "Fottøy & Tilbehør" : "Footwear & Accessories", icon: Footprints, slug: "fottøy1", color: "#5d4037" },
+              { name: lang === "no" ? "Friluftsliv" : "Outdoor Life", icon: Tent, slug: "camping", color: "#c75d2c" },
+            ].map((card, i) => {
+              const Icon = card.icon;
+              const cat = categories.find((x) => x.slug === card.slug);
+              return (
+                <button
+                  key={card.slug}
+                  onClick={() => onNavigate("shop", { shopFilters: { category: card.slug } })}
+                  className="group flex flex-col items-start gap-3 rounded-[10px] border border-black/5 bg-white p-5 text-left shadow-[0_4px_12px_rgba(31,45,58,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(31,45,58,0.15)]"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span
+                      className="flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110"
+                      style={{ backgroundColor: card.color + "20", color: card.color }}
+                    >
+                      <Icon size={20} strokeWidth={1.6} />
+                    </span>
+                    <ArrowRight
+                      size={14}
+                      className="text-[#8a96a1] opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0.5"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[#1f2d3a] leading-tight">
+                      {card.name}
+                    </p>
+                    {cat && (
+                      <p className="mt-1 text-[11px] font-light text-[#8a96a1]">
+                        {cat.count} {lang === "no" ? "artikler" : "items"}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </motion.div>
         </div>
       </section>
 
       {/* Shipping marquee */}
       <ShippingBanner size="md" />
 
-      {/* CATEGORY GRID */}
+      {/* 3 PRODUCT SHOWCASE CARDS — New Arrivals / Best Sellers / Season's Highlights */}
       <section className="w-full bg-[#f5f1e8]">
-        <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
-          <div className="mb-12 max-w-2xl">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#8a96a1]">
-              {t("home.ourSelection")}
-            </p>
-            <h2
-              className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#1f2d3a]"
-              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
-            >
-              {t("nav.categories")}
-            </h2>
-            <p className="mt-4 text-[15px] font-light leading-relaxed text-[#6b7884]">
-              {t("home.ourSelectionDesc")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
-            {CATEGORY_TILES.map((c, i) => {
-              const Icon = c.icon;
-              const cat = categories.find((x) => x.slug === c.slug);
+        <div className="mx-auto max-w-[1280px] px-6 py-12 lg:px-10 lg:py-16">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {[
+              {
+                title: lang === "no" ? "Nyheter" : "New Arrivals",
+                filter: "newest" as const,
+                icon: Sparkles,
+                accent: "#1f6f8b",
+              },
+              {
+                title: lang === "no" ? "Bestselgere" : "Best Sellers",
+                filter: "bestsellers" as const,
+                icon: Award,
+                accent: "#f0c548",
+              },
+              {
+                title: lang === "no" ? "Årets Høydepunkter" : "Season's Highlights",
+                filter: "recommended" as const,
+                icon: Tent,
+                accent: "#c75d2c",
+              },
+            ].map((showcase, i) => {
+              const Icon = showcase.icon;
+              // Pick a product from the featured array for this showcase
+              const product = featured && featured.length > 0
+                ? featured[i * 4 + (i === 0 ? 0 : i === 1 ? 2 : 5)]
+                : null;
               return (
                 <motion.button
-                  key={c.slug}
-                  initial={{ opacity: 0, y: 10 }}
+                  key={showcase.title}
+                  initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: i * 0.04 }}
-                  onClick={() => onNavigate("shop", { shopFilters: { category: c.slug } })}
-                  className="group flex flex-col items-center justify-center gap-3 rounded-[8px] border border-black/5 bg-white px-3 py-6 shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(31,45,58,0.12)]"
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  onClick={() => onNavigate("shop")}
+                  className="group flex flex-col overflow-hidden rounded-[10px] border border-black/5 bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(31,45,58,0.15)]"
                 >
-                  <span
-                    className="flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110"
-                    style={{ backgroundColor: c.color + "20", color: c.color }}
-                  >
-                    <Icon size={22} strokeWidth={1.6} />
-                  </span>
-                  <span className="text-[13px] font-semibold text-[#1f2d3a]">
-                    {c.name}
-                  </span>
-                  {cat && (
-                    <span className="text-[10px] font-light uppercase tracking-[0.1em] text-[#8a96a1]">
-                      {cat.count} artikler
+                  {/* Image area */}
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#f4f3ef]">
+                    {product ? (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#1f2d3a]/50 via-transparent to-transparent" />
+                      </>
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <Icon size={40} strokeWidth={1.2} style={{ color: showcase.accent }} />
+                      </div>
+                    )}
+                    {/* Badge */}
+                    <span
+                      className="absolute left-3 top-3 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white"
+                      style={{ backgroundColor: showcase.accent }}
+                    >
+                      {showcase.title}
                     </span>
-                  )}
+                  </div>
+                  {/* Content */}
+                  <div className="flex flex-col gap-2 p-5">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em]" style={{ color: showcase.accent }}>
+                      {showcase.title}
+                    </p>
+                    <h3 className="text-[16px] font-bold leading-snug text-[#1f2d3a] line-clamp-2">
+                      {product ? product.name : (lang === "no" ? "Se utvalg" : "Browse selection")}
+                    </h3>
+                    {product && (
+                      <p className="text-[12px] font-light text-[#8a96a1]">
+                        {product.brand?.name ?? "Kleven"}
+                      </p>
+                    )}
+                    <div className="mt-2 flex items-center gap-1 text-[12px] font-semibold text-[#1f2d3a]">
+                      {lang === "no" ? "Se mer" : "See more"}
+                      <ArrowRight
+                        size={13}
+                        strokeWidth={2.2}
+                        className="transition-transform group-hover:translate-x-1"
+                      />
+                    </div>
+                  </div>
                 </motion.button>
               );
             })}
