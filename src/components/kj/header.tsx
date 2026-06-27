@@ -106,7 +106,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           {/* Center: Search bar (right of logo) */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden max-w-[calc(100%-30px)] flex-1 items-center gap-2.5 rounded-full bg-white/10 px-4 py-1.5 transition-colors hover:bg-white/15 focus-within:bg-white/15 md:flex"
+            className="hidden max-w-[calc(100%-70px)] flex-1 items-center gap-2.5 rounded-full bg-white/10 px-4 py-1.5 transition-colors hover:bg-white/15 focus-within:bg-white/15 md:flex"
           >
             <Search size={18} className="flex-shrink-0 text-white/60" />
             <input
