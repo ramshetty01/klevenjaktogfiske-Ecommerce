@@ -93,12 +93,12 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
   // Tag color mapping (uses original tag value for color logic)
   const tagClass = (tag: string) => {
-    if (tag.startsWith("-") || tag === "Tilbud") return "bg-[#B54135] text-white";
-    if (tag === "Nyhet") return "bg-[#20231F] text-white";
-    if (tag === "Begrenset") return "bg-[#194D04] text-white";
-    if (tag === "Premium") return "bg-[#194D04] text-white";
-    if (tag === "Populært") return "bg-[#287E05] text-[#20231F]";
-    return "bg-[#287E05] text-[#20231F]"; // Bestselger
+    if (tag.startsWith("-") || tag === "Tilbud") return "bg-[#f8a530] text-white";
+    if (tag === "Nyhet") return "bg-[#212121] text-white";
+    if (tag === "Begrenset") return "bg-[#0056a7] text-white";
+    if (tag === "Premium") return "bg-[#0056a7] text-white";
+    if (tag === "Populært") return "bg-[#428701] text-[#212121]";
+    return "bg-[#428701] text-[#212121]"; // Bestselger
   };
 
   return (
@@ -113,7 +113,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       tabIndex={0}
       role="link"
       aria-label={`${lang === "no" ? "Åpne" : "Open"} ${product.name}`}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#287E05]"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#428701]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#FFFFFF]">
         <img
@@ -138,7 +138,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Discount % badge */}
         {discount > 0 && (
           <span
-            className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#B54135] text-[11px] font-bold text-white shadow-md"
+            className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#f8a530] text-[11px] font-bold text-white shadow-md"
             aria-label={`${discount}% ${lang === "no" ? "rabatt" : "off"}`}
           >
             -{discount}%
@@ -149,7 +149,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         <button
           onClick={handleAdd}
           aria-label={`${lang === "no" ? "Legg" : "Add"} ${product.name} ${lang === "no" ? "i handlevognen" : "to cart"}`}
-          className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#20231F] opacity-0 shadow-md transition-all duration-300 hover:bg-[#287E05] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
+          className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#212121] opacity-0 shadow-md transition-all duration-300 hover:bg-[#428701] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
         >
           <Plus size={14} strokeWidth={2.2} />
         </button>
@@ -157,13 +157,13 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
       <div className={`flex flex-1 flex-col gap-0.5 ${compact ? "px-2.5 py-2" : "px-3 py-3"}`}>
         {/* Category label */}
-        <div className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#687066]">
+        <div className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#858585]">
           {product.category?.name ?? product.brand?.name ?? "Kleven"}
         </div>
 
         {/* Name */}
         <h3
-          className={`font-semibold leading-tight text-[#20231F] line-clamp-2 ${
+          className={`font-semibold leading-tight text-[#212121] line-clamp-2 ${
             compact ? "text-[12px]" : "text-[13px]"
           }`}
         >
@@ -172,7 +172,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
         {/* Subtitle */}
         {product.subtitle && (
-          <p className="text-[10px] font-light text-[#687066] line-clamp-1">
+          <p className="text-[10px] font-light text-[#858585] line-clamp-1">
             {product.subtitle}
           </p>
         )}
@@ -181,7 +181,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {product.stockLabel && (
           <p
             className={`mt-0.5 text-[9px] font-medium uppercase tracking-[0.04em] ${
-              inStock ? "text-[#287E05]" : "text-[#B54135]"
+              inStock ? "text-[#428701]" : "text-[#f8a530]"
             }`}
           >
             {localizeStock(product.stockLabel, lang)}
@@ -191,9 +191,9 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Price row */}
         <div className="mt-1.5 flex items-baseline gap-1.5">
           {priceUnknown ? (
-            <span className="text-[13px] font-bold text-[#20231F]">{t("shop.seePrice")}</span>
+            <span className="text-[13px] font-bold text-[#212121]">{t("shop.seePrice")}</span>
           ) : (
-            <span className="text-[13px] font-bold text-[#20231F]">
+            <span className="text-[13px] font-bold text-[#212121]">
               {formatNok(product.price)}
             </span>
           )}
@@ -206,9 +206,9 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
 
         {/* Rating */}
         {product.reviewCount > 0 && (
-          <div className="mt-1 flex items-center gap-1 text-[9px] text-[#687066]">
-            <Star size={10} className="fill-[#287E05] text-[#287E05]" />
-            <span className="font-semibold text-[#20231F]">
+          <div className="mt-1 flex items-center gap-1 text-[9px] text-[#858585]">
+            <Star size={10} className="fill-[#428701] text-[#428701]" />
+            <span className="font-semibold text-[#212121]">
               {product.rating.toFixed(1)}
             </span>
             <span>({product.reviewCount})</span>

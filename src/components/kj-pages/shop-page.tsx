@@ -529,7 +529,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           {brands.length > 20 && (
             <button
               onClick={() => setShowAllBrands((v) => !v)}
-              className="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#B54135] hover:underline"
+              className="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#f8a530] hover:underline"
             >
               {showAllBrands
                 ? lang === "no"
@@ -558,7 +558,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             }
             className="my-3"
           />
-          <div className="flex items-center justify-between text-[12px] font-medium text-[#20231F]">
+          <div className="flex items-center justify-between text-[12px] font-medium text-[#212121]">
             <span>Kr {priceRange[0].toLocaleString("no-NO")}</span>
             <span>
               Kr {priceRange[1].toLocaleString("no-NO")}
@@ -566,7 +566,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
             </span>
           </div>
           {facets && (
-            <p className="mt-2 text-[10px] text-[#687066]">
+            <p className="mt-2 text-[10px] text-[#858585]">
               {lang === "no"
                 ? `Katalog: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`
                 : `Catalog: kr ${facets.priceRange.min.toLocaleString("no-NO")} – ${facets.priceRange.max.toLocaleString("no-NO")}`}
@@ -616,7 +616,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           }
         />
         {facets && (
-          <p className="mt-1.5 pl-6 text-[10px] text-[#687066]">
+          <p className="mt-1.5 pl-6 text-[10px] text-[#858585]">
             {facets.availability.inStock} {t("shop.inStock").toLowerCase()} ·{" "}
             {facets.availability.outOfStock}{" "}
             {t("shop.outOfStock").toLowerCase()}
@@ -627,7 +627,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       {activeFilterCount > 0 && (
         <button
           onClick={clearFilters}
-          className="flex items-center gap-1 text-[12px] font-semibold text-[#B54135] hover:underline"
+          className="flex items-center gap-1 text-[12px] font-semibold text-[#f8a530] hover:underline"
         >
           <X size={12} /> {t("shop.clearAll")} ({activeFilterCount})
         </button>
@@ -640,17 +640,17 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       <ShippingBanner size="md" />
 
       {/* Shop header */}
-      <section className="w-full" style={{ backgroundColor: "#F6F7F2" }}>
+      <section className="w-full" style={{ backgroundColor: "#F4F4F4" }}>
         <div className="mx-auto max-w-[1280px] px-6 pt-12 pb-6 lg:px-10">
           {searchQ && (
-            <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#687066]">
-              <span className="normal-case text-[#20231F]">
+            <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#858585]">
+              <span className="normal-case text-[#212121]">
                 {t("nav.search")}: &laquo;{searchQ}&raquo;
               </span>
             </div>
           )}
           <h1
-            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#20231F]"
+            className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold tracking-[-0.02em] text-[#212121]"
             style={{ fontFamily: "var(--font-manrope), sans-serif" }}
           >
             {parentForHeading
@@ -660,13 +660,13 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                 : t("shop.title")}
           </h1>
           {activeSubcategoryObj && (
-            <p className="mt-2 text-[16px] font-medium uppercase tracking-[0.1em] text-[#194D04]">
+            <p className="mt-2 text-[16px] font-medium uppercase tracking-[0.1em] text-[#0056a7]">
               {activeSubcategoryObj.name}
             </p>
           )}
 
           {/* Top filter bar — quick category pills */}
-          <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-[#DDE2DA] pb-5">
+          <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-[#d0d5d2] pb-5">
             <CategoryPill
               label={t("shop.all")}
               active={activeCategory === "alle"}
@@ -686,8 +686,8 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           {parentForHeading &&
             parentForHeading.subcategories.filter((s) => s.count > 0).length >
               0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#DDE2DA] pb-5">
-                <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#687066]">
+              <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d0d5d2] pb-5">
+                <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#858585]">
                   {t("shop.subcategory")}
                 </span>
                 <SubcategoryPill
@@ -710,22 +710,22 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
           {/* Sort + count row */}
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-[12px] font-light text-[#687066]">
+            <div className="text-[12px] font-light text-[#858585]">
               {t("shop.showing")}{" "}
-              <span className="font-semibold text-[#20231F]">{totalCount}</span>{" "}
+              <span className="font-semibold text-[#212121]">{totalCount}</span>{" "}
               {totalCount !== 1 ? t("shop.articles") : t("shop.article")}
               {parentForHeading && (
                 <>
                   {" "}
                   {t("shop.in")}{" "}
-                  <span className="font-semibold text-[#20231F]">
+                  <span className="font-semibold text-[#212121]">
                     {parentForHeading.name}
                   </span>
                 </>
               )}
               {activeSubcategoryObj && (
                 <>
-                  {" "}→ <span className="font-semibold text-[#194D04]">{activeSubcategoryObj.name}</span>
+                  {" "}→ <span className="font-semibold text-[#0056a7]">{activeSubcategoryObj.name}</span>
                 </>
               )}
             </div>
@@ -735,35 +735,35 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               <Button
                 variant="outline"
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden h-9 rounded-full border-[#DDE2DA] bg-white px-4 text-[12px] font-medium text-[#20231F]"
+                className="lg:hidden h-9 rounded-full border-[#d0d5d2] bg-white px-4 text-[12px] font-medium text-[#212121]"
               >
                 <Filter size={14} className="mr-1.5" />
                 {t("shop.filters")}
                 {activeFilterCount > 0 && (
-                  <span className="ml-1.5 rounded-full bg-[#20231F] px-1.5 text-[10px] font-semibold text-white">
+                  <span className="ml-1.5 rounded-full bg-[#212121] px-1.5 text-[10px] font-semibold text-white">
                     {activeFilterCount}
                   </span>
                 )}
               </Button>
 
               <div className="flex items-center gap-2">
-                <SlidersHorizontal size={14} className="text-[#687066]" />
-                <span className="hidden text-[12px] font-light text-[#687066] sm:inline">
+                <SlidersHorizontal size={14} className="text-[#858585]" />
+                <span className="hidden text-[12px] font-light text-[#858585] sm:inline">
                   {t("shop.sortBy")}
                 </span>
                 <Select
                   value={effectiveSort}
                   onValueChange={(v) => setSort(v as SortKey)}
                 >
-                  <SelectTrigger className="h-9 w-[180px] sm:w-[230px] rounded-full border border-[#DDE2DA] bg-white px-4 text-[12px] font-medium text-[#20231F] hover:bg-[#F6F7F2] focus:ring-0 focus:ring-offset-0">
+                  <SelectTrigger className="h-9 w-[180px] sm:w-[230px] rounded-full border border-[#d0d5d2] bg-white px-4 text-[12px] font-medium text-[#212121] hover:bg-[#F4F4F4] focus:ring-0 focus:ring-offset-0">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-md border border-[#DDE2DA] bg-white">
+                  <SelectContent className="rounded-md border border-[#d0d5d2] bg-white">
                     {visibleSortOptions.map((o) => (
                       <SelectItem
                         key={o.value}
                         value={o.value}
-                        className="text-[13px] text-[#20231F] focus:bg-[#F6F7F2] focus:text-[#20231F]"
+                        className="text-[13px] text-[#212121] focus:bg-[#F4F4F4] focus:text-[#212121]"
                       >
                         {t(o.labelKey)}
                       </SelectItem>
@@ -777,7 +777,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
       </section>
 
       {/* Body: chips + sidebar + grid */}
-      <section className="w-full pb-20" style={{ backgroundColor: "#F6F7F2" }}>
+      <section className="w-full pb-20" style={{ backgroundColor: "#F4F4F4" }}>
         <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
           {/* Active filter chips */}
           {activeChips.length > 0 && (
@@ -785,12 +785,12 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               {activeChips.map((chip) => (
                 <span
                   key={chip.key}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#DDE2DA] bg-white px-2.5 py-1 text-[11px] font-medium text-[#20231F]"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#d0d5d2] bg-white px-2.5 py-1 text-[11px] font-medium text-[#212121]"
                 >
                   {chip.label}
                   <button
                     onClick={chip.onRemove}
-                    className="text-[#687066] transition-colors hover:text-[#B54135]"
+                    className="text-[#858585] transition-colors hover:text-[#f8a530]"
                     aria-label={t("shop.clearAll")}
                   >
                     <X size={12} />
@@ -799,7 +799,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               ))}
               <button
                 onClick={clearFilters}
-                className="ml-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#B54135] hover:underline"
+                className="ml-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#f8a530] hover:underline"
               >
                 {t("shop.clearAll")}
               </button>
@@ -812,10 +812,10 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-lg border border-black/10 bg-white kj-scroll">
                 {/* Filter header — Decathlon style */}
                 <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
-                  <h3 className="text-[16px] font-bold text-[#20231F]">
+                  <h3 className="text-[16px] font-bold text-[#212121]">
                     {t("shop.filters")}
                     {activeFilterCount > 0 && (
-                      <span className="ml-1.5 text-[14px] font-normal text-[#687066]">
+                      <span className="ml-1.5 text-[14px] font-normal text-[#858585]">
                         ({activeFilterCount})
                       </span>
                     )}
@@ -823,7 +823,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                   {activeFilterCount > 0 && (
                     <button
                       onClick={clearFilters}
-                      className="text-[13px] font-medium text-[#194D04] hover:underline"
+                      className="text-[13px] font-medium text-[#0056a7] hover:underline"
                     >
                       {t("shop.clearAll")}
                     </button>
@@ -845,15 +845,15 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                     ))
                   : products.length === 0
                     ? <div className="col-span-full py-20 text-center">
-                        <p className="text-[16px] font-semibold text-[#20231F]">
+                        <p className="text-[16px] font-semibold text-[#212121]">
                           {t("shop.noResults")}
                         </p>
-                        <p className="mt-2 text-[13px] text-[#687066]">
+                        <p className="mt-2 text-[13px] text-[#858585]">
                           {t("shop.noResultsHint")}
                         </p>
                         <button
                           onClick={clearFilters}
-                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#20231F] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#194D04]"
+                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#212121] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#0056a7]"
                         >
                           <X size={12} /> {t("shop.clearFilters")}
                         </button>
@@ -880,7 +880,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       setPage((p) => Math.max(1, p - 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#DDE2DA] bg-white text-[#20231F] transition-colors hover:bg-[#20231F] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#20231F]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d0d5d2] bg-white text-[#212121] transition-colors hover:bg-[#212121] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#212121]"
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -898,7 +898,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       return (
                         <span key={n} className="flex items-center gap-2">
                           {showEllipsis && (
-                            <span className="px-1 text-[12px] font-light text-[#687066]">
+                            <span className="px-1 text-[12px] font-light text-[#858585]">
                               …
                             </span>
                           )}
@@ -909,8 +909,8 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                             }}
                             className={`rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
                               n === page
-                                ? "bg-[#20231F] text-white"
-                                : "text-[#687066] hover:bg-white hover:text-[#20231F]"
+                                ? "bg-[#212121] text-white"
+                                : "text-[#858585] hover:bg-white hover:text-[#212121]"
                             }`}
                           >
                             {n}
@@ -926,7 +926,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                       setPage((p) => Math.min(totalPages, p + 1));
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#DDE2DA] bg-white text-[#20231F] transition-colors hover:bg-[#20231F] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#20231F]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d0d5d2] bg-white text-[#212121] transition-colors hover:bg-[#212121] hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#212121]"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -943,11 +943,11 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           side="bottom"
           className="flex h-[85vh] flex-col gap-0 rounded-t-2xl p-0"
         >
-          <SheetHeader className="border-b border-[#DDE2DA] px-4 py-3">
-            <SheetTitle className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#20231F]">
+          <SheetHeader className="border-b border-[#d0d5d2] px-4 py-3">
+            <SheetTitle className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#212121]">
               {t("shop.filters")}
               {activeFilterCount > 0 && (
-                <span className="ml-2 rounded-full bg-[#20231F] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                <span className="ml-2 rounded-full bg-[#212121] px-1.5 py-0.5 text-[10px] font-semibold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -956,10 +956,10 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           <div className="flex-1 overflow-y-auto px-4 py-3 kj-scroll">
             {FiltersPanel}
           </div>
-          <div className="border-t border-[#DDE2DA] p-4">
+          <div className="border-t border-[#d0d5d2] p-4">
             <Button
               onClick={() => setMobileFilterOpen(false)}
-              className="h-11 w-full rounded-full bg-[#20231F] text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#194D04]"
+              className="h-11 w-full rounded-full bg-[#212121] text-[12px] font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#0056a7]"
             >
               {t("shop.showResults")} ({totalCount})
             </Button>
@@ -986,8 +986,8 @@ function CategoryPill({
       onClick={onClick}
       className={`rounded-full px-3.5 py-1.5 text-[11px] font-medium transition-all duration-200 ${
         active
-          ? "bg-[#20231F] text-white"
-          : "bg-white text-[#20231F] hover:bg-[#287E05]"
+          ? "bg-[#212121] text-white"
+          : "bg-white text-[#212121] hover:bg-[#428701]"
       }`}
     >
       {label}
@@ -1009,8 +1009,8 @@ function SubcategoryPill({
       onClick={onClick}
       className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all duration-200 ${
         active
-          ? "bg-[#194D04] text-white"
-          : "bg-[#F6F7F2] text-[#20231F] hover:bg-[#287E05] hover:text-[#20231F]"
+          ? "bg-[#0056a7] text-white"
+          : "bg-[#F4F4F4] text-[#212121] hover:bg-[#428701] hover:text-[#212121]"
       }`}
     >
       {label}
@@ -1028,12 +1028,12 @@ function FilterRadio({
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2.5 py-0.5 text-[13px] text-[#20231F] hover:text-[#20231F]">
+    <label className="flex cursor-pointer items-center gap-2.5 py-0.5 text-[13px] text-[#212121] hover:text-[#212121]">
       <input
         type="radio"
         checked={checked}
         onChange={onChange}
-        className="h-4 w-4 accent-[#20231F]"
+        className="h-4 w-4 accent-[#212121]"
       />
       {label}
     </label>
@@ -1057,19 +1057,19 @@ function FilterCheckbox({
     <label
       className={`flex items-center gap-2.5 py-0.5 text-[13px] ${
         disabled
-          ? "cursor-not-allowed text-[#687066]"
-          : "cursor-pointer text-[#20231F] hover:text-[#20231F]"
+          ? "cursor-not-allowed text-[#858585]"
+          : "cursor-pointer text-[#212121] hover:text-[#212121]"
       }`}
     >
       <Checkbox
         checked={checked}
         onCheckedChange={() => !disabled && onChange()}
         disabled={disabled}
-        className="h-4 w-4 border-[#DDE2DA] data-[state=checked]:border-[#20231F] data-[state=checked]:bg-[#20231F] data-[state=checked]:text-white"
+        className="h-4 w-4 border-[#d0d5d2] data-[state=checked]:border-[#212121] data-[state=checked]:bg-[#212121] data-[state=checked]:text-white"
       />
       <span className="flex-1">{label}</span>
       {count !== undefined && (
-        <span className={`text-[10px] ${disabled ? "text-[#aab2bb]" : "text-[#687066]"}`}>
+        <span className={`text-[10px] ${disabled ? "text-[#aab2bb]" : "text-[#858585]"}`}>
           ({count})
         </span>
       )}
@@ -1092,11 +1092,11 @@ function CollapsibleSection({
     <div className="border-b border-black/10 last:border-b-0">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-3 text-left text-[14px] font-medium text-[#20231F] transition-colors hover:text-[#194D04]"
+        className="flex w-full items-center justify-between py-3 text-left text-[14px] font-medium text-[#212121] transition-colors hover:text-[#0056a7]"
         aria-expanded={isOpen}
       >
         {title}
-        <span className="flex h-5 w-5 items-center justify-center text-[#20231F]">
+        <span className="flex h-5 w-5 items-center justify-center text-[#212121]">
           {isOpen ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           ) : (

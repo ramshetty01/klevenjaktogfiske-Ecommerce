@@ -69,20 +69,20 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
   }, []);
 
   return (
-    <div className="kj-page-enter" style={{ backgroundColor: "#F6F7F2" }}>
+    <div className="kj-page-enter" style={{ backgroundColor: "#F4F4F4" }}>
       <section className="mx-auto max-w-[1100px] px-6 py-20 lg:px-10 lg:py-28">
         {/* Heading */}
         <div className="mb-16 max-w-3xl">
-          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.25em] text-[#687066]">
+          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.25em] text-[#858585]">
             {t("categories.ourRange")}
           </p>
           <h1
-            className="text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#20231F]"
+            className="text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[1.05] tracking-[-0.02em] text-[#212121]"
             style={{ fontFamily: "var(--font-manrope), sans-serif" }}
           >
             {t("categories.title")}
           </h1>
-          <p className="mt-6 max-w-2xl text-[20px] font-light leading-relaxed text-[#20231F]">
+          <p className="mt-6 max-w-2xl text-[20px] font-light leading-relaxed text-[#212121]">
             Ti hovedkategorier, over 4 000 artikler. Hver kategori er kuratert
             av eksperter som kjenner utstyret innvendig — fordi de bruker det
             selv.
@@ -113,20 +113,20 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
                   transition={{ duration: 0.3, delay: idx * 0.03 }}
                   className="border-t border-black/10 py-10 last:border-b"
                 >
-                  <div className="mb-3 flex items-center gap-3 text-[#687066]">
+                  <div className="mb-3 flex items-center gap-3 text-[#858585]">
                     <Icon size={28} strokeWidth={1.4} />
-                    <h2 className="text-[22px] font-semibold text-[#20231F]">
+                    <h2 className="text-[22px] font-semibold text-[#212121]">
                       {c.name}
                     </h2>
                     <button
                       onClick={() => onNavigate("shop", { shopFilters: { category: c.slug } })}
-                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#20231F] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#194D04]"
+                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#212121] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#0056a7]"
                     >
                       {lang === "no" ? "Se alle" : "See all"} ({c.count})
                       <ArrowRight size={12} />
                     </button>
                   </div>
-                  <p className="max-w-2xl pl-0 text-[17px] font-light leading-[1.75] text-[#20231F] md:pl-10">
+                  <p className="max-w-2xl pl-0 text-[17px] font-light leading-[1.75] text-[#212121] md:pl-10">
                     {description}
                   </p>
 
@@ -137,7 +137,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
                         <button
                           key={sub.id}
                           onClick={() => onNavigate("shop", { shopFilters: { subcategory: sub.slug } })}
-                          className="rounded-full bg-[#287E05]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#20231F] transition-colors hover:bg-[#287E05] hover:text-[#20231F]"
+                          className="rounded-full bg-[#428701]/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#212121] transition-colors hover:bg-[#428701] hover:text-[#212121]"
                         >
                           {sub.name} ({sub.count})
                         </button>
@@ -152,10 +152,10 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
         {/* Footer CTA area */}
         <div className="mt-16 flex flex-col items-start justify-between gap-6 rounded-[8px] bg-white p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] md:flex-row md:items-center">
           <div>
-            <h3 className="text-[20px] font-semibold text-[#20231F]">
+            <h3 className="text-[20px] font-semibold text-[#212121]">
               {t("categories.readyToShop")}
             </h3>
-            <p className="mt-1 text-[14px] font-light text-[#687066]">
+            <p className="mt-1 text-[14px] font-light text-[#858585]">
               {t("categories.readyToShopDesc")}
             </p>
           </div>
@@ -163,7 +163,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
             <CategoriesChip onClick={() => onNavigate("about")} />
             <button
               onClick={() => onNavigate("shop")}
-              className="inline-flex items-center gap-2 rounded-full bg-[#20231F] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-[#194D04]"
+              className="inline-flex items-center gap-2 rounded-full bg-[#212121] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-[#0056a7]"
             >
               {t("categories.toShop")}
               <ArrowRight size={14} />

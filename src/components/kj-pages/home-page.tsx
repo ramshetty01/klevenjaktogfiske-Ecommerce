@@ -14,16 +14,16 @@ interface HomePageProps {
 }
 
 const CATEGORY_TILES = [
-  { name: "Jakt", icon: Crosshair, slug: "jakt", color: "#194D04" },
+  { name: "Jakt", icon: Crosshair, slug: "jakt", color: "#0056a7" },
   { name: "Fiske", icon: Fish, slug: "fiske", color: "#1f6f8b" },
-  { name: "Camping", icon: Tent, slug: "camping", color: "#B54135" },
-  { name: "Bekledning", icon: Shirt, slug: "klær", color: "#287E05" },
+  { name: "Camping", icon: Tent, slug: "camping", color: "#f8a530" },
+  { name: "Bekledning", icon: Shirt, slug: "klær", color: "#428701" },
   { name: "Vintersport", icon: Snowflake, slug: "vintersport", color: "#5b6e8a" },
   { name: "Husdyr", icon: PawPrint, slug: "kjæledyr", color: "#a06a3f" },
   { name: "Fottøy", icon: Footprints, slug: "fottøy1", color: "#5d4037" },
   { name: "Outlet", icon: Tag, slug: "outlet", color: "#8a5a44" },
   { name: "Gavekort", icon: Gift, slug: "gift-card", color: "#c79a3f" },
-  { name: "Kleven Fluer", icon: Bug, slug: "kleven-fluer", color: "#194D04" },
+  { name: "Kleven Fluer", icon: Bug, slug: "kleven-fluer", color: "#0056a7" },
 ];
 
 export function HomePage({ onNavigate }: HomePageProps) {
@@ -103,7 +103,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             >
               {t("home.heroLine1")}
               <br />
-              <span className="text-[#287E05]">{t("home.heroLine2")}</span>
+              <span className="text-[#428701]">{t("home.heroLine2")}</span>
             </h1>
 
             <p className="mt-5 max-w-md text-[18px] font-light leading-relaxed text-white/85">
@@ -113,14 +113,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => onNavigate("shop")}
-                className="group inline-flex items-center gap-3 rounded-full bg-[#287E05] px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#20231F] transition-all duration-300 hover:bg-[#216704]"
+                className="group inline-flex items-center gap-3 rounded-full bg-[#428701] px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#212121] transition-all duration-300 hover:bg-[#369400]"
               >
                 {t("home.shopNow")}
                 <ArrowRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-1" />
               </button>
               <button
                 onClick={() => onNavigate("categories")}
-                className="inline-flex items-center gap-3 rounded-full border-2 border-white/60 bg-white/5 px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-[#20231F]"
+                className="inline-flex items-center gap-3 rounded-full border-2 border-white/60 bg-white/5 px-8 py-3.5 text-[14px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-[#212121]"
               >
                 {t("nav.categories")}
               </button>
@@ -143,9 +143,9 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                  className="flex items-center gap-3 rounded-lg border border-white/10 bg-[#20231F]/80 px-5 py-4 backdrop-blur-md"
+                  className="flex items-center gap-3 rounded-lg border border-white/10 bg-[#212121]/80 px-5 py-4 backdrop-blur-md"
                 >
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#287E05]/15 text-[#287E05]">
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#428701]/15 text-[#428701]">
                     <Icon size={20} strokeWidth={1.6} />
                   </span>
                   <div>
@@ -160,7 +160,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       </section>
 
       {/* ===== 6 CATEGORY CARDS WITH PHOTOS ===== */}
-      <section className="w-full bg-[#F6F7F2]">
+      <section className="w-full bg-[#F4F4F4]">
         <div className="mx-auto max-w-[1280px] px-6 py-12 lg:px-10 lg:py-16">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {[
@@ -206,7 +206,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   </div>
                   {/* Count badge */}
                   {catData && (
-                    <span className="absolute right-2 top-2 rounded-full bg-[#287E05] px-2 py-0.5 text-[9px] font-bold text-[#20231F]">
+                    <span className="absolute right-2 top-2 rounded-full bg-[#428701] px-2 py-0.5 text-[9px] font-bold text-[#212121]">
                       {catData.count}
                     </span>
                   )}
@@ -220,13 +220,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
       {/* ===== POPULAR PRODUCTS ===== */}
       <section className="w-full bg-white">
         <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
-          <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[#DDE2DA] pb-5">
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[#d0d5d2] pb-5">
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#687066]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
                 {t("sort.recommended")}
               </p>
               <h2
-                className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#20231F]"
+                className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#212121]"
                 style={{ fontFamily: "var(--font-manrope), sans-serif" }}
               >
                 {t("home.featured")}
@@ -234,7 +234,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </div>
             <button
               onClick={() => onNavigate("shop")}
-              className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#20231F] hover:underline"
+              className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#212121] hover:underline"
             >
               {t("home.seeAllShop")} <ArrowRight size={12} />
             </button>
@@ -244,7 +244,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             {featured === null
               ? Array.from({ length: 20 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : featured.length === 0
-                ? <p className="col-span-full py-12 text-center text-[14px] text-[#687066]">{lang === "no" ? "Ingen produkter tilgjengelig." : "No products available."}</p>
+                ? <p className="col-span-full py-12 text-center text-[14px] text-[#858585]">{lang === "no" ? "Ingen produkter tilgjengelig." : "No products available."}</p>
                 : featured.slice(0, 20).map((p) => (
                   <ProductCard
                     key={p.id}
@@ -257,19 +257,19 @@ export function HomePage({ onNavigate }: HomePageProps) {
       </section>
 
       {/* BRAND SHOWCASE */}
-      <section className="w-full bg-[#F6F7F2]">
+      <section className="w-full bg-[#F4F4F4]">
         <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
           <div className="mb-10 max-w-2xl">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#687066]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
               {t("home.ourSelection")}
             </p>
             <h2
-              className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#20231F]"
+              className="mt-2 text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.01em] text-[#212121]"
               style={{ fontFamily: "var(--font-manrope), sans-serif" }}
             >
               {t("home.brandsTitle")}
             </h2>
-            <p className="mt-4 text-[15px] font-light leading-relaxed text-[#687066]">
+            <p className="mt-4 text-[15px] font-light leading-relaxed text-[#858585]">
               {lang === "no"
                 ? "Vi er autoriserte forhandlere for over 400 merkevarer — fra Sauer og Zeiss til Helle, Fjällräven og Bergans."
                 : "We are authorized dealers for over 400 brands — from Sauer and Zeiss to Helle, Fjällräven and Bergans."}
@@ -294,11 +294,11 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   onClick={() => onNavigate("shop", { shopFilters: { brand: b.slug } })}
                   className="group flex aspect-[3/2] flex-col items-center justify-center rounded-md border border-black/5 bg-white px-3 py-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(31,45,58,0.10)]"
                 >
-                  <span className="text-[14px] font-bold tracking-[-0.01em] text-[#20231F] transition-colors group-hover:text-[#194D04]">
+                  <span className="text-[14px] font-bold tracking-[-0.01em] text-[#212121] transition-colors group-hover:text-[#0056a7]">
                     {b.name}
                   </span>
                   {b.country && (
-                    <span className="mt-1 text-[10px] font-light uppercase tracking-[0.1em] text-[#687066]">
+                    <span className="mt-1 text-[10px] font-light uppercase tracking-[0.1em] text-[#858585]">
                       {b.country}
                     </span>
                   )}
@@ -309,7 +309,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       </section>
 
       {/* BRAND PROMISE BAND */}
-      <section className="w-full bg-[#20231F]">
+      <section className="w-full bg-[#212121]">
         <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {[
@@ -334,13 +334,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
               },
             ].map((item) => (
               <div key={item.title} className="flex flex-col items-start gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#287E05] text-[18px] font-bold text-[#20231F]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#428701] text-[18px] font-bold text-[#212121]">
                   {item.icon}
                 </span>
                 <h3 className="text-[16px] font-semibold uppercase tracking-[0.1em] text-white">
                   {item.title}
                 </h3>
-                <p className="text-[13px] font-light leading-relaxed text-[#687066]">
+                <p className="text-[13px] font-light leading-relaxed text-[#858585]">
                   {item.body}
                 </p>
               </div>

@@ -47,28 +47,28 @@
   /* Kleven Jakt & Fiske brand tokens */
   --radius: 0.625rem;
 
-  /* Brand palette — Nordic outdoor retail, green primary */
-  --kj-navy: #20231F;          /* near-black — header / footer / text */
-  --kj-navy-deep: #194D04;     /* primary active (darkest green) */
-  --kj-forest: #287E05;        /* PRIMARY GREEN */
-  --kj-forest-light: #216704;  /* primary hover */
+  /* Brand palette — matched to klevenjaktogfiske.no */
+  --kj-navy: #212121;          /* dark text / header / footer (from actual site) */
+  --kj-navy-deep: #0056a7;     /* deep blue — secondary */
+  --kj-forest: #428701;        /* PRIMARY GREEN — rgb(66,135,1) from actual site */
+  --kj-forest-light: #4e8443;  /* lighter green variant from site */
   --kj-forest-surface: #EAF4E6;/* light green surface */
   --kj-forest-border: #C5DEBB; /* pale green border */
-  --kj-cream: #F6F7F2;         /* warm off-white background */
-  --kj-paper: #EAF4E6;         /* light green surface (secondary) */
-  --kj-yellow: #287E05;        /* primary green (replaces gold) */
-  --kj-yellow-bright: #D99A32; /* sale accent (amber) */
-  --kj-yellow-deep: #216704;   /* primary hover */
-  --kj-orange: #B54135;        /* error / out-of-stock */
-  --kj-blue-soft: #EAF4E6;     /* light green surface */
-  --kj-blue-light: #F6F7F2;
-  --kj-text-dark: #20231F;     /* near-black primary text */
-  --kj-text-body: #20231F;     /* body text */
-  --kj-text-muted: #687066;    /* secondary text */
-  --kj-text-icon: #687066;     /* icons / dividers */
-  --kj-bg-gray: #F6F7F2;       /* shop page background — warm off-white */
-  --kj-divider: #DDE2DA;       /* neutral border */
-  --kj-footer-text: #687066;   /* footer secondary text */
+  --kj-cream: #F4F4F4;         /* light gray background (from actual site) */
+  --kj-paper: #EDEDED;         /* slightly darker gray */
+  --kj-yellow: #428701;        /* primary green (from site) */
+  --kj-yellow-bright: #f1c40f; /* yellow accent — promotional banners (from site) */
+  --kj-yellow-deep: #369400;   /* hover green */
+  --kj-orange: #f8a530;        /* orange accent (from site) */
+  --kj-blue-soft: #1863dc;     /* blue accent — links/buttons (from site) */
+  --kj-blue-light: #F4F4F4;
+  --kj-text-dark: #212121;     /* primary text (from site) */
+  --kj-text-body: #4e4b66;     /* body text (from site) */
+  --kj-text-muted: #858585;    /* secondary text (from site) */
+  --kj-text-icon: #858585;     /* icons / dividers */
+  --kj-bg-gray: #F4F4F4;       /* shop page background (from site) */
+  --kj-divider: #d0d5d2;       /* neutral border (from site) */
+  --kj-footer-text: #858585;   /* footer secondary text */
 
   /* shadcn tokens */
   --background: oklch(1 0 0);
