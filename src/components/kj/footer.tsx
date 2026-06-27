@@ -50,12 +50,15 @@ export function Footer({ onNavigate }: FooterProps) {
       style={{ backgroundColor: "#1f2d3a" }}
     >
       <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
-        {/* ===== Top: Brand + contact strip ===== */}
-        <div className="mb-12 flex flex-col gap-8 border-b border-white/10 pb-10 md:flex-row md:items-start md:justify-between">
+        {/* ===== 4-COLUMN GRID ===== */}
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+
+          {/* Column 1: KLEVEN — brand + tagline + contact + socials */}
           <div className="flex flex-col">
-            <div className="mb-3">
+            {/* Brand */}
+            <div className="mb-4">
               <div
-                className="text-[24px] font-semibold tracking-[0.04em]"
+                className="text-[22px] font-semibold tracking-[0.04em]"
                 style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
               >
                 KLEVEN
@@ -64,42 +67,44 @@ export function Footer({ onNavigate }: FooterProps) {
                 {t("nav.brandSubtitle")} AS
               </div>
             </div>
-            <p className="max-w-sm text-[13px] font-light leading-relaxed text-[#b8c0c8]">
+
+            {/* Tagline */}
+            <p className="mb-5 text-[12px] font-light leading-relaxed text-[#b8c0c8]">
               {t("footer.tagline")}
             </p>
-          </div>
 
-          {/* Contact + socials */}
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-2 text-[13px] font-light text-[#b8c0c8] md:items-end">
+            {/* Contact */}
+            <div className="flex flex-col gap-2.5 text-[12px] font-light text-[#b8c0c8]">
               <a
                 href="tel:+4778407140"
-                className="flex items-center gap-2 hover:text-white"
+                className="flex items-center gap-2 transition-colors hover:text-[#f0c548]"
               >
-                <Phone size={14} strokeWidth={1.6} className="text-[#f0c548]" />
+                <Phone size={13} strokeWidth={1.6} className="text-[#f0c548]" />
                 78 40 71 40
               </a>
               <a
                 href="mailto:Camilla@klevenjakt-fiske.no"
-                className="flex items-center gap-2 hover:text-white"
+                className="flex items-center gap-2 transition-colors hover:text-[#f0c548]"
               >
-                <Mail size={14} strokeWidth={1.6} className="text-[#f0c548]" />
-                Camilla@klevenjakt-fiske.no
+                <Mail size={13} strokeWidth={1.6} className="text-[#f0c548]" />
+                <span className="break-all">Camilla@klevenjakt-fiske.no</span>
               </a>
-              <span className="flex items-start gap-2 md:justify-end">
+              <span className="flex items-start gap-2">
                 <MapPin
-                  size={14}
+                  size={13}
                   strokeWidth={1.6}
-                  className="mt-0.5 text-[#f0c548]"
+                  className="mt-0.5 flex-shrink-0 text-[#f0c548]"
                 />
-                <span className="md:text-right">
+                <span>
                   Brenneriveien 2
                   <br />
                   9601 Hammerfest, {lang === "no" ? "Norge" : "Norway"}
                 </span>
               </span>
             </div>
-            <div className="mt-2 flex items-center gap-3 md:justify-end">
+
+            {/* Social icons */}
+            <div className="mt-5 flex items-center gap-2.5">
               {[
                 { Icon: Instagram, label: "Instagram" },
                 { Icon: Facebook, label: "Facebook" },
@@ -108,18 +113,15 @@ export function Footer({ onNavigate }: FooterProps) {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#f0c548] hover:text-[#1f2d3a] hover:scale-105"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 hover:bg-[#f0c548] hover:text-[#1f2d3a] hover:scale-105"
                 >
-                  <Icon size={15} strokeWidth={1.6} />
+                  <Icon size={14} strokeWidth={1.6} />
                 </a>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* ===== 3-COLUMN GRID: Categories | Customer Service | Opening Hours ===== */}
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Column 1: Categories */}
+          {/* Column 2: Categories */}
           <div className="flex flex-col">
             <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
               <span className="h-px w-6 bg-[#f0c548]" />
@@ -141,7 +143,7 @@ export function Footer({ onNavigate }: FooterProps) {
             </ul>
           </div>
 
-          {/* Column 2: Customer Service */}
+          {/* Column 3: Customer Service */}
           <div className="flex flex-col">
             <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
               <span className="h-px w-6 bg-[#f0c548]" />
@@ -161,7 +163,7 @@ export function Footer({ onNavigate }: FooterProps) {
             </ul>
           </div>
 
-          {/* Column 3: Opening Hours */}
+          {/* Column 4: Opening Hours */}
           <div className="flex flex-col">
             <h4 className="mb-5 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#f0c548]">
               <span className="h-px w-6 bg-[#f0c548]" />
