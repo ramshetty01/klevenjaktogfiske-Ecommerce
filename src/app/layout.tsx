@@ -24,9 +24,6 @@ export const metadata: Metadata = {
     "camping",
   ],
   authors: [{ name: "Kleven Jakt & Fiske AS" }],
-  icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
-  },
   openGraph: {
     title: "Kleven Jakt & Fiske — Ut på tur aldri sur!",
     description:
