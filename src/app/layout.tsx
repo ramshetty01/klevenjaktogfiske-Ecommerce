@@ -50,6 +50,12 @@ export default function RootLayout({
             text nodes in <font> tags, which conflicts with React's virtual
             DOM and causes "removeChild" runtime errors. */}
         <meta name="google" content="notranslate" />
+        <link rel="dns-prefetch" href="https://www.klevenjaktogfiske.no" />
+        <link
+          rel="preconnect"
+          href="https://www.klevenjaktogfiske.no"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className={`${manrope.variable} antialiased bg-background text-foreground`}

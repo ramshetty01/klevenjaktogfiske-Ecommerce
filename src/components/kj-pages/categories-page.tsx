@@ -100,9 +100,9 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
 
   return (
     <div className="kj-page-enter" style={{ backgroundColor: "#F4F4F4" }}>
-      <section className="mx-auto max-w-[1100px] px-6 py-20 lg:px-10 lg:py-28">
+      <section className="mx-auto max-w-[1100px] px-4 py-14 sm:px-6 sm:py-20 lg:px-10 lg:py-28">
         {/* Heading */}
-        <div className="mb-16 max-w-3xl">
+        <div className="mb-10 max-w-3xl sm:mb-16">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.25em] text-[#858585]">
             {t("categories.ourRange")}
           </p>
@@ -112,7 +112,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
           >
             {t("categories.title")}
           </h1>
-          <p className="mt-6 max-w-2xl text-[20px] font-light leading-relaxed text-[#212121]">
+          <p className="mt-5 max-w-2xl text-[17px] font-light leading-relaxed text-[#212121] sm:mt-6 sm:text-[20px]">
             {lang === "no"
               ? "Ti hovedkategorier, over 4 000 artikler. Hver kategori er kuratert av eksperter som kjenner utstyret innvendig — fordi de bruker det selv."
               : "Ten main categories, over 4,000 articles. Each category is curated by experts who know the gear inside out — because they use it themselves."}
@@ -143,14 +143,14 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
                   transition={{ duration: 0.3, delay: idx * 0.03 }}
                   className="border-t border-black/10 py-10 last:border-b"
                 >
-                  <div className="mb-3 flex items-center gap-3 text-[#858585]">
+                  <div className="mb-3 flex flex-wrap items-center gap-3 text-[#858585]">
                     <Icon size={28} strokeWidth={1.4} />
                     <h2 className="text-[22px] font-semibold text-[#212121]">
                       {c.name}
                     </h2>
                     <button
                       onClick={() => onNavigate("shop", { shopFilters: { category: c.slug } })}
-                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#212121] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#0056a7]"
+                      className="ml-0 inline-flex items-center gap-1 rounded-full bg-[#212121] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#0056a7] sm:ml-auto"
                     >
                       {t("nav.megaSeeAll")} ({c.count})
                       <ArrowRight size={12} />
@@ -189,7 +189,7 @@ export function CategoriesPage({ onNavigate }: CategoriesPageProps) {
               {t("categories.readyToShopDesc")}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <CategoriesChip onClick={() => onNavigate("about")} />
             <button
               onClick={() => onNavigate("shop")}

@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useLang } from "@/lib/kj/lang-store";
 import type { PageId, NavContext } from "../kj/header";
 
@@ -23,14 +24,18 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       <section className="relative w-full overflow-hidden">
         <div className="relative h-[40vh] min-h-[280px] w-full">
           { }
-          <img
-            src="/images/kelven-hero.png"
+          <Image
+            src="/images/kelven-hero.webp"
             alt="Kleven Jakt & Fiske butikk under nordlyset i Hammerfest"
+            fill
+            priority
+            sizes="100vw"
+            quality={82}
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#212121]/80 via-[#212121]/20 to-transparent" />
           <div className="absolute inset-0 flex items-end">
-            <div className="mx-auto w-full max-w-[1280px] px-6 pb-8 lg:px-10">
+            <div className="mx-auto w-full max-w-[1280px] px-4 pb-6 sm:px-6 sm:pb-8 lg:px-10">
               <motion.p
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -53,9 +58,9 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1280px] px-6 py-20 lg:px-10 lg:py-28">
+      <section className="mx-auto max-w-[1280px] px-4 py-14 sm:px-6 sm:py-20 lg:px-10 lg:py-28">
         {/* Heading */}
-        <div className="mb-16 max-w-3xl">
+        <div className="mb-10 max-w-3xl sm:mb-16">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.25em] text-[#858585]">
             {t("about.aboutUs")}
           </p>
@@ -76,9 +81,12 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           <div className="relative">
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[8px] shadow-[0_20px_50px_rgba(31,45,58,0.25)]">
               { }
-              <img
-                src="/images/about-heritage.png"
+              <Image
+                src="/images/about-heritage.webp"
                 alt="En mann i rød genser viser stolt frem to store fisker til en ung gutt på en skogsti — et øyeblikk av tradisjonsoverføring"
+                fill
+                sizes="(max-width: 1023px) calc(100vw - 32px), 420px"
+                quality={80}
                 className="h-full w-full object-cover"
               />
             </div>

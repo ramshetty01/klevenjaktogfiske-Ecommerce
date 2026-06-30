@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Instagram, Facebook, MapPin, Phone, Mail, ArrowRight, Clock } from "lucide-react";
 import { useLang } from "@/lib/kj/lang-store";
 import type { PageId, NavContext } from "./header";
@@ -12,7 +13,6 @@ export function Footer({ onNavigate }: FooterProps) {
   const { t } = useLang();
   const go = (page: PageId, ctx?: NavContext) => {
     onNavigate(page, ctx);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const categoryLinks: { label: string; slug?: string }[] = [
@@ -49,7 +49,7 @@ export function Footer({ onNavigate }: FooterProps) {
       className="relative w-full border-t border-[#d0d5d2] text-[#212121]"
       style={{ backgroundColor: "#FFFFFF" }}
     >
-      <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
+      <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
         {/* ===== 4-COLUMN GRID ===== */}
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -57,10 +57,13 @@ export function Footer({ onNavigate }: FooterProps) {
           <div className="flex flex-col">
             {/* Brand */}
             <div className="mb-4">
-              <img
-                src="/images/kleven-logo.png"
+              <Image
+                src="/images/kleven-logo.webp"
                 alt="Kleven Jakt & Fiske"
-                className="h-10 w-auto"
+                width={420}
+                height={117}
+                sizes="160px"
+                className="h-auto w-40"
               />
             </div>
 

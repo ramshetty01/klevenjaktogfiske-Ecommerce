@@ -145,7 +145,21 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-manrope), "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow-wrap: anywhere;
   }
+  button,
+  [role="button"],
+  [role="link"] {
+    touch-action: manipulation;
+  }
+  img {
+    max-width: 100%;
+  }
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* ---------- Marquee animation for shipping banner ---------- */
@@ -205,6 +219,14 @@
 
 .kj-page-enter {
   animation: kj-fade-in 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kj-page-enter,
+  .kj-marquee-track,
+  .kj-marquee-vertical-track {
+    animation: none;
+  }
 }
 
 /* ---------- Hide horizontal scrollbar on carousels ---------- */

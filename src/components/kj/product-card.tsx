@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ArrowRight, Star, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@/lib/kj/types";
@@ -16,6 +17,8 @@ interface ProductCardProps {
   onOpen?: (slug: string) => void;
   /** Compact variant — used in dense shop grid (smaller text). */
   compact?: boolean;
+  /** Load immediately when the card is initially visible above the fold. */
+  priority?: boolean;
 }
 
 /** Map raw Norwegian tag values to translation keys. */
@@ -41,7 +44,7 @@ function localizeStock(label: string, lang: "no" | "en"): string {
 /**
  * Compact product card used in shop grids and the home page.
  */
-export function ProductCard({ product, onOpen, compact = false }: ProductCardProps) {
+export function ProductCard({ product, onOpen, compact = false, priority = false }: ProductCardProps) {
   const { toast } = useToast();
   const add = useCart((s) => s.add);
   const { t, lang } = useLang();
@@ -116,11 +119,16 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
       className="group flex cursor-pointer flex-col overflow-hidden rounded-[6px] border border-black/5 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(31,45,58,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#428701]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#FFFFFF]">
-        <img
+        <Image
           src={imgSrc}
           alt={product.name}
+          fill
+          sizes="(max-width: 639px) 46vw, (max-width: 1023px) 31vw, (max-width: 1279px) 22vw, 240px"
+          quality={72}
+          unoptimized={imgSrc.startsWith("http")}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
           onError={() => {
             if (imgSrc !== PLACEHOLDER) setImgSrc(PLACEHOLDER);
           }}
@@ -149,7 +157,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         <button
           onClick={handleAdd}
           aria-label={`${t("common.add")} ${product.name} ${t("common.toCart")}`}
-          className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-1 items-center justify-center rounded-full bg-white text-[#212121] opacity-0 shadow-md transition-all duration-300 hover:bg-[#428701] group-hover:translate-y-0 group-hover:opacity-100 focus:opacity-100"
+          className="absolute bottom-2 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#212121] opacity-100 shadow-md transition-all duration-300 hover:bg-[#428701] md:translate-y-1 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:focus:opacity-100"
         >
           <Plus size={14} strokeWidth={2.2} />
         </button>
@@ -164,7 +172,7 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Name */}
         <h3
           className={`font-semibold leading-tight text-[#212121] line-clamp-2 ${
-            compact ? "text-[12px]" : "text-[13px]"
+            compact ? "text-[13px]" : "text-[14px]"
           }`}
         >
           {product.name}
@@ -191,9 +199,9 @@ export function ProductCard({ product, onOpen, compact = false }: ProductCardPro
         {/* Price row */}
         <div className="mt-1.5 flex items-baseline gap-1.5">
           {priceUnknown ? (
-            <span className="text-[13px] font-bold text-[#212121]">{t("shop.seePrice")}</span>
+            <span className="text-[14px] font-bold text-[#212121]">{t("shop.seePrice")}</span>
           ) : (
-            <span className="text-[13px] font-bold text-[#212121]">
+            <span className="text-[14px] font-bold text-[#212121]">
               {formatNok(product.price)}
             </span>
           )}

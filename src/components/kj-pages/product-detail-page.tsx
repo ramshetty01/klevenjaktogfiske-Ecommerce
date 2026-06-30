@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   ChevronLeft, Star, Minus, Plus, ShoppingBag, Truck, Shield, RotateCcw, Phone, ExternalLink,
 } from "lucide-react";
@@ -157,7 +158,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
   if (loading) {
     return (
       <div className="kj-page-enter bg-white">
-        <div className="mx-auto max-w-[1280px] px-6 py-10 lg:px-10">
+        <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
             <div className="aspect-square animate-pulse rounded-lg bg-[#FFFFFF]" />
             <div className="flex flex-col gap-4">
@@ -222,8 +223,8 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
   return (
     <div className="kj-page-enter bg-white">
       {/* Breadcrumb */}
-      <div className="mx-auto max-w-[1280px] px-6 pt-6 lg:px-10">
-        <nav className="flex items-center gap-2 text-[12px] font-light text-[#858585]">
+      <div className="mx-auto max-w-[1280px] px-4 pt-4 sm:px-6 sm:pt-6 lg:px-10">
+        <nav className="flex min-w-0 items-center gap-2 overflow-hidden whitespace-nowrap text-[12px] font-light text-[#858585]">
           <button onClick={() => onNavigate("home")} className="hover:text-[#212121]">
             {t("product.backHome")}
           </button>
@@ -243,13 +244,13 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             </>
           )}
           <ChevronLeft size={12} className="rotate-180" />
-          <span className="text-[#212121]">{product.name}</span>
+          <span className="min-w-0 truncate text-[#212121]">{product.name}</span>
         </nav>
       </div>
 
       {/* Main product layout */}
-      <section className="mx-auto max-w-[1280px] px-6 py-8 lg:px-10 lg:py-12">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+      <section className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+        <div className="grid grid-cols-1 gap-7 lg:grid-cols-2 lg:gap-16">
           {/* Image gallery */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -259,9 +260,14 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
           >
             <div className="relative aspect-square overflow-hidden rounded-lg border border-black/5 bg-[#FFFFFF]">
               { }
-              <img
+              <Image
                 src={srcFor(activeImage)}
                 alt={product.name}
+                fill
+                priority
+                sizes="(max-width: 1023px) calc(100vw - 32px), 560px"
+                quality={82}
+                unoptimized={srcFor(activeImage).startsWith("http")}
                 className="h-full w-full object-cover"
                 onError={() => {
                   setFailedImages((prev) => {
@@ -302,7 +308,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
             </div>
             {/* Thumbnails */}
             {galleryImages.length > 1 && (
-              <div className="flex gap-2">
+              <div className="kj-no-scrollbar flex gap-2 overflow-x-auto pb-1">
                 {galleryImages.map((img, idx) => (
                   <button
                     key={idx}
@@ -312,9 +318,14 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
                     }`}
                   >
                     { }
-                    <img
+                    <Image
                       src={srcFor(idx)}
                       alt={`${product.name} bilde ${idx + 1}`}
+                      width={80}
+                      height={80}
+                      sizes="80px"
+                      quality={68}
+                      unoptimized={srcFor(idx).startsWith("http")}
                       className="h-full w-full object-cover"
                       onError={() => {
                         setFailedImages((prev) => {
@@ -515,7 +526,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
       {/* Related products */}
       {related.length > 0 && (
         <section className="bg-[#F4F4F4] py-16">
-          <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
+          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
             <div className="mb-8 flex items-end justify-between border-b border-[#d0d5d2] pb-4">
               <div>
                 <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
@@ -536,11 +547,12 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-              {related.map((p) => (
+              {related.map((p, index) => (
                 <ProductCard
                   key={p.id}
                   product={p}
                   compact
+                  priority={index < 2}
                   onOpen={(s) => onNavigate("product", { productSlug: s })}
                 />
               ))}
@@ -551,7 +563,7 @@ export function ProductDetailPage({ slug, onNavigate }: ProductDetailPageProps) 
 
       {/* Reviews section */}
       <section className="bg-white py-16">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
             <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#d0d5d2] pb-4">
               <div>
                 <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Newsreader } from "next/font/google";
+import Image from "next/image";
 import { ArrowRight, Crosshair, Fish, Tent, Shirt, Snowflake, PawPrint, Truck, MapPin, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PageId, NavContext } from "../kj/header";
@@ -61,10 +62,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
     <div className="kj-page-enter">
       {/* ===== HERO ===== */}
       <section className="relative min-h-[500px] w-full overflow-hidden lg:h-[512px]">
-        <img
-          src="/images/hero-fishing.png"
+        <Image
+          src="/images/hero-fishing.webp"
           alt="Mann fisker i innsjø ved solnedgang med fjell i bakgrunnen"
-          className="absolute inset-0 h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          quality={82}
+          className="absolute inset-0 h-full w-full object-cover object-[60%_center] sm:object-center"
         />
         <div
           className="absolute inset-0"
@@ -82,7 +87,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             className="max-w-[590px]"
           >
             <h1
-              className={`${heroEditorial.className} text-[clamp(3.1rem,6.2vw,5.5rem)] font-medium leading-[0.96] tracking-[-0.035em]`}
+              className={`${heroEditorial.className} text-[clamp(2.7rem,11vw,5.5rem)] font-medium leading-[0.96] tracking-[-0.035em]`}
               style={{ color: "color-mix(in oklab, var(--color-white) 80%, transparent)" }}
             >
               {t("home.heroLine1")}
@@ -94,17 +99,17 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {t("home.heroSub")}
             </p>
 
-            <div className="mt-7 grid w-full max-w-[420px] grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            <div className="mt-7 flex flex-wrap items-center gap-3 sm:grid sm:w-full sm:max-w-[420px] sm:grid-cols-2 sm:gap-4">
               <button
                 onClick={() => onNavigate("shop")}
-                className="group inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#287e06] px-6 text-[16px] font-medium whitespace-nowrap text-white shadow-sm transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#206705] hover:shadow-lg active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                className="group inline-flex h-12 items-center justify-center gap-3 whitespace-nowrap rounded-full bg-[#287e06] px-5 text-[15px] font-medium text-white shadow-sm transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#206705] hover:shadow-lg active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:h-14 sm:w-full sm:px-6 sm:text-[16px]"
               >
                 {t("home.shopNow")}
                 <ArrowRight size={18} strokeWidth={1.5} className="transition-transform group-hover:translate-x-1" />
               </button>
               <button
                 onClick={() => onNavigate("categories")}
-                className="inline-flex h-14 w-full items-center justify-center rounded-full border border-white/70 bg-[#071b1b]/20 px-6 text-[16px] font-medium whitespace-nowrap text-white shadow-sm backdrop-blur-[3px] transition-[background-color,border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-[#287e06] hover:bg-[#287e06] hover:shadow-lg active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-full border border-white/70 bg-[#071b1b]/20 px-5 text-[15px] font-medium text-white shadow-sm backdrop-blur-[3px] transition-[background-color,border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-[#287e06] hover:bg-[#287e06] hover:shadow-lg active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:h-14 sm:w-full sm:px-6 sm:text-[16px]"
               >
                 {t("nav.categories")}
               </button>
@@ -170,7 +175,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                       aria-label={cat.name}
                       className="h-full w-full bg-no-repeat transition-transform duration-500 group-hover:scale-[1.035]"
                       style={{
-                        backgroundImage: "url('/images/category-reference.png')",
+                        backgroundImage: "url('/images/category-reference.webp')",
                         backgroundSize: "662.1% 478.5%",
                         backgroundPosition: cat.position,
                       }}
@@ -192,7 +197,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
       {/* ===== POPULAR PRODUCTS ===== */}
       <section className="w-full bg-white">
-        <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
+        <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[#d0d5d2] pb-5">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
@@ -218,10 +223,11 @@ export function HomePage({ onNavigate }: HomePageProps) {
               ? Array.from({ length: 20 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : featured.length === 0
                 ? <p className="col-span-full py-12 text-center text-[14px] text-[#858585]">{t("home.noProducts")}</p>
-                : featured.slice(0, 20).map((p) => (
+                : featured.slice(0, 20).map((p, index) => (
                   <ProductCard
                     key={p.id}
                     product={p}
+                    priority={index < 4}
                     onOpen={(slug) => onNavigate("product", { productSlug: slug })}
                   />
                 ))}
@@ -231,7 +237,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
       {/* BRAND SHOWCASE */}
       <section className="w-full bg-[#F4F4F4]">
-        <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-10 lg:py-20">
+        <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20">
           <div className="mb-10 max-w-2xl">
             <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#858585]">
               {t("home.ourSelection")}
@@ -281,7 +287,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
       {/* BRAND PROMISE BAND */}
       <section className="w-full bg-[#212121]">
-        <div className="mx-auto max-w-[1280px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {[
               {

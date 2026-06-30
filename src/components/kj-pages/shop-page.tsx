@@ -655,7 +655,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
       {/* Shop header */}
       <section className="w-full" style={{ backgroundColor: "#F4F4F4" }}>
-        <div className="mx-auto max-w-[1280px] px-6 pt-12 pb-6 lg:px-10">
+        <div className="mx-auto max-w-[1280px] px-4 pb-5 pt-8 sm:px-6 sm:pb-6 sm:pt-12 lg:px-10">
           {searchQ && (
             <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#858585]">
               <span className="normal-case text-[#212121]">
@@ -680,7 +680,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           )}
 
           {/* Top filter bar — quick category pills */}
-          <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-[#d0d5d2] pb-5">
+          <div className="kj-no-scrollbar mt-5 flex snap-x items-center gap-2 overflow-x-auto border-b border-[#d0d5d2] pb-4 sm:mt-6 sm:flex-wrap sm:overflow-visible sm:pb-5">
             <CategoryPill
               label={t("shop.all")}
               active={activeCategory === "alle"}
@@ -700,7 +700,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
           {parentForHeading &&
             parentForHeading.subcategories.filter((s) => s.count > 0).length >
               0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[#d0d5d2] pb-5">
+              <div className="kj-no-scrollbar mt-4 flex items-center gap-1.5 overflow-x-auto border-b border-[#d0d5d2] pb-4 sm:flex-wrap sm:overflow-visible sm:pb-5">
                 <span className="mr-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#858585]">
                   {t("shop.subcategory")}
                 </span>
@@ -744,12 +744,12 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-start sm:gap-3">
               {/* Mobile filter button */}
               <Button
                 variant="outline"
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden h-9 rounded-full border-[#d0d5d2] bg-white px-4 text-[12px] font-medium text-[#212121]"
+                className="h-10 rounded-full border-[#d0d5d2] bg-white px-4 text-[12px] font-medium text-[#212121] lg:hidden"
               >
                 <Filter size={14} className="mr-1.5" />
                 {t("shop.filters")}
@@ -769,7 +769,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                   value={effectiveSort}
                   onValueChange={(v) => setSort(v as SortKey)}
                 >
-                  <SelectTrigger className="h-9 w-[180px] sm:w-[230px] rounded-full border border-[#d0d5d2] bg-white px-4 text-[12px] font-medium text-[#212121] hover:bg-[#F4F4F4] focus:ring-0 focus:ring-offset-0">
+                  <SelectTrigger className="h-10 w-[160px] rounded-full border border-[#d0d5d2] bg-white px-3 text-[12px] font-medium text-[#212121] hover:bg-[#F4F4F4] focus:ring-0 focus:ring-offset-0 sm:w-[230px] sm:px-4">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-md border border-[#d0d5d2] bg-white">
@@ -792,7 +792,7 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
 
       {/* Body: chips + sidebar + grid */}
       <section className="w-full pb-20" style={{ backgroundColor: "#F4F4F4" }}>
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
           {/* Active filter chips */}
           {activeChips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 py-4">
@@ -872,11 +872,12 @@ export function ShopPage({ initialFilters, onNavigate }: ShopPageProps) {
                           <X size={12} /> {t("shop.clearFilters")}
                         </button>
                       </div>
-                    : products.map((p) => (
+                    : products.map((p, index) => (
                         <ProductCard
                           key={p.id}
                           product={p}
                           compact
+                          priority={index < 6}
                           onOpen={(slug) =>
                             onNavigate?.("product", { productSlug: slug })
                           }
@@ -998,7 +999,7 @@ function CategoryPill({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-3.5 py-1.5 text-[11px] font-medium transition-all duration-200 ${
+      className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-[11px] font-medium transition-all duration-200 ${
         active
           ? "bg-[#212121] text-white"
           : "bg-white text-[#212121] hover:bg-[#428701]"
@@ -1021,7 +1022,7 @@ function SubcategoryPill({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all duration-200 ${
+      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium transition-all duration-200 ${
         active
           ? "bg-[#0056a7] text-white"
           : "bg-[#F4F4F4] text-[#212121] hover:bg-[#428701] hover:text-[#212121]"

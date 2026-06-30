@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,9 +29,13 @@ function CartImage({ src, alt }: { src: string; alt: string }) {
     src && src.trim().length > 0 ? src : PLACEHOLDER,
   );
   return (
-    <img
+    <Image
       src={imgSrc}
       alt={alt}
+      fill
+      sizes="96px"
+      quality={70}
+      unoptimized={imgSrc.startsWith("http")}
       className="h-full w-full object-cover transition-transform hover:scale-105"
       onError={() => {
         if (imgSrc !== PLACEHOLDER) setImgSrc(PLACEHOLDER);
@@ -82,7 +87,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
       <ShippingBanner size="md" />
 
       <section className="w-full bg-[#F4F4F4]">
-        <div className="mx-auto max-w-[1280px] px-6 py-10 lg:px-10 lg:py-14">
+        <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-14">
           <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#858585]">
             {t("cart.title")}
           </div>
@@ -148,7 +153,7 @@ export function CartPage({ onNavigate }: CartPageProps) {
                       {/* Image */}
                       <button
                         onClick={() => onNavigate("product", { productSlug: item.product.slug })}
-                        className="aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#FFFFFF]"
+                        className="relative aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-md bg-[#FFFFFF]"
                       >
                         { }
                         <CartImage src={item.product.imageUrl} alt={item.product.name} />

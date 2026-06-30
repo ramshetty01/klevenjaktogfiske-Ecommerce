@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { Menu, X, Search, User, ShoppingBag, ChevronDown, Globe } from "lucide-react";
 import { useCart } from "@/lib/kj/cart-store";
 import { useLang } from "@/lib/kj/lang-store";
@@ -57,7 +58,6 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
     onNavigate(page, ctx);
     setMobileOpen(false);
     setMegaOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -88,25 +88,28 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
         }`}
       >
         {/* ===== ROW 1: Brand + Search Bar + Actions ===== */}
-        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6 lg:px-10">
+        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-3 px-4 sm:px-6 md:gap-5 lg:px-10">
           {/* Left: brand */}
           <button
             onClick={() => handleNav("home")}
             className="flex flex-shrink-0 items-center"
             aria-label={t("nav.homeAria")}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/kleven-logo.png"
+            <Image
+              src="/images/kleven-logo.webp"
               alt="Kleven Jakt & Fiske"
-              className="h-12 w-auto"
+              width={420}
+              height={117}
+              priority
+              sizes="(max-width: 767px) 132px, 160px"
+              className="h-auto w-[132px] sm:w-[145px] lg:w-[160px]"
             />
           </button>
 
           {/* Center: Search bar (fixed width, right of logo) */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden w-[580px] flex-shrink-0 items-center gap-2.5 rounded-full bg-[#F4F4F4] px-8 py-1.5 transition-colors hover:bg-[#EDEDED] focus-within:bg-[#EDEDED] md:flex"
+            className="hidden min-w-0 max-w-[580px] flex-1 items-center gap-2.5 rounded-full bg-[#F4F4F4] px-5 py-2 transition-colors hover:bg-[#EDEDED] focus-within:bg-[#EDEDED] md:flex lg:px-8"
           >
             <Search size={18} className="flex-shrink-0 text-[#212121]/60" />
             <input
@@ -127,7 +130,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
           </form>
 
           {/* Right: actions */}
-          <div className="flex flex-shrink-0 items-center gap-3">
+          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-2">
             <button
               aria-label={t("nav.account")}
               className="hidden text-[#212121]/85 transition-colors hover:text-[#212121] sm:block"
@@ -139,7 +142,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <div className="relative">
               <button
                 onClick={() => setLangOpen((v) => !v)}
-                className="flex items-center gap-1 rounded-full border border-[#d0d5d2] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[#212121]/90 transition-colors hover:border-[#428701] hover:text-[#428701]"
+                className="flex h-10 items-center gap-1 rounded-full border border-[#d0d5d2] px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-[#212121]/90 transition-colors hover:border-[#428701] hover:text-[#428701]"
                 aria-label="Language / Språk"
               >
                 <Globe size={12} strokeWidth={2} />
@@ -174,7 +177,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <button
               aria-label={t("nav.cart")}
               onClick={() => handleNav("cart")}
-              className="relative text-[#212121]/85 transition-colors hover:text-[#212121]"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full text-[#212121]/85 transition-colors hover:bg-[#F4F4F4] hover:text-[#212121]"
             >
               <ShoppingBag size={18} strokeWidth={1.6} />
               {totalCount > 0 && (
@@ -189,7 +192,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
             <button
               aria-label={t("nav.menu")}
               onClick={() => setMobileOpen((v) => !v)}
-              className="ml-1 text-[#212121] md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-[#212121] hover:bg-[#F4F4F4] md:hidden"
             >
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -307,7 +310,7 @@ export function Header({ current, onNavigate, categories = [] }: HeaderProps) {
         {/* Mobile drawer */}
         {mobileOpen && (
           <div className="border-t border-[#d0d5d2] md:hidden">
-            <nav className="mx-auto flex max-w-[1280px] flex-col px-6 py-2">
+            <nav className="mx-auto flex max-h-[calc(100dvh-4rem)] max-w-[1280px] flex-col overflow-y-auto px-4 py-2 sm:px-6">
               {/* Search bar in mobile */}
               <form
                 onSubmit={handleSearchSubmit}

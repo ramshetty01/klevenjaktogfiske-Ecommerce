@@ -80,6 +80,11 @@ export default function Home() {
   }, []);
 
   const navigate = useCallback((p: PageId, ctx?: NavContext) => {
+    // This is a client-side single-page transition, so the browser will not
+    // reset scroll position for us as it would on a normal navigation.
+    // Reset before rendering the destination to prevent product pages from
+    // opening at the shop's previous scroll depth.
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     setNavCtx(ctx ?? {});
     setPage(p);
   }, []);
